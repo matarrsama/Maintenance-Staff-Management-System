@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediFlow - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e0e3e5",
+                      "on-primary-fixed-variant": "#0038b6",
+                      "inverse-on-surface": "#eff1f3",
+                      "secondary-container": "#d0e1fb",
+                      "on-primary-fixed": "#001452",
+                      "surface": "#f7f9fb",
+                      "tertiary-fixed-dim": "#89ceff",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#b7c4ff",
+                      "tertiary-fixed": "#c9e6ff",
+                      "on-tertiary-fixed-variant": "#004c6e",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#b7c4ff",
+                      "tertiary": "#005479",
+                      "surface-bright": "#f7f9fb",
+                      "primary": "#003ec7",
+                      "on-primary-container": "#dfe3ff",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "on-tertiary-container": "#cee9ff",
+                      "surface-container-high": "#e6e8ea",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#d3e4fe",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "on-surface": "#191c1e",
+                      "on-secondary-fixed": "#0b1c30",
+                      "background": "#f7f9fb",
+                      "on-surface-variant": "#434656",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f2f4f6",
+                      "outline": "#737688",
+                      "on-secondary-container": "#54647a",
+                      "surface-tint": "#004ced",
+                      "primary-container": "#0052ff",
+                      "outline-variant": "#c3c5d9",
+                      "secondary": "#505f76",
+                      "surface-container": "#eceef0",
+                      "surface-dim": "#d8dadc",
+                      "primary-fixed": "#dde1ff",
+                      "tertiary-container": "#006d9c",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#001e2f",
+                      "error": "#ba1a1a",
+                      "surface-variant": "#e0e3e5",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#2d3133",
+                      "on-background": "#191c1e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xs": "8px",
+                      "md": "24px",
+                      "xl": "48px",
+                      "margin-mobile": "16px",
+                      "gutter": "20px",
+                      "margin-desktop": "40px",
+                      "sm": "16px",
+                      "base": "4px",
+                      "lg": "32px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-sm": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "JetBrains Mono"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "30px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop antialiased font-body-lg text-on-background">
+<div class="w-full max-w-[480px]">
+<!-- Logo Header -->
+<div class="flex flex-col items-center mb-lg">
+<div class="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-sm shadow-[0px_4px_12px_rgba(0,82,255,0.1)]">
+<span class="material-symbols-outlined text-[32px] text-on-primary" data-icon="local_hospital">local_hospital</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">MediFlow</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-base">Maintenance Management System</p>
+</div>
+<!-- Login Card -->
+<div class="bg-surface-container-lowest border border-surface-container-highest rounded-xl p-md md:p-lg">
+<form action="#" class="space-y-md" method="POST">
+<!-- Employee ID / Email Field -->
+<div class="space-y-base">
+<label class="block font-body-md text-body-md font-bold text-on-surface" for="employee-id">Email or Employee ID</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-[20px]" data-icon="badge">badge</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-surface-container-highest rounded bg-surface-container-lowest text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors font-body-md text-body-md" id="employee-id" name="employee-id" placeholder="e.g. M-10492" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-base">
+<div class="flex items-center justify-between">
+<label class="block font-body-md text-body-md font-bold text-on-surface" for="password">Password</label>
+<a class="font-body-md text-body-md text-primary hover:text-primary-container transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-[20px]" data-icon="lock">lock</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-surface-container-highest rounded bg-surface-container-lowest text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors font-body-md text-body-md" id="password" name="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Sign In Button -->
+<button class="w-full flex justify-center py-2 px-4 border border-transparent rounded bg-primary text-on-primary font-body-lg text-body-lg font-medium hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors mt-lg" type="submit">
+                    Sign In
+                </button>
+</form>
+</div>
+<!-- System Notice -->
+<div class="mt-lg text-center bg-surface-container-low rounded-lg p-sm border border-surface-container-highest">
+<div class="flex items-start md:items-center justify-center gap-2 text-left md:text-center">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0" data-icon="info">info</span>
+<p class="font-body-md text-body-md text-secondary">
+                    Account creation is managed by the Department Head. Please contact the HOD to request a new account.
+                </p>
+</div>
+</div>
+</div>
+</body></html>

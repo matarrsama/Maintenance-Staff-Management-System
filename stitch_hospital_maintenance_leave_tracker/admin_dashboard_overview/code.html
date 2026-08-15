@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clinical Precision System - Leave Management Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#191c1e",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "on-primary-fixed": "#001452",
+                      "on-surface-variant": "#434656",
+                      "outline-variant": "#c3c5d9",
+                      "surface-variant": "#e0e3e5",
+                      "surface-dim": "#d8dadc",
+                      "primary-fixed-dim": "#b7c4ff",
+                      "outline": "#737688",
+                      "background": "#f7f9fb",
+                      "surface-bright": "#f7f9fb",
+                      "surface-container-high": "#e6e8ea",
+                      "surface-container-low": "#f2f4f6",
+                      "surface-container-highest": "#e0e3e5",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-container": "#0052ff",
+                      "surface-container": "#eceef0",
+                      "secondary-container": "#d0e1fb",
+                      "secondary-fixed": "#d3e4fe",
+                      "on-primary-container": "#dfe3ff",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "tertiary-container": "#006d9c",
+                      "tertiary": "#005479",
+                      "on-tertiary-fixed-variant": "#004c6e",
+                      "inverse-primary": "#b7c4ff",
+                      "on-error": "#ffffff",
+                      "secondary": "#505f76",
+                      "on-background": "#191c1e",
+                      "on-secondary-container": "#54647a",
+                      "surface-tint": "#004ced",
+                      "inverse-on-surface": "#eff1f3",
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#dde1ff",
+                      "surface": "#f7f9fb",
+                      "on-secondary-fixed": "#0b1c30",
+                      "error": "#ba1a1a",
+                      "inverse-surface": "#2d3133",
+                      "on-primary-fixed-variant": "#0038b6",
+                      "tertiary-fixed-dim": "#89ceff",
+                      "tertiary-fixed": "#c9e6ff",
+                      "on-secondary": "#ffffff",
+                      "primary": "#003ec7",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed": "#001e2f",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#cee9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xs": "8px",
+                      "base": "4px",
+                      "lg": "32px",
+                      "margin-desktop": "40px",
+                      "margin-mobile": "16px",
+                      "md": "24px",
+                      "xl": "48px",
+                      "sm": "16px",
+                      "gutter": "20px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-sm": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg": [
+                              "Hanken Grotesk"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "30px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #f7f9fb; /* surface */
+            color: #191c1e; /* on-surface */
+        }
+      </style>
+</head>
+<body class="font-body-md text-body-md bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar (from JSON) -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] flex flex-col h-full p-sm gap-xs bg-surface-container-lowest dark:bg-on-surface border-r border-outline-variant dark:border-on-surface-variant z-40 hidden md:flex">
+<!-- Header -->
+<div class="flex items-center gap-sm mb-md px-xs pt-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Clinical Precision</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Maintenance Dept</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary hover:bg-primary-fixed-variant text-on-primary font-label-md text-label-md py-sm rounded-lg mb-md flex items-center justify-center gap-xs transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Request
+        </button>
+<!-- Main Nav -->
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-sm py-xs bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs text-secondary dark:text-surface-variant hover:bg-surface-container dark:hover:bg-on-secondary-fixed-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-label-md text-label-md">My Leave</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs text-secondary dark:text-surface-variant hover:bg-surface-container dark:hover:bg-on-secondary-fixed-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs text-secondary dark:text-surface-variant hover:bg-surface-container dark:hover:bg-on-secondary-fixed-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="font-label-md text-label-md">Schedule</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs text-secondary dark:text-surface-variant hover:bg-surface-container dark:hover:bg-on-secondary-fixed-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</nav>
+<!-- Footer Nav -->
+<div class="mt-auto border-t border-outline-variant pt-sm flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-sm py-xs text-secondary hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs text-secondary hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[260px] min-h-screen">
+<!-- TopAppBar (from JSON) -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 z-50 bg-surface dark:bg-on-surface border-b border-outline-variant dark:border-on-surface-variant shrink-0">
+<!-- Left Side (Mobile Nav Toggle / Logo area fallback) -->
+<div class="flex items-center gap-sm">
+<button class="md:hidden text-on-surface-variant p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary md:hidden">
+                    Clinical Precision System
+                </div>
+<!-- Search (on left as per JSON, hidden on small mobile to save space) -->
+<div class="hidden sm:flex items-center bg-surface-container-low px-sm py-xs rounded-full border border-outline-variant focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md text-on-surface outline-none w-64 placeholder-on-surface-variant" placeholder="Search staff or requests..." type="text"/>
+</div>
+</div>
+<!-- Right Side (Actions) -->
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-on-secondary-fixed-variant transition-colors p-2 rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-on-secondary-fixed-variant transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center ml-xs cursor-pointer border border-outline-variant">
+<span class="font-label-md text-on-primary-container">JD</span>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop bg-background">
+<div class="max-w-[1440px] mx-auto">
+<div class="mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Leave Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and monitor maintenance staff availability.</p>
+</div>
+<!-- Metrics Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
+<!-- Metric Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<h3 class="font-label-md text-label-md text-on-surface-variant">Staff on Leave</h3>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-sm">person_off</span>
+</div>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">12</div>
+<div class="flex items-center mt-xs text-sm">
+<span class="text-error font-medium flex items-center"><span class="material-symbols-outlined text-[16px] mr-1">arrow_upward</span> +2</span>
+<span class="text-on-surface-variant ml-xs">vs last week</span>
+</div>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col justify-between relative overflow-hidden">
+<!-- subtle background accent -->
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-xl"></div>
+<div class="flex items-center justify-between mb-sm relative z-10">
+<h3 class="font-label-md text-label-md text-on-surface-variant">Pending Approvals</h3>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm">pending_actions</span>
+</div>
+</div>
+<div class="relative z-10">
+<div class="font-headline-lg text-headline-lg text-on-surface">8</div>
+<div class="flex items-center mt-xs text-sm">
+<span class="text-on-surface-variant">Requires attention today</span>
+</div>
+</div>
+</div>
+<!-- Metric Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<h3 class="font-label-md text-label-md text-on-surface-variant">Dept Coverage</h3>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface text-sm">health_and_safety</span>
+</div>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">84%</div>
+<!-- Progress Bar -->
+<div class="w-full bg-surface-container-high h-2 rounded-full mt-sm overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 84%"></div>
+</div>
+<div class="flex items-center mt-xs text-sm">
+<span class="text-on-surface-variant text-xs">Target: 85% Minimum</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pending Requests Table Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm shadow-primary/5">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface/50">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-sm">
+                            Pending Requests
+                            <span class="bg-primary-container text-on-primary-container font-label-md text-label-md px-2 py-0.5 rounded-full">8</span>
+</h3>
+<button class="text-primary hover:text-primary-fixed-variant font-label-md text-label-md flex items-center gap-xs">
+                            View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-outline-variant">
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant">Employee</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant">Type</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant">Dates</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant">Coverage Risk</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-lowest transition-colors">
+<td class="px-md py-sm">
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full object-cover bg-surface-container-high border border-outline-variant" data-alt="A small, professional headshot photo of a male maintenance worker in a grey uniform shirt, well lit, corporate portrait style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEH_ZdNnaNWOTpgXb3Kl7LnaGlK2ke65X32K2E9lAQ1n5oNhLgqTbB_OPg7n4oAVN9w1XguoyU-NwC4zmcvNycTZUc36TfkB8-Gr6Xm38izZAH-WLXhcY4Ht3KFJV4YoRGOXTEYrN761gvY5OqLdZtjeS5mtf9BwMH1XbFKro9ehy_9aPHttfxPMYV2sZjM9x7jg2XHteKN-qBn1l28FqZ_T3XShsSIg7DTT23h2OH3uRH9-zdaudW"/>
+<div>
+<div class="font-medium text-on-surface">Robert Chen</div>
+<div class="text-xs text-on-surface-variant">HVAC Technician</div>
+</div>
+</div>
+</td>
+<td class="px-md py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-tertiary-container/20 text-tertiary">
+                                            Annual Leave
+                                        </span>
+</td>
+<td class="px-md py-sm">
+<div class="text-on-surface">Oct 12 - Oct 16</div>
+<div class="text-xs text-on-surface-variant">5 days</div>
+</td>
+<td class="px-md py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary-container/20 text-secondary border border-secondary/20">
+                                            Low Risk
+                                        </span>
+</td>
+<td class="px-md py-sm text-right">
+<div class="flex items-center justify-end gap-xs">
+<button class="p-1 text-on-surface-variant hover:text-error hover:bg-error-container rounded transition-colors" title="Deny">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<button class="px-3 py-1 bg-primary text-white font-label-md text-label-md rounded hover:bg-primary-fixed-variant transition-colors">
+                                                Approve
+                                            </button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Zebra stripe) -->
+<tr class="border-b border-outline-variant/50 bg-surface/30 hover:bg-surface-container-lowest transition-colors">
+<td class="px-md py-sm">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-medium text-xs border border-outline-variant">
+                                                SJ
+                                            </div>
+<div>
+<div class="font-medium text-on-surface">Sarah Jenkins</div>
+<div class="text-xs text-on-surface-variant">Plumbing Specialist</div>
+</div>
+</div>
+</td>
+<td class="px-md py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-error-container/20 text-error">
+                                            Sick Leave
+                                        </span>
+</td>
+<td class="px-md py-sm">
+<div class="text-on-surface">Oct 04 - Oct 05</div>
+<div class="text-xs text-on-surface-variant">2 days</div>
+</td>
+<td class="px-md py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-error-container/40 text-error font-bold border border-error/20">
+                                            High Risk
+                                        </span>
+</td>
+<td class="px-md py-sm text-right">
+<div class="flex items-center justify-end gap-xs">
+<button class="p-1 text-on-surface-variant hover:text-error hover:bg-error-container rounded transition-colors" title="Deny">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<button class="px-3 py-1 bg-primary text-white font-label-md text-label-md rounded hover:bg-primary-fixed-variant transition-colors">
+                                                Approve
+                                            </button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-md py-sm">
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full object-cover bg-surface-container-high border border-outline-variant" data-alt="A professional headshot of a mature male maintenance supervisor, wearing a high-visibility vest over a blue shirt, neutral grey background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvoEZPqdoUe9wowdsHqbZMcajx-3GnAYjXDlkiZlAiuoAHt_EfwAnfwgxf_9348wJ11kireDPw8qvlOjyi-bCucDxr1rAM03EGkjWepUeay8e7rDQjyUnkxqrFU-6Xyt_sL7K6paIhGrRhCPw0shEmxlSwczzTbsI9WoY2nAFqijsb206BW_6mDgZbB3YLhMX3C95CloYzThId-RRj2xnhD7pGccT8P_TdUGcthOoSqhLZl1Nbhswz"/>
+<div>
+<div class="font-medium text-on-surface">Michael Davies</div>
+<div class="text-xs text-on-surface-variant">Electrical Lead</div>
+</div>
+</div>
+</td>
+<td class="px-md py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-tertiary-container/20 text-tertiary">
+                                            Training
+                                        </span>
+</td>
+<td class="px-md py-sm">
+<div class="text-on-surface">Nov 01 - Nov 03</div>
+<div class="text-xs text-on-surface-variant">3 days</div>
+</td>
+<td class="px-md py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-container/20 text-primary border border-primary/20">
+                                            Moderate
+                                        </span>
+</td>
+<td class="px-md py-sm text-right">
+<div class="flex items-center justify-end gap-xs">
+<button class="p-1 text-on-surface-variant hover:text-error hover:bg-error-container rounded transition-colors" title="Deny">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<button class="px-3 py-1 bg-primary text-white font-label-md text-label-md rounded hover:bg-primary-fixed-variant transition-colors">
+                                                Approve
+                                            </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
