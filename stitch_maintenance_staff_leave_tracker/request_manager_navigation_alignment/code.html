@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Leave Request Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "tertiary-fixed-dim": "#c4c7c9",
+                "on-secondary-container": "#006f66",
+                "surface-variant": "#d3e4fe",
+                "inverse-primary": "#b6c4ff",
+                "on-primary-fixed": "#00164e",
+                "tertiary-fixed": "#e0e3e5",
+                "error-container": "#ffdad6",
+                "tertiary": "#272b2d",
+                "on-error": "#ffffff",
+                "error": "#ba1a1a",
+                "secondary-fixed": "#89f5e7",
+                "on-tertiary-container": "#aaadaf",
+                "outline-variant": "#c5c5d3",
+                "on-tertiary-fixed": "#191c1e",
+                "surface-container-low": "#eff4ff",
+                "surface": "#f8f9ff",
+                "on-primary-container": "#90a8ff",
+                "on-secondary-fixed-variant": "#005049",
+                "surface-container": "#e5eeff",
+                "primary-fixed-dim": "#b6c4ff",
+                "tertiary-container": "#3d4143",
+                "on-surface-variant": "#444651",
+                "surface-container-high": "#dce9ff",
+                "on-secondary-fixed": "#00201d",
+                "surface-bright": "#f8f9ff",
+                "on-secondary": "#ffffff",
+                "surface-dim": "#cbdbf5",
+                "on-tertiary-fixed-variant": "#444749",
+                "outline": "#757682",
+                "inverse-on-surface": "#eaf1ff",
+                "primary-fixed": "#dce1ff",
+                "on-error-container": "#93000a",
+                "primary": "#00236f",
+                "inverse-surface": "#213145",
+                "surface-container-lowest": "#ffffff",
+                "on-primary": "#ffffff",
+                "primary-container": "#1e3a8a",
+                "surface-tint": "#4059aa",
+                "on-background": "#0b1c30",
+                "secondary-container": "#86f2e4",
+                "secondary-fixed-dim": "#6bd8cb",
+                "surface-container-highest": "#d3e4fe",
+                "background": "#f8f9ff",
+                "secondary": "#006a61",
+                "on-primary-fixed-variant": "#264191",
+                "on-tertiary": "#ffffff",
+                "on-surface": "#0b1c30"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "unit": "4px",
+                "container-padding": "24px",
+                "section-gap": "32px",
+                "data-density-compact": "8px",
+                "gutter": "16px",
+                "data-density-comfortable": "16px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "data-mono": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ],
+                "headline-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "data-mono": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "18px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-sm": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<div class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate">Hospital Maintenance</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate">HOD - Facilities</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<!-- Active Tab: Request Manager -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Request Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim md:hidden">Hospital Maintenance System</h1>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search requests..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + New Leave Request
+                </button>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<img alt="HOD Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A small circular profile picture of an authoritative facilities manager in a modern corporate setting, clean lighting, professional attire." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhCxjFTg1LpBN4JgrQfy4ptUK9jsFX_95vvrIDYPeRx1CvV0oJIw5whmG7vu7K7kLfOTxAYp3-v3jSXlDSt4hAnmhoutgFPXohUI8dtz1sRfSC45SndSltWrVSeYV6pR09AIT7gcFLrJKRVepKrAndPod3xQvCgaW8F4lir9Vay9-DzCb5Hd0e-AOK6H8J3-V_nnnGK37I6di7h3fvhWLKAMz389e63-LKDqDB4w6tA95CQ5i8Db_SEw"/>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium">James Wilson</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Facilities</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-grow p-spacing-container-padding grid grid-cols-1 lg:grid-cols-12 gap-spacing-container-padding overflow-hidden h-[calc(100vh-64px)]">
+<!-- Left Pane: Pending Requests List -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded flex flex-col h-full overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-slate-50 flex justify-between items-center">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Pending Requests</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Requires your approval</p>
+</div>
+<span class="bg-primary-container text-on-primary px-2.5 py-0.5 rounded-full font-label-md text-[10px]">4 Pending</span>
+</div>
+<div class="flex-grow overflow-y-auto p-4 space-y-3">
+<!-- Request Card 1 -->
+<div class="border border-outline-variant rounded p-4 bg-surface-bright hover:bg-surface-container-lowest transition-colors cursor-pointer group hover:border-primary-fixed-dim relative">
+<div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="h-8 w-8 rounded bg-teal-50 text-teal-800 flex items-center justify-center hover:bg-teal-100 transition-colors border border-teal-200" title="Approve">
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+<button class="h-8 w-8 rounded bg-red-50 text-red-800 flex items-center justify-center hover:bg-red-100 transition-colors border border-red-200" title="Deny">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div class="flex items-start">
+<div class="h-10 w-10 rounded-full bg-surface-variant overflow-hidden mr-4 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a hospital maintenance technician in a neat uniform. Clean medical setting background, soft lighting, calm and reliable mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5eXAWjHp76j2ZQG5XuNFKYmmfiegz691o_9BskCTk93bQ539UfS-6Rmx9iPMZg4nVFy7xFokTy_Nl5Ur6nLgZPeID_xBhJpfO1s7OMdBotKvDgSmjbnE2JAj_8aXo-66AYCir_eT3epgH7dDk6nELXvf_-yEyKYyvSFdqcvwpbEumQyr6lB-q3edO_2LPL63F8UhbDQePFtrn6B5gpdXJY324Vs0j_Ml4wRigScERzTRNvthUuSvXIg"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-1 pr-16">
+<h4 class="font-data-mono text-data-mono text-on-surface font-semibold">Robert Chen</h4>
+<span class="inline-block px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-label-md rounded border border-slate-200">PENDING</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Electrician • Level 3</p>
+<div class="grid grid-cols-2 gap-2 mb-3 bg-surface p-2 rounded border border-outline-variant border-opacity-50">
+<div>
+<span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Type</span>
+<span class="font-body-sm text-body-sm text-on-surface">Annual Leave</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Duration</span>
+<span class="font-body-sm text-body-sm text-on-surface">3 Days (Oct 12 - Oct 14)</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2"><span class="font-medium text-on-surface">Reason:</span> Family event out of state. Coverage arranged with M. Davis for emergency calls.</p>
+</div>
+</div>
+</div>
+<!-- Request Card 2 -->
+<div class="border border-outline-variant rounded p-4 bg-surface-bright hover:bg-surface-container-lowest transition-colors cursor-pointer group hover:border-primary-fixed-dim relative">
+<div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="h-8 w-8 rounded bg-teal-50 text-teal-800 flex items-center justify-center hover:bg-teal-100 transition-colors border border-teal-200" title="Approve">
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+<button class="h-8 w-8 rounded bg-red-50 text-red-800 flex items-center justify-center hover:bg-red-100 transition-colors border border-red-200" title="Deny">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div class="flex items-start">
+<div class="h-10 w-10 rounded-full bg-surface-variant overflow-hidden mr-4 flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-700 font-bold">
+                                SJ
+                            </div>
+<div class="flex-grow">
+<div class="flex justify-between items-start mb-1 pr-16">
+<h4 class="font-data-mono text-data-mono text-on-surface font-semibold">Sarah Jenkins</h4>
+<span class="inline-block px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-label-md rounded border border-slate-200">PENDING</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">HVAC Specialist</p>
+<div class="grid grid-cols-2 gap-2 mb-3 bg-surface p-2 rounded border border-outline-variant border-opacity-50">
+<div>
+<span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Type</span>
+<span class="font-body-sm text-body-sm text-on-surface">Sick Leave</span>
+</div>
+<div>
+<span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Duration</span>
+<span class="font-body-sm text-body-sm text-on-surface">1 Day (Oct 05)</span>
+</div>
+</div>
+<div class="flex items-center text-red-600 font-body-sm text-body-sm mt-2 bg-red-50 p-2 rounded border border-red-100">
+<span class="material-symbols-outlined text-[16px] mr-2">warning</span>
+<span>Conflict: 2 other HVAC staff on leave.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Pane: New Request Form -->
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded flex flex-col h-full overflow-hidden shadow-sm relative">
+<!-- Decorative subtle header gradient -->
+<div class="h-1 w-full bg-gradient-to-r from-primary-container to-surface-tint absolute top-0 left-0"></div>
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary-container">edit_document</span>
+                        New Entry
+                    </h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<div class="flex-grow overflow-y-auto p-6">
+<form class="space-y-5">
+<!-- Staff Member Selection -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="staff-select">Staff Member <span class="text-error">*</span></label>
+<div class="relative">
+<select class="block w-full h-[40px] pl-3 pr-10 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors cursor-pointer" id="staff-select">
+<option disabled="" selected="" value="">Select staff member...</option>
+<option value="1">Marcus Johnson (Plumbing)</option>
+<option value="2">Emily Davis (Electrical)</option>
+<option value="3">David Kim (General Maint.)</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+<div class="mt-1.5 flex items-center text-on-surface-variant font-body-sm text-[11px]">
+<span class="material-symbols-outlined text-[14px] mr-1">info</span>
+<span>Eligibility: 14 days annual leave remaining</span>
+</div>
+</div>
+<!-- Leave Type -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="leave-type">Leave Type <span class="text-error">*</span></label>
+<div class="relative">
+<select class="block w-full h-[40px] pl-3 pr-10 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors cursor-pointer" id="leave-type">
+<option value="annual">Annual Leave</option>
+<option value="sick">Sick Leave</option>
+<option value="unpaid">Unpaid Leave</option>
+<option value="compassionate">Compassionate</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Date Range Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="start-date">Start Date <span class="text-error">*</span></label>
+<div class="relative">
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="start-date" type="date"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="end-date">End Date <span class="text-error">*</span></label>
+<div class="relative">
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="end-date" type="date"/>
+</div>
+</div>
+</div>
+<!-- Calculation & Conflict Panel (Automated mock) -->
+<div class="bg-surface p-3 border border-outline-variant border-dashed rounded">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-outline">Total Duration</span>
+<span class="font-data-mono text-data-mono font-bold text-on-surface bg-surface-container-high px-2 py-0.5 rounded">0 Days</span>
+</div>
+<div class="flex items-start text-on-surface-variant font-body-sm text-[12px]">
+<span class="material-symbols-outlined text-[16px] mr-1.5 mt-0.5">check_circle</span>
+<span>No roster conflicts detected for selected dates. Minimum staffing levels maintained.</span>
+</div>
+</div>
+<!-- Reason -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="reason">Reason / Notes</label>
+<textarea class="block w-full p-3 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors resize-none" id="reason" placeholder="Provide any necessary context..." rows="3"></textarea>
+</div>
+</form>
+</div>
+<!-- Action Footer -->
+<div class="p-4 border-t border-outline-variant bg-surface-bright flex justify-end space-x-3">
+<button class="px-4 py-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors" type="button">
+                        Clear
+                    </button>
+<button class="px-4 py-2 border border-primary-container text-primary-container rounded font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm active:shadow-inner" type="button">
+                        Save Draft
+                    </button>
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner" type="submit">
+                        Submit &amp; Approve
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
