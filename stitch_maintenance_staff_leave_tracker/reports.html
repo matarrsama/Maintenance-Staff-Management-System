@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Management Reports - %APP%">Management Reports - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/pdf-export.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<!-- Active Tab: Reports -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search requests..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Workspace -->
+<main id="app-main" class="flex-grow p-container-padding flex flex-col gap-section-gap overflow-y-auto h-[calc(100vh-64px)]">
+<div class="max-w-[1200px] mx-auto w-full flex flex-col gap-section-gap px-container-padding">
+<!-- Page Header & Controls -->
+<div class="flex flex-col gap-4">
+<!-- Row 1: Title + Export Buttons -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Management Reports</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Overview of department leave metrics and staffing capacity.</p>
+</div>
+<div class="flex gap-2 shrink-0">
+<button type="button" onclick="exportReportsCSV()" class="border border-outline-variant text-on-surface hover:bg-surface-container px-3 py-1.5 rounded-DEFAULT font-label-md text-label-md flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span>
+                        Export CSV
+                    </button>
+<button type="button" onclick="exportReportsPDF()" class="border border-outline-variant text-on-surface hover:bg-surface-container px-3 py-1.5 rounded-DEFAULT font-label-md text-label-md flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+</div>
+</div>
+<!-- Row 2: Filters -->
+<div class="flex flex-wrap items-center gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="report-start">From</label>
+<input id="report-start" type="date" onchange="onReportRangeChange()" class="h-9 px-2 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"/>
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="report-end">To</label>
+<input id="report-end" type="date" onchange="onReportRangeChange()" class="h-9 px-2 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"/>
+<div class="flex gap-1">
+<button type="button" onclick="applyReportPreset('month')" class="px-2.5 py-1 bg-surface-container rounded font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">This Month</button>
+<button type="button" onclick="applyReportPreset('30d')" class="px-2.5 py-1 bg-surface-container rounded font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">Last 30 Days</button>
+<button type="button" onclick="applyReportPreset('6m')" class="px-2.5 py-1 bg-surface-container rounded font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">Last 6 Months</button>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant bg-surface-container-lowest border border-outline-variant rounded-DEFAULT px-3 py-1.5" id="report-range-label"></span>
+</div>
+</div>
+<!-- High-Level Metrics (Level 1 Elevation Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Metric 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-data-density-comfortable flex flex-col shadow-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Total Leave Days (Month)</span>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface" id="metric-leave-days"><span class="skel skel-h1 w-14 inline-block" data-skeleton></span></span>
+<span class="font-body-sm text-body-sm text-error flex items-center mb-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+<span id="metric-leave-days-trend">vs last month</span>
+</span>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-data-density-comfortable flex flex-col shadow-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Dept. Attendance Rate</span>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface" id="metric-attendance"><span class="skel skel-h1 w-14 inline-block" data-skeleton></span></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-1">Staff available today</span>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-data-density-comfortable flex flex-col shadow-sm border-l-4 border-l-error">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Staffing Level Alerts</span>
+<div class="flex items-end gap-2">
+<span class="font-headline-lg text-headline-lg text-error" id="metric-alerts"><span class="skel skel-h1 w-14 inline-block" data-skeleton></span></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-1">Teams under capacity</span>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-data-density-comfortable flex flex-col shadow-sm">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Most Requested Type</span>
+<div class="flex items-end gap-2">
+<span class="font-headline-md text-headline-md text-on-surface" id="metric-most-type"><span class="skel skel-h4 w-24 inline-block" data-skeleton></span></span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1" id="metric-most-type-pct"><span class="skel skel-row w-40 inline-block" data-skeleton></span></span>
+</div>
+</div>
+<!-- Bento Layout for Chart and Table -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter h-full">
+<!-- Staffing Trends Chart (Takes 2 columns on large screens) -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm overflow-hidden">
+<div class="px-data-density-comfortable py-4 border-b border-outline-variant bg-surface-container-lowest flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Staffing Trends: Leave Frequency</h3>
+<div class="flex gap-2">
+<button class="font-label-md text-label-md px-2 py-1 bg-surface-container rounded text-on-surface">Monthly</button>
+<button class="font-label-md text-label-md px-2 py-1 text-on-surface-variant hover:bg-surface-container rounded">Quarterly</button>
+</div>
+</div>
+<!-- Chart Area -->
+<div class="p-data-density-comfortable flex-1 flex items-end justify-between gap-2 h-64 bg-background">
+<!-- Bars rendered from live data -->
+<div class="w-full bg-surface-container h-full relative rounded-sm flex items-end px-4 gap-4" id="chart-bars">
+<div class="skel flex-1 h-24" data-skeleton></div>
+<div class="skel flex-1 h-16" data-skeleton></div>
+<div class="skel flex-1 h-20" data-skeleton></div>
+<div class="skel flex-1 h-28" data-skeleton></div>
+</div>
+</div>
+<!-- Chart X-axis labels -->
+<div class="flex justify-between px-8 py-2 border-t border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant" id="chart-labels"></div>
+</div>
+<!-- Detailed Leave Summary Table -->
+<div class="lg:col-span-1 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm overflow-hidden">
+<div class="px-data-density-comfortable py-4 border-b border-outline-variant bg-surface-container-lowest">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Team Capacity Status</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low sticky top-0">
+<tr>
+<th class="p-data-density-compact px-4 font-label-md text-label-md text-on-surface-variant uppercase border-b border-outline-variant w-1/2">Team Name</th>
+<th class="p-data-density-compact px-4 font-label-md text-label-md text-on-surface-variant uppercase border-b border-outline-variant text-right">Capacity %</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface" id="team-capacity-body">
+<tr data-skeleton><td class="py-4 px-4"><div class="skel skel-row w-1/2"></div></td><td class="py-4 px-4"><div class="skel skel-row w-24 ml-auto"></div></td></tr>
+<tr data-skeleton><td class="py-4 px-4"><div class="skel skel-row w-1/3"></div></td><td class="py-4 px-4"><div class="skel skel-row w-24 ml-auto"></div></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+(function () {
+var LEAVE_TYPES_KEY = 'bansang_leave_types';
+var LEAVE_ENTRIES_KEY = 'bansang_leave_entries';
+function getLeaveTypes() {
+return window.DB ? window.DB.getList('leaveTypes') : [];
+}
+function getLeaveEntries() {
+return (window.DB ? window.DB.getList('leaveEntries') : []).filter(function (e) { return !e.deleted; });
+}
+function escapeHtml(str) {
+var div = document.createElement('div');
+div.textContent = str == null ? '' : String(str);
+return div.innerHTML;
+}
+function todayStr() {
+var d = new Date();
+var pad = function (n) { return ('0' + n).slice(-2); };
+return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function fmtDate(str) {
+if (!str) return '';
+var p = String(str).split('-');
+if (p.length !== 3) return str;
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return months[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+}
+function isSchedulable(type) {
+return /annual/i.test((type && type.name) || '');
+}
+function getTypeById(id) {
+var types = getLeaveTypes();
+return types.filter(function (t) { return t.id === id; })[0] || null;
+}
+function inRange(dateStr, start, end) {
+return dateStr >= start && dateStr <= end;
+}
+function effectiveStatus(e) {
+var t = todayStr();
+if (t < e.startDate) return 'Scheduled';
+if (t > e.endDate) return 'Completed';
+if (e.status === 'Logged') return 'Completed';
+return 'In Progress';
+}
+function daysBetween(start, end) {
+var ms = new Date(end) - new Date(start);
+return Math.max(1, Math.round(ms / 86400000) + 1);
+}
+function currentMonthStr() {
+return todayStr().slice(0, 7);
+}
+function monthDay(str) {
+return parseInt(String(str).slice(8, 10), 10);
+}
+window.LeaveTracker = {
+getLeaveTypes: getLeaveTypes,
+getLeaveEntries: getLeaveEntries,
+escapeHtml: escapeHtml,
+todayStr: todayStr,
+fmtDate: fmtDate,
+isSchedulable: isSchedulable,
+getTypeById: getTypeById,
+inRange: inRange,
+effectiveStatus: effectiveStatus,
+daysBetween: daysBetween,
+currentMonthStr: currentMonthStr,
+monthDay: monthDay
+};
+})();
+</script>
+<script>
+(function () {
+function overlapDays(e, monthKey) {
+var y = parseInt(monthKey.slice(0, 4), 10);
+var m = parseInt(monthKey.slice(5, 7), 10);
+var monthStart = monthKey + '-01';
+var monthEnd = y + '-' + ('0' + m).slice(-2) + '-' + new Date(y, m, 0).getDate();
+var s = e.startDate > monthStart ? e.startDate : monthStart;
+var end = e.endDate < monthEnd ? e.endDate : monthEnd;
+if (s > end) return 0;
+return Math.round((new Date(end) - new Date(s)) / 86400000) + 1;
+}
+
+function monthTotal(entries, mk) {
+var t = 0;
+var parts = mk.split('-');
+var monthEnd = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10), 0).getDate();
+var mStart = mk + '-01';
+var mEnd = mk + '-' + pad2(monthEnd);
+entries.forEach(function (e) {
+if (e.startDate <= mEnd && e.endDate >= mStart) t += overlapDays(e, mk);
+});
+return t;
+}
+
+function shortMonth(mk) {
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return months[parseInt(mk.slice(5, 7), 10) - 1];
+}
+
+var reportRange = null;
+function pad2(n) { return ('0' + n).slice(-2); }
+function defaultRange() {
+var d = new Date();
+var dim = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+return { start: d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-01', end: d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(dim) };
+}
+function rangeOrDefault() { return reportRange || defaultRange(); }
+function addDays(dateStr, delta) {
+var d = new Date(dateStr.slice(0, 4), parseInt(dateStr.slice(5, 7), 10) - 1, parseInt(dateStr.slice(8, 10), 10));
+d.setDate(d.getDate() + delta);
+return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+function daysDiff(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000) + 1; }
+function entryOverlapDays(e, start, end) {
+var s = e.startDate > start ? e.startDate : start;
+var en = e.endDate < end ? e.endDate : end;
+if (s > en) return 0;
+return Math.round((new Date(en) - new Date(s)) / 86400000) + 1;
+}
+function rangeEntries(entries) {
+var r = rangeOrDefault();
+return entries.filter(function (e) { return e.startDate <= r.end && e.endDate >= r.start; });
+}
+function monthKeysBetween(start, end) {
+var keys = [];
+var d = new Date(parseInt(start.slice(0, 4), 10), parseInt(start.slice(5, 7), 10) - 1, 1);
+var endY = parseInt(end.slice(0, 4), 10);
+var endM = parseInt(end.slice(5, 7), 10) - 1;
+var guard = 0;
+while ((d.getFullYear() < endY || (d.getFullYear() === endY && d.getMonth() <= endM)) && guard < 36) {
+keys.push(d.getFullYear() + '-' + pad2(d.getMonth() + 1));
+d.setMonth(d.getMonth() + 1);
+guard++;
+}
+return keys;
+}
+function applyRange(start, end) {
+reportRange = { start: start, end: end };
+var sEl = document.getElementById('report-start');
+var eEl = document.getElementById('report-end');
+if (sEl) sEl.value = start;
+if (eEl) eEl.value = end;
+render();
+}
+window.applyReportPreset = function (kind) {
+var today = new Date();
+var todayStr = today.getFullYear() + '-' + pad2(today.getMonth() + 1) + '-' + pad2(today.getDate());
+var start;
+if (kind === 'month') {
+start = today.getFullYear() + '-' + pad2(today.getMonth() + 1) + '-01';
+} else if (kind === '30d') {
+var d = new Date(today);
+d.setDate(d.getDate() - 29);
+start = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+} else {
+var d2 = new Date(today);
+d2.setDate(1);
+d2.setMonth(d2.getMonth() - 5);
+start = d2.getFullYear() + '-' + pad2(d2.getMonth() + 1) + '-01';
+}
+applyRange(start, todayStr);
+};
+window.onReportRangeChange = function () {
+var sEl = document.getElementById('report-start');
+var eEl = document.getElementById('report-end');
+var s = sEl ? sEl.value : '';
+var e = eEl ? eEl.value : '';
+if (!s || !e) return;
+if (e < s) {
+alert('End date must be on or after the start date.');
+var r = reportRange || defaultRange();
+applyRange(r.start, r.end);
+return;
+}
+reportRange = { start: s, end: e };
+render();
+};
+
+function render() {
+var entries = LeaveTracker.getLeaveEntries();
+var today = LeaveTracker.todayStr();
+var staff = window.DB ? window.DB.getList('staff') : [];
+var teams = window.DB ? window.DB.getList('teams') : [];
+var r = rangeOrDefault();
+
+var rangeList = rangeEntries(entries);
+var totalDays = 0;
+rangeList.forEach(function (e) { totalDays += entryOverlapDays(e, r.start, r.end); });
+var daysEl = document.getElementById('metric-leave-days');
+if (daysEl) daysEl.textContent = totalDays;
+
+var rangeLen = daysDiff(r.start, r.end);
+var prevStart = addDays(r.start, -rangeLen);
+var prevEnd = addDays(r.start, -1);
+var prevDays = 0;
+entries.forEach(function (e) {
+if (e.startDate <= prevEnd && e.endDate >= prevStart) prevDays += entryOverlapDays(e, prevStart, prevEnd);
+});
+var trendEl = document.getElementById('metric-leave-days-trend');
+if (trendEl) {
+if (prevDays > 0) {
+var delta = Math.round(((totalDays - prevDays) / prevDays) * 100);
+trendEl.textContent = (delta > 0 ? '+' : '') + delta + '% vs previous period';
+} else {
+trendEl.textContent = 'vs previous period';
+}
+}
+
+var staffById = {};
+staff.forEach(function (s) { staffById[s.id] = s; });
+var onLeaveToday = {};
+entries.forEach(function (e) {
+if (LeaveTracker.inRange(today, e.startDate, e.endDate) && staffById[e.staffId]) onLeaveToday[e.staffId] = true;
+});
+var onLeaveCount = Object.keys(onLeaveToday).length;
+
+var attendance = staff.length ? Math.max(0, Math.round(((staff.length - onLeaveCount) / staff.length) * 100)) : 100;
+var attEl = document.getElementById('metric-attendance');
+if (attEl) attEl.textContent = attendance + '%';
+
+var teamOf = {};
+staff.forEach(function (s) {
+var t = s.team || 'general';
+teamOf[t] = (teamOf[t] || 0) + 1;
+});
+var onLeaveByTeam = {};
+Object.keys(onLeaveToday).forEach(function (sid) {
+var t = staffById[sid].team || 'general';
+onLeaveByTeam[t] = (onLeaveByTeam[t] || 0) + 1;
+});
+var alertCount = 0;
+Object.keys(teamOf).forEach(function (t) {
+if (teamOf[t] > 0 && ((teamOf[t] - (onLeaveByTeam[t] || 0)) / teamOf[t]) < 0.8) alertCount++;
+});
+var alertsEl = document.getElementById('metric-alerts');
+if (alertsEl) alertsEl.textContent = alertCount;
+
+var rangeEl = document.getElementById('report-range-label');
+if (rangeEl) rangeEl.textContent = LeaveTracker.fmtDate(r.start) + ' - ' + LeaveTracker.fmtDate(r.end);
+
+var months = monthKeysBetween(r.start, r.end);
+var monthTotals = months.map(function (mk) { return monthTotal(rangeList, mk); });
+var maxMonth = Math.max.apply(null, monthTotals.concat([1]));
+var barsEl = document.getElementById('chart-bars');
+if (barsEl) {
+barsEl.innerHTML = monthTotals.map(function (t) {
+var h = Math.max(6, Math.round((t / maxMonth) * 100));
+return '<div class="w-full bg-primary-container rounded-t-sm opacity-80 hover:opacity-100 transition-opacity" style="height: ' + h + '%;" title="' + t + ' leave day(s)"></div>';
+}).join('');
+}
+var labelsEl = document.getElementById('chart-labels');
+if (labelsEl) {
+labelsEl.innerHTML = months.map(function (mk) { return '<span>' + shortMonth(mk) + '</span>'; }).join('');
+}
+
+var teamBody = document.getElementById('team-capacity-body');
+if (teamBody) {
+if (!teams.length) {
+teamBody.innerHTML = '<tr><td colspan="2" class="py-8 px-4 text-center text-on-surface-variant">No teams configured yet.</td></tr>';
+} else {
+teamBody.innerHTML = teams.map(function (team) {
+var total = teamOf[team.id] || 0;
+var onLeave = onLeaveByTeam[team.id] || 0;
+var active = total - onLeave;
+var cap = total ? Math.round((active / total) * 100) : 100;
+var barCls = cap < 70 ? 'bg-error' : cap < 85 ? 'bg-outline' : 'bg-secondary';
+var badgeCls = cap < 70 ? 'bg-error-container text-on-error-container' : cap < 85 ? 'bg-surface-variant text-on-surface-variant' : 'bg-secondary-container text-on-secondary-container';
+var rowBg = cap < 70 ? ' bg-error-container/20' : '';
+return '<tr class="hover:bg-surface-container transition-colors border-b border-outline-variant last:border-0' + rowBg + '">' +
+'<td class="p-data-density-comfortable px-4"><div class="font-medium">' + LeaveTracker.escapeHtml(team.name) + '</div>' +
+'<div class="font-body-sm text-body-sm text-on-surface-variant">' + active + ' Active, ' + onLeave + ' On Leave</div></td>' +
+'<td class="p-data-density-comfortable px-4 text-right"><div class="flex items-center justify-end gap-2">' +
+'<div class="w-16 bg-surface-container rounded-full h-1.5 overflow-hidden"><div class="' + barCls + ' h-full rounded-full" style="width: ' + cap + '%"></div></div>' +
+'<span class="inline-block px-2 py-1 rounded ' + badgeCls + ' font-label-md text-label-md min-w-[48px] text-center">' + cap + '%</span>' +
+'</div></td></tr>';
+}).join('');
+}
+}
+
+var byType = {};
+rangeList.forEach(function (e) { byType[e.typeName] = (byType[e.typeName] || 0) + 1; });
+var typeNames = Object.keys(byType);
+var typeEl = document.getElementById('metric-most-type');
+var pctEl = document.getElementById('metric-most-type-pct');
+if (typeEl && typeNames.length) {
+var top = typeNames.reduce(function (a, b) { return byType[a] >= byType[b] ? a : b; });
+typeEl.textContent = top;
+if (pctEl) pctEl.textContent = Math.round((byType[top] / rangeList.length) * 100) + '% of ' + rangeList.length + ' leave entries in period';
+} else {
+if (typeEl) typeEl.textContent = '—';
+if (pctEl) pctEl.textContent = 'No leave recorded yet';
+}
+}
+
+function reportData() {
+var r = rangeOrDefault();
+var entries = LeaveTracker.getLeaveEntries();
+var staff = window.DB ? window.DB.getList('staff') : [];
+var teams = window.DB ? window.DB.getList('teams') : [];
+var rangeList = rangeEntries(entries);
+var totalDays = 0;
+rangeList.forEach(function (e) { totalDays += entryOverlapDays(e, r.start, r.end); });
+var staffById = {};
+staff.forEach(function (s) { staffById[s.id] = s; });
+var today = LeaveTracker.todayStr();
+var onLeaveToday = {};
+entries.forEach(function (e) {
+if (LeaveTracker.inRange(today, e.startDate, e.endDate) && staffById[e.staffId]) onLeaveToday[e.staffId] = true;
+});
+var onLeaveCount = Object.keys(onLeaveToday).length;
+var attendance = staff.length ? Math.max(0, Math.round(((staff.length - onLeaveCount) / staff.length) * 100)) : 100;
+var teamOf = {};
+staff.forEach(function (s) { var t = s.team || 'general'; teamOf[t] = (teamOf[t] || 0) + 1; });
+var onLeaveByTeam = {};
+Object.keys(onLeaveToday).forEach(function (sid) {
+var t = staffById[sid].team || 'general';
+onLeaveByTeam[t] = (onLeaveByTeam[t] || 0) + 1;
+});
+var alertCount = 0;
+Object.keys(teamOf).forEach(function (t) {
+if (teamOf[t] > 0 && ((teamOf[t] - (onLeaveByTeam[t] || 0)) / teamOf[t]) < 0.8) alertCount++;
+});
+var byType = {};
+rangeList.forEach(function (e) { byType[e.typeName] = (byType[e.typeName] || 0) + 1; });
+var typeNames = Object.keys(byType);
+var mostType = typeNames.length ? typeNames.reduce(function (a, b) { return byType[a] >= byType[b] ? a : b; }) : '—';
+var mostPct = rangeList.length && typeNames.length ? Math.round((byType[mostType] / rangeList.length) * 100) : 0;
+var capacities = teams.map(function (team) {
+var total = teamOf[team.id] || 0;
+var onLeave = onLeaveByTeam[team.id] || 0;
+return { name: team.name, active: total - onLeave, onLeave: onLeave, cap: total ? Math.round(((total - onLeave) / total) * 100) : 100 };
+});
+var detailed = rangeList.slice().sort(function (a, b) { return b.startDate.localeCompare(a.startDate); }).map(function (e) {
+var s = staffById[e.staffId];
+return { staff: s ? s.name : (e.staffName || 'Unknown'), empId: s ? s.empId : '', team: s ? (s.teamLabel || '') : '', type: e.typeName, start: e.startDate, end: e.endDate, status: LeaveTracker.effectiveStatus(e), days: entryOverlapDays(e, r.start, r.end) };
+});
+return { r: r, totalDays: totalDays, attendance: attendance, alertCount: alertCount, mostType: mostType, mostPct: mostPct, entryCount: rangeList.length, capacities: capacities, detailed: detailed };
+}
+
+function csvEscape(v) {
+v = v == null ? '' : String(v);
+if (/[",\n]/.test(v)) v = '"' + v.replace(/"/g, '""') + '"';
+return v;
+}
+
+function reportsDownload(filename, content, mime) {
+var blob;
+if (mime === 'application/pdf') {
+blob = new Blob([new TextEncoder().encode(content)], { type: mime });
+} else {
+blob = new Blob([content], { type: mime });
+}
+var url = URL.createObjectURL(blob);
+var a = document.createElement('a');
+a.href = url;
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+}
+
+window.exportReportsCSV = function () {
+var d = reportData();
+var settings = (window.DB && window.DB.getDoc('settings')) || {};
+var hospital = settings.hospitalName || 'BANSANG HOSPITAL';
+var rows = [
+[hospital + ' - Management Reports'],
+['Period: ' + d.r.start + ' to ' + d.r.end],
+['Generated: ' + new Date().toLocaleString()],
+[],
+['SUMMARY'],
+['Total Leave Days', d.totalDays],
+['Attendance Rate (today)', d.attendance + '%'],
+['Staffing Level Alerts (today)', d.alertCount],
+['Most Requested Type', d.mostType, d.mostPct + '%'],
+['Leave Entries in Period', d.entryCount],
+[],
+['TEAM CAPACITY'],
+['Team', 'Active', 'On Leave', 'Capacity %']
+];
+d.capacities.forEach(function (c) { rows.push([c.name, c.active, c.onLeave, c.cap + '%']); });
+rows.push([]);
+rows.push(['LEAVE ENTRIES']);
+rows.push(['Staff', 'Team', 'Leave Type', 'Start', 'End', 'Status', 'Days']);
+d.detailed.forEach(function (e) { rows.push([e.staff, e.team, e.type, e.start, e.end, e.status, e.days]); });
+var content = rows.map(function (row) { return row.map(csvEscape).join(','); }).join('\r\n');
+reportsDownload('Reports_' + d.r.start + '_to_' + d.r.end + '.csv', '\uFEFF' + content, 'text/csv;charset=utf-8');
+};
+
+window.exportReportsPDF = function () {
+var PDFExport = window.PDFExport;
+if (!PDFExport) {
+alert('PDF export is still loading. Please try again.');
+return;
+}
+var d = reportData();
+var settings = (window.DB && window.DB.getDoc('settings')) || {};
+var hospital = settings.hospitalName || 'BANSANG HOSPITAL';
+var dept = settings.department || settings.slogan || 'Maintenance Unit';
+var now = new Date();
+var pad2 = function (n) { return ('0' + n).slice(-2); };
+var generated = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate()) + ' ' + pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+
+var C = { staff: 22, emp: 12, team: 16, type: 14, start: 11, end: 11, duration: 10 };
+var colWidths = [C.staff, C.emp, C.team, C.type, C.start, C.end, C.duration];
+
+var entryRows = d.detailed.map(function (e) {
+var dur = e.days + (e.days === 1 ? ' day' : ' days');
+return { t: PDFExport.padCol(e.staff, C.staff) + PDFExport.padCol(e.empId || '', C.emp) + PDFExport.padCol(e.team, C.team) + PDFExport.padCol(e.type, C.type) + PDFExport.padCol(e.start || '', C.start) + PDFExport.padCol(e.end || '', C.end) + PDFExport.padCol(dur, C.duration), s: 8.5 };
+});
+
+var title = [
+{ t: hospital, b: true, s: 16, color: [20, 50, 120] },
+{ t: 'Leave Records Report', b: true, s: 12, color: [30, 30, 30] },
+{ t: dept + '  |  Period: ' + d.r.start + ' to ' + d.r.end, s: 9, color: [110, 115, 120] },
+{ t: 'Generated: ' + generated, s: 8, color: [160, 165, 170] }
+];
+
+var entryHeader = PDFExport.padCol('Team Member', C.staff) + PDFExport.padCol('Staff ID', C.emp) + PDFExport.padCol('Team', C.team) + PDFExport.padCol('Leave Type', C.type) + PDFExport.padCol('Start Date', C.start) + PDFExport.padCol('End Date', C.end) + PDFExport.padCol('Duration', C.duration);
+
+var pdf = PDFExport.buildPdf({
+title: title,
+sections: [
+{ title: 'Leave Records', header: [{ t: entryHeader, s: 8.5 }], rows: entryRows, columns: colWidths }
+],
+footer: hospital + '  |  Leave Records Report  |  ' + d.r.start + ' to ' + d.r.end
+});
+reportsDownload('Reports_' + d.r.start + '_to_' + d.r.end + '.pdf', pdf, 'application/pdf');
+};
+
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+var def = defaultRange();
+applyRange(def.start, def.end);
+window.DB.subscribe(render);
+});
+});
+})();
+</script>
+</body></html>

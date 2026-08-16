@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Notifications - %APP%">Notifications - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-primary dark:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Canvas -->
+<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<div class="max-w-[900px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Notifications</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Alerts and activity from across the maintenance unit.</p>
+</div>
+<button onclick="markAllRead()" class="px-4 py-2 border border-outline-variant rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">done_all</span>
+                    Mark All as Read
+                </button>
+</div>
+<!-- Filter Tabs -->
+<div class="flex gap-2 mb-6">
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded-full font-label-md text-label-md shadow-sm" id="tab-all" onclick="setFilter('all')">All</button>
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full font-label-md text-label-md hover:bg-surface-container transition-colors" id="tab-unread" onclick="setFilter('unread')">Unread</button>
+</div>
+<!-- Notification List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden" id="notifications-list">
+<div class="p-5 flex items-center gap-4" data-skeleton>
+<span class="skel skel-avatar shrink-0"></span>
+<div class="flex-1 space-y-2"><div class="skel skel-h6 w-1/2"></div><div class="skel skel-h6 w-full"></div></div>
+</div>
+<div class="p-5 flex items-center gap-4" data-skeleton>
+<span class="skel skel-avatar shrink-0"></span>
+<div class="flex-1 space-y-2"><div class="skel skel-h6 w-1/2"></div><div class="skel skel-h6 w-full"></div></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+(function () {
+var currentFilter = 'all';
+
+function getNotifications() {
+return window.DB ? window.DB.getList('notifications') : [];
+}
+
+function save(notifications) {
+window.DB.saveList('notifications', notifications);
+}
+
+function iconFor(type) {
+if (type === 'schedule') return { icon: 'event_available', cls: 'bg-primary-fixed text-on-primary-fixed' };
+if (type === 'reminder') return { icon: 'schedule_send', cls: 'bg-secondary-container text-on-secondary-container' };
+if (type === 'logged') return { icon: 'bolt', cls: 'bg-error-container text-on-error-container' };
+if (type === 'alert') return { icon: 'warning', cls: 'bg-error-container text-on-error-container' };
+if (type === 'report') return { icon: 'analytics', cls: 'bg-secondary-container text-on-secondary-container' };
+return { icon: 'settings', cls: 'bg-surface-container text-on-surface-variant' };
+}
+
+function render() {
+var list = document.getElementById('notifications-list');
+var items = getNotifications();
+var filtered = currentFilter === 'unread' ? items.filter(function (n) { return !n.read; }) : items;
+var unreadCount = items.filter(function (n) { return !n.read; }).length;
+var allTab = document.getElementById('tab-all');
+var unreadTab = document.getElementById('tab-unread');
+if (allTab) {
+allTab.className = 'px-4 py-2 rounded-full font-label-md text-label-md shadow-sm ' + (currentFilter === 'all' ? 'bg-primary-container text-on-primary' : 'border border-outline-variant text-on-surface-variant hover:bg-surface-container');
+}
+if (unreadTab) {
+unreadTab.className = 'px-4 py-2 rounded-full font-label-md text-label-md ' + (currentFilter === 'unread' ? 'bg-primary-container text-on-primary shadow-sm' : 'border border-outline-variant text-on-surface-variant hover:bg-surface-container');
+}
+if (!filtered.length) {
+list.innerHTML = '<div class="p-10 text-center"><span class="material-symbols-outlined text-[40px] text-on-surface-variant opacity-40">notifications_none</span><p class="font-body-sm text-body-sm text-on-surface-variant mt-2">No notifications ' + (currentFilter === 'unread' ? 'unread' : '') + '.</p></div>';
+return;
+}
+list.innerHTML = filtered.map(function (n) {
+var meta = iconFor(n.type);
+var unreadDot = n.read ? '' : '<span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5"></span>';
+var rowCls = n.read ? 'bg-surface-container-lowest' : 'bg-primary-fixed/20';
+return '<div class="flex items-start gap-4 p-5 border-b border-outline-variant last:border-0 cursor-pointer hover:bg-surface-container/40 transition-colors ' + rowCls + '" onclick="markRead(\'' + n.id + '\')">' +
+'<div class="w-10 h-10 rounded-full ' + meta.cls + ' flex items-center justify-center flex-shrink-0">' +
+'<span class="material-symbols-outlined text-[18px]">' + meta.icon + '</span></div>' +
+'<div class="flex-1 min-w-0">' +
+'<div class="flex items-center justify-between gap-2">' +
+'<p class="font-body-md text-body-md text-on-surface font-medium">' + n.title + '</p>' + unreadDot +
+'</div>' +
+'<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">' + n.body + '</p>' +
+'<p class="text-[11px] text-outline mt-1">' + n.time + '</p>' +
+'</div>' +
+'<button class="text-on-surface-variant hover:text-error transition-colors p-1" title="Remove" onclick="event.stopPropagation(); removeNotification(\'' + n.id + '\')">' +
+'<span class="material-symbols-outlined text-[18px]">close</span>' +
+'</button>' +
+'</div>';
+}).join('');
+if (unreadCount) {
+var btn = document.querySelector('[onclick="markAllRead()"]');
+if (btn) btn.textContent = 'Mark All as Read (' + unreadCount + ')';
+}
+}
+
+window.setFilter = function (f) { currentFilter = f; render(); };
+
+window.markRead = function (id) {
+var items = getNotifications();
+items.forEach(function (n) { if (n.id === id) n.read = true; });
+save(items);
+render();
+};
+
+window.markAllRead = function () {
+var items = getNotifications();
+items.forEach(function (n) { n.read = true; });
+save(items);
+render();
+};
+
+window.removeNotification = function (id) {
+var items = getNotifications();
+save(items.filter(function (n) { return n.id !== id; }));
+render();
+};
+
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+render();
+window.DB.subscribe(render);
+});
+});
+})();
+</script>
+</body></html>

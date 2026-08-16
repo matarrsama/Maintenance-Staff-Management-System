@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Profile - %APP%">Profile - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/ui.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Canvas -->
+<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<div class="max-w-[1200px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">My Profile</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">View and update your personal and job information.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Profile Card -->
+<div class="lg:col-span-1">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-6 flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full overflow-hidden border-2 border-primary-fixed mb-4">
+<span class="w-full h-full inline-block" data-user-avatar data-avatar-class="w-full h-full flex items-center justify-center rounded-full bg-primary-container text-on-primary font-bold text-sm"><span class="skel w-full h-full block rounded-full" data-skeleton></span></span>
+</div>
+<button onclick="document.getElementById('profile-avatar-input').click()" class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-full text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="photo_camera">photo_camera</span>
+<span>Change Photo</span>
+</button>
+<input id="profile-avatar-input" type="file" accept="image/*" class="hidden" onchange="uploadProfilePhoto(this)"/>
+<h3 class="font-headline-md text-headline-md text-on-surface" data-user-name><span class="skel skel-h4 w-32 inline-block" data-skeleton></span></h3>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Head of Department - Maintenance Unit</p>
+<div class="flex gap-2 mt-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-label-md">Active</span>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-label-md">Admin</span>
+</div>
+<div class="w-full mt-6 pt-6 border-t border-outline-variant space-y-3 text-left">
+<div class="flex justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Email</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium" data-user-email></span>
+</div>
+<div class="flex justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Department</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Maintenance Unit</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Edit Forms -->
+<div class="lg:col-span-2 flex flex-col gap-gutter">
+<!-- Personal Information -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low rounded-t-xl">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Personal Information</h3>
+</div>
+<div class="p-6 space-y-5">
+<div class="space-y-5" data-skeleton>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div><div class="skel skel-h6 w-1/3 mb-1.5"></div><div class="skel skel-row h-[40px] w-full"></div></div>
+<div><div class="skel skel-h6 w-1/3 mb-1.5"></div><div class="skel skel-row h-[40px] w-full"></div></div>
+<div><div class="skel skel-h6 w-1/3 mb-1.5"></div><div class="skel skel-row h-[40px] w-full"></div></div>
+<div><div class="skel skel-h6 w-1/3 mb-1.5"></div><div class="skel skel-row h-[40px] w-full"></div></div>
+</div>
+<div class="skel skel-row w-32"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="profile-first-name">First Name</label>
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="profile-first-name" type="text" value=""/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="profile-last-name">Last Name</label>
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="profile-last-name" type="text" value=""/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="profile-email">Email</label>
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface-variant bg-surface-container cursor-not-allowed border border-outline-variant rounded font-body-sm text-body-sm shadow-sm" id="profile-email" type="email" value="" readonly/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="profile-phone">Phone</label>
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="profile-phone" type="tel" value=""/>
+</div>
+</div>
+<button onclick="saveProfile()" class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner">Save Changes</button>
+</div>
+</div>
+<!-- Job Details -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low rounded-t-xl">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Job Details</h3>
+</div>
+<div class="p-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4" data-skeleton>
+<div><div class="skel skel-h6 w-1/3 mb-1"></div><div class="skel skel-h6 w-2/3"></div></div>
+<div><div class="skel skel-h6 w-1/3 mb-1"></div><div class="skel skel-h6 w-2/3"></div></div>
+<div><div class="skel skel-h6 w-1/3 mb-1"></div><div class="skel skel-h6 w-2/3"></div></div>
+<div><div class="skel skel-h6 w-1/3 mb-1"></div><div class="skel skel-h6 w-2/3"></div></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant mb-1">Job Title</span>
+<p class="font-body-md text-body-md text-on-surface">Head of Department</p>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant mb-1">Department</span>
+<p class="font-body-md text-body-md text-on-surface">Maintenance Unit</p>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant mb-1">Reports To</span>
+<p class="font-body-md text-body-md text-on-surface">Hospital Administration</p>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant mb-1">Email</span>
+<p class="font-body-md text-body-md text-on-surface" data-user-email><span class="skel skel-h6 w-24 inline-block" data-skeleton></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Crop Modal -->
+<div id="crop-modal" class="fixed inset-0 z-[100] items-center justify-center bg-black/60 backdrop-blur-sm p-4" style="display:none">
+<div class="bg-surface-container-lowest rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Crop Profile Photo</h3>
+<button onclick="closeCropModal()" class="text-on-surface-variant hover:text-on-surface" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6">
+<div id="crop-stage" class="relative w-full aspect-square overflow-hidden rounded-lg bg-black select-none touch-none cursor-move"></div>
+<div class="mt-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">zoom_out</span>
+<input id="crop-zoom" type="range" min="1" max="3" step="0.01" value="1" class="flex-1 accent-primary" oninput="updateCropZoom(this.value)"/>
+<span class="material-symbols-outlined text-on-surface-variant">zoom_in</span>
+</div>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant text-center">Drag to position · use the slider or scroll wheel to zoom</p>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3">
+<button onclick="closeCropModal()" class="px-4 py-2 border border-outline-variant rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container" type="button">Cancel</button>
+<button onclick="applyCrop()" class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors" type="button">Apply</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<script>
+(function () {
+var KEY = 'bansang_profile';
+function load() {
+return window.DB ? window.DB.getDoc('profile') : {};
+}
+function apply() {
+var p = load() || {};
+var authEmail = (window.Auth && window.Auth.currentUser && window.Auth.currentUser.email) || '';
+var fields = [
+['profile-first-name', p.firstName || ''],
+['profile-last-name', p.lastName || ''],
+['profile-email', p.email || authEmail],
+['profile-phone', p.phone || '']
+];
+fields.forEach(function (f) {
+var el = document.getElementById(f[0]);
+if (el && f[1]) el.value = f[1];
+});
+}
+window.saveProfile = async function () {
+var btn = document.querySelector('button[onclick="saveProfile()"]');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var p = load() || {};
+p.firstName = document.getElementById('profile-first-name').value.trim();
+p.lastName = document.getElementById('profile-last-name').value.trim();
+p.email = document.getElementById('profile-email').value.trim();
+p.phone = document.getElementById('profile-phone').value.trim();
+var res = await window.DB.saveDoc('profile', p);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save your profile to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save your profile to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+if (window.Auth && window.Auth.fillHeader) window.Auth.fillHeader();
+if (window.Dialogs) window.Dialogs.toast('Profile updated successfully.', 'success');
+else alert('Profile updated successfully.');
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+window.uploadProfilePhoto = function (input) {
+if (!input || !input.files || !input.files[0]) return;
+var file = input.files[0];
+if (file.size > 5 * 1024 * 1024) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Image too large', message: 'Image must be under 5MB.', type: 'warning' });
+else alert('Image must be under 5MB.');
+input.value = '';
+return;
+}
+if (!file.type || file.type.indexOf('image/') !== 0) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Invalid file', message: 'Please choose an image file.', type: 'warning' });
+else alert('Please choose an image file.');
+input.value = '';
+return;
+}
+openCropModal(file);
+};
+var cropState = null;
+var cropImg = null;
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function openCropModal(file) {
+var reader = new FileReader();
+reader.onload = function (ev) {
+var img = new Image();
+img.onload = function () {
+var stage = document.getElementById('crop-stage');
+stage.innerHTML = '';
+cropImg = document.createElement('img');
+cropImg.src = img.src;
+cropImg.className = 'absolute max-w-none';
+cropImg.style.left = '0';
+cropImg.style.top = '0';
+cropImg.setAttribute('alt', 'Photo preview');
+stage.appendChild(cropImg);
+var modal = document.getElementById('crop-modal');
+modal.style.display = 'flex';
+var W = stage.clientWidth || 320;
+var base = Math.max(W / img.naturalWidth, W / img.naturalHeight);
+cropState = { natW: img.naturalWidth, natH: img.naturalHeight, base: base, zoom: 1, x: W / 2, y: W / 2, W: W };
+document.getElementById('crop-zoom').value = 1;
+updateCropTransform();
+};
+img.onerror = function () { if (window.Dialogs) window.Dialogs.alert({ title: 'Read error', message: 'Could not read image file.', type: 'error' }); else alert('Could not read image file.'); };
+img.src = ev.target.result;
+};
+reader.readAsDataURL(file);
+}
+function updateCropTransform() {
+if (!cropState) return;
+var s = cropState;
+var W = s.W;
+var zoom = s.zoom;
+var dispW = s.natW * s.base * zoom;
+var dispH = s.natH * s.base * zoom;
+s.x = clamp(s.x, dispW / 2, W - dispW / 2);
+s.y = clamp(s.y, dispH / 2, W - dispH / 2);
+cropImg.style.width = dispW + 'px';
+cropImg.style.height = dispH + 'px';
+cropImg.style.transform = 'translate(' + (s.x - dispW / 2) + 'px, ' + (s.y - dispH / 2) + 'px)';
+}
+window.updateCropZoom = function (value) {
+if (!cropState) return;
+var oldZoom = cropState.zoom;
+cropState.zoom = parseFloat(value) || 1;
+var f = cropState.zoom / oldZoom;
+cropState.x *= f;
+cropState.y *= f;
+updateCropTransform();
+};
+window.closeCropModal = function () {
+var modal = document.getElementById('crop-modal');
+modal.style.display = 'none';
+cropState = null;
+cropImg = null;
+var input = document.getElementById('profile-avatar-input');
+if (input) input.value = '';
+};
+window.applyCrop = async function () {
+if (!cropState || !cropImg) return;
+var btn = document.querySelector('button[onclick="applyCrop()"]');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var s = cropState;
+var totalScale = s.base * s.zoom;
+var cropSide = s.W / totalScale;
+var natCx = s.natW / 2 + (s.W / 2 - s.x) / totalScale;
+var natCy = s.natH / 2 + (s.W / 2 - s.y) / totalScale;
+var sx = clamp(natCx - cropSide / 2, 0, s.natW - cropSide);
+var sy = clamp(natCy - cropSide / 2, 0, s.natH - cropSide);
+var OUT = 400;
+var canvas = document.createElement('canvas');
+canvas.width = OUT;
+canvas.height = OUT;
+var ctx = canvas.getContext('2d');
+ctx.imageSmoothingQuality = 'high';
+ctx.drawImage(cropImg, sx, sy, cropSide, cropSide, 0, 0, OUT, OUT);
+var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+var p = load() || {};
+p.avatar = dataUrl;
+var res = await window.DB.saveDoc('profile', p);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save your photo to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save your photo to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+if (window.Auth && window.Auth.fillHeader) window.Auth.fillHeader();
+closeCropModal();
+if (window.Dialogs) window.Dialogs.toast('Profile photo updated.', 'success');
+else alert('Profile photo updated.');
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+apply();
+window.DB.subscribe(apply);
+});
+var stage = document.getElementById('crop-stage');
+var dragging = false;
+var lastX = 0;
+var lastY = 0;
+stage.addEventListener('pointerdown', function (e) {
+if (!cropState) return;
+dragging = true;
+lastX = e.clientX;
+lastY = e.clientY;
+stage.setPointerCapture(e.pointerId);
+});
+stage.addEventListener('pointermove', function (e) {
+if (!dragging || !cropState) return;
+var dx = e.clientX - lastX;
+var dy = e.clientY - lastY;
+lastX = e.clientX;
+lastY = e.clientY;
+cropState.x += dx;
+cropState.y += dy;
+updateCropTransform();
+});
+stage.addEventListener('pointerup', function () { dragging = false; });
+stage.addEventListener('pointercancel', function () { dragging = false; });
+stage.addEventListener('wheel', function (e) {
+e.preventDefault();
+if (!cropState) return;
+var slider = document.getElementById('crop-zoom');
+var z = parseFloat(slider.value);
+var dir = e.deltaY < 0 ? 0.1 : -0.1;
+var nz = Math.min(3, Math.max(1, z + dir));
+slider.value = nz;
+updateCropZoom(nz);
+}, { passive: false });
+var modal = document.getElementById('crop-modal');
+modal.addEventListener('click', function (e) {
+if (e.target === modal) closeCropModal();
+});
+});
+})();
+</script>
+</body></html>

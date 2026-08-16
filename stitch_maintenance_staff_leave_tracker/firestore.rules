@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// Deployment: firebase deploy --only firestore:rules
+//
+// No signup page exists — users are created directly in the Firebase Auth
+// console, so every authenticated (signed-in) user may read/write app data.
+// Tighten these rules later if roles are introduced.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Data collections
+    match /teams/{docId} {
+      allow read, write: if signedIn();
+    }
+    match /leaveTypes/{docId} {
+      allow read, write: if signedIn();
+    }
+    match /leaveEntries/{docId} {
+      allow read, write: if signedIn();
+    }
+    match /staff/{docId} {
+      allow read, write: if signedIn();
+    }
+    match /notifications/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    // App-level settings document
+    match /settings/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    // Per-user profile documents (profiles/{uid|local})
+    match /profiles/{docId} {
+      allow read, write: if signedIn();
+    }
+  }
+}

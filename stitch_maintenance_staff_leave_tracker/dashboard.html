@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Dashboard - %APP%">Dashboard - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<!-- Active Tab -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap">
+<button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Content Area -->
+<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<!-- Mobile Header (Visible only on mobile) -->
+<div class="md:hidden flex justify-between items-center mb-6">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Dashboard</h1>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<span class="w-full h-full inline-block" data-user-avatar data-avatar-class="w-full h-full flex items-center justify-center rounded-full bg-primary-container text-on-primary font-bold text-xs"></span>
+</div>
+</div>
+<!-- Metric Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-section-gap">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 shadow-sm">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Total Staff</p>
+<div class="flex items-end gap-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface" id="metric-total-staff"><span class="skel skel-h1 w-16 inline-block" data-skeleton></span></h2>
+<span class="font-body-sm text-body-sm text-secondary mb-1">Active</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 shadow-sm relative overflow-hidden">
+<div class="absolute right-0 top-0 w-16 h-16 bg-surface-container-highest rounded-bl-full opacity-50"></div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Currently on Leave</p>
+<div class="flex items-end gap-2 relative z-10">
+<h2 class="font-headline-lg text-headline-lg text-primary-container" id="metric-on-leave"><span class="skel skel-h1 w-16 inline-block" data-skeleton></span></h2>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 shadow-sm">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Scheduled / Upcoming</p>
+<div class="flex items-end gap-2">
+<h2 class="font-headline-lg text-headline-lg text-on-surface" id="metric-scheduled"><span class="skel skel-h1 w-16 inline-block" data-skeleton></span></h2>
+<span class="font-body-sm text-body-sm text-outline mb-1">Planned by HOD</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-5 shadow-sm">
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Dept Capacity</p>
+<div class="flex items-end gap-2">
+<h2 class="font-headline-lg text-headline-lg text-secondary" id="metric-capacity"><span class="skel skel-h1 w-16 inline-block" data-skeleton></span></h2>
+</div>
+<div class="w-full bg-surface-container h-1.5 mt-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full" id="metric-capacity-bar" style="width: 0%"></div>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Main Content -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Staff Out Table (Spans 2 cols on lg) -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden flex flex-col">
+<div class="p-5 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Staff Currently Out</h3>
+<button onclick="window.location.href='leave-roster.html'" class="font-label-md text-label-md text-primary hover:underline">View Full Roster</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-dim border-b border-outline-variant">
+<th class="py-3 px-5 font-label-md text-label-md text-on-surface-variant">Name</th>
+<th class="py-3 px-5 font-label-md text-label-md text-on-surface-variant">Role</th>
+<th class="py-3 px-5 font-label-md text-label-md text-on-surface-variant">Leave Type</th>
+<th class="py-3 px-5 font-label-md text-label-md text-on-surface-variant">Return Date</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y divide-outline-variant" id="staff-out-tbody">
+<tr data-skeleton><td colspan="4" class="py-4 px-5"><div class="skel skel-row w-full"></div></td></tr>
+<tr data-skeleton><td colspan="4" class="py-4 px-5"><div class="skel skel-row w-3/4"></div></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Column: Recent Requests & Chart -->
+<div class="flex flex-col gap-gutter">
+<!-- Recent Leave Activity -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-5">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Recent Leave Activity</h3>
+<span class="material-symbols-outlined text-outline">history</span>
+</div>
+<ul class="space-y-4" id="recent-activity">
+<li class="px-1" data-skeleton><div class="skel skel-row w-11/12"></div></li>
+<li class="px-1" data-skeleton><div class="skel skel-row w-3/4"></div></li>
+</ul>
+<button id="review-all-btn" onclick="window.location.href='request-manager.html'" class="w-full mt-5 py-2 border border-outline-variant rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors">
+                        View Leave Manager (0)
+                    </button>
+</div>
+<!-- Capacity Chart Placeholder (Visual Representation) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-5 flex-grow flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Weekly Capacity</h3>
+<div class="flex-grow flex items-end justify-between gap-2 h-32 mt-auto pb-2 border-b border-outline-variant">
+<!-- Simulated Bar Chart -->
+<div class="w-full bg-primary-container rounded-t" style="height: 95%;"></div>
+<div class="w-full bg-primary-container rounded-t opacity-80" style="height: 90%;"></div>
+<div class="w-full bg-secondary rounded-t" style="height: 100%;"></div>
+<div class="w-full bg-primary-container rounded-t opacity-70" style="height: 85%;"></div>
+<div class="w-full bg-primary-container rounded-t opacity-60" style="height: 75%;"></div>
+</div>
+<div class="flex justify-between mt-2 font-label-md text-[10px] text-outline uppercase">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+(function () {
+var LEAVE_TYPES_KEY = 'bansang_leave_types';
+var LEAVE_ENTRIES_KEY = 'bansang_leave_entries';
+function getLeaveTypes() {
+return window.DB ? window.DB.getList('leaveTypes') : [];
+}
+function getLeaveEntries() {
+return (window.DB ? window.DB.getList('leaveEntries') : []).filter(function (e) { return !e.deleted; });
+}
+function escapeHtml(str) {
+var div = document.createElement('div');
+div.textContent = str == null ? '' : String(str);
+return div.innerHTML;
+}
+function todayStr() {
+var d = new Date();
+var pad = function (n) { return ('0' + n).slice(-2); };
+return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function fmtDate(str) {
+if (!str) return '';
+var p = String(str).split('-');
+if (p.length !== 3) return str;
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return months[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+}
+function isSchedulable(type) {
+return /annual/i.test((type && type.name) || '');
+}
+function getTypeById(id) {
+var types = getLeaveTypes();
+return types.filter(function (t) { return t.id === id; })[0] || null;
+}
+function inRange(dateStr, start, end) {
+return dateStr >= start && dateStr <= end;
+}
+function effectiveStatus(e) {
+var t = todayStr();
+if (t < e.startDate) return 'Scheduled';
+if (t > e.endDate) return 'Completed';
+if (e.status === 'Logged') return 'Completed';
+return 'In Progress';
+}
+function daysBetween(start, end) {
+var ms = new Date(end) - new Date(start);
+return Math.max(1, Math.round(ms / 86400000) + 1);
+}
+function currentMonthStr() {
+return todayStr().slice(0, 7);
+}
+function monthDay(str) {
+return parseInt(String(str).slice(8, 10), 10);
+}
+window.LeaveTracker = {
+getLeaveTypes: getLeaveTypes,
+getLeaveEntries: getLeaveEntries,
+escapeHtml: escapeHtml,
+todayStr: todayStr,
+fmtDate: fmtDate,
+isSchedulable: isSchedulable,
+getTypeById: getTypeById,
+inRange: inRange,
+effectiveStatus: effectiveStatus,
+daysBetween: daysBetween,
+currentMonthStr: currentMonthStr,
+monthDay: monthDay
+};
+})();
+</script>
+<script>
+if (window.Auth) window.Auth.guard();
+(function () {
+function render() {
+var today = LeaveTracker.todayStr();
+var entries = LeaveTracker.getLeaveEntries();
+
+var onLeave = entries.filter(function (e) { return LeaveTracker.inRange(today, e.startDate, e.endDate); });
+var scheduled = entries.filter(function (e) { return LeaveTracker.effectiveStatus(e) === 'Scheduled'; });
+
+var onLeaveEl = document.getElementById('metric-on-leave');
+if (onLeaveEl) onLeaveEl.textContent = onLeave.length;
+
+var schedEl = document.getElementById('metric-scheduled');
+if (schedEl) schedEl.textContent = scheduled.length;
+
+var staffList = window.DB ? window.DB.getList('staff') : [];
+var totalStaff = staffList.length;
+var totalStaffEl = document.getElementById('metric-total-staff');
+if (totalStaffEl) totalStaffEl.textContent = totalStaff;
+
+var capacity = totalStaff ? Math.max(0, Math.round(((totalStaff - onLeave.length) / totalStaff) * 100)) : 100;
+var capacityEl = document.getElementById('metric-capacity');
+if (capacityEl) capacityEl.textContent = capacity + '%';
+var capacityBar = document.getElementById('metric-capacity-bar');
+if (capacityBar) capacityBar.style.width = capacity + '%';
+
+var tbody = document.getElementById('staff-out-tbody');
+if (tbody) {
+if (onLeave.length) {
+tbody.innerHTML = onLeave.map(function (e) {
+var isAnnual = /annual/i.test(e.typeName);
+var badgeCls = isAnnual ? 'bg-surface-container-high text-on-surface' : 'bg-error-container text-on-error-container';
+return '<tr class="hover:bg-surface-container-highest transition-colors">' +
+'<td class="py-3 px-5 font-data-mono text-data-mono text-on-surface">' + LeaveTracker.escapeHtml(e.staffName) + '</td>' +
+'<td class="py-3 px-5 text-on-surface-variant">' + LeaveTracker.escapeHtml(e.staffRole || '') + '</td>' +
+'<td class="py-3 px-5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ' + badgeCls + '">' + LeaveTracker.escapeHtml(e.typeName) + '</span></td>' +
+'<td class="py-3 px-5 text-on-surface-variant">' + LeaveTracker.fmtDate(e.endDate) + '</td>' +
+'</tr>';
+}).join('');
+} else {
+tbody.innerHTML = '<tr><td colspan="4" class="py-8 px-5 text-center text-on-surface-variant">No staff currently on leave.</td></tr>';
+}
+}
+
+var list = document.getElementById('recent-activity');
+if (list) {
+var recent = entries.slice().sort(function (a, b) { return String(b.createdAt || '').localeCompare(String(a.createdAt || '')); }).slice(0, 3);
+if (recent.length) {
+list.innerHTML = recent.map(function (e) {
+var isAnnual = /annual/i.test(e.typeName);
+var iconCls = isAnnual ? 'bg-surface-container text-primary' : 'bg-error-container text-on-error-container';
+var icon = isAnnual ? 'event_available' : 'bolt';
+var when = LeaveTracker.fmtDate(e.startDate) + (e.startDate !== e.endDate ? ' to ' + LeaveTracker.fmtDate(e.endDate) : '');
+var st = LeaveTracker.effectiveStatus(e);
+var whenLabel;
+if (st === 'Completed') whenLabel = 'Completed on ' + when;
+else if (st === 'In Progress') whenLabel = 'In progress until ' + LeaveTracker.fmtDate(e.endDate);
+else whenLabel = 'Scheduled for ' + when;
+return '<li class="flex items-start gap-3">' +
+'<div class="w-8 h-8 rounded-full ' + iconCls + ' flex items-center justify-center flex-shrink-0">' +
+'<span class="material-symbols-outlined text-[18px]">' + icon + '</span></div>' +
+'<div><p class="font-body-sm text-body-sm text-on-surface font-medium">' + LeaveTracker.escapeHtml(e.staffName) + ' - <span class="text-on-surface-variant font-normal">' + LeaveTracker.escapeHtml(e.typeName) + '</span></p>' +
+'<p class="text-[11px] text-outline mt-0.5">' + whenLabel + '</p></div>' +
+'</li>';
+}).join('');
+} else {
+list.innerHTML = '<li class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">No leave recorded yet.</li>';
+}
+}
+
+var btn = document.getElementById('review-all-btn');
+if (btn) btn.textContent = 'View Leave Manager (' + entries.length + ')';
+}
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+render();
+window.DB.subscribe(render);
+});
+});
+})();
+</script>
+</body></html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Sign In - %APP%">Sign In - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/ui.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center font-body-md text-on-surface p-container-padding antialiased" style="background: linear-gradient(rgba(25, 50, 120, 0.65), rgba(25, 50, 120, 0.75)), url('/login-bg.webp') center/cover no-repeat fixed;"><!-- Auth Container -->
+<main class="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded shadow-sm overflow-hidden flex flex-col relative z-10">
+<!-- Header Section -->
+<header class="bg-surface-container-low border-b border-outline-variant p-6 flex flex-col items-center text-center">
+<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-primary text-2xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">
+                    health_and_safety
+                </span>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold" data-app-name>BANSANG HOSPITAL</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1" data-app-slogan>Secure Staff Authentication</p>
+</header>
+<!-- Form Section -->
+<div class="p-6">
+<form action="dashboard.html" class="space-y-5" method="POST" onsubmit="handleSignIn(event)">
+<!-- Email Field -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="email">Hospital Email</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-lg">mail</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface-container-lowest text-on-surface font-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors h-[40px]" id="email" name="email" placeholder="staff.member@hospital.org" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-on-surface" for="password">Password</label>
+<a class="font-body-sm text-body-sm text-primary hover:text-primary-container transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant text-lg">lock</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded bg-surface-container-lowest text-on-surface font-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors h-[40px]" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Action Button -->
+<div class="pt-2">
+<button class="w-full flex justify-center items-center py-2 px-4 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner h-[40px]" data-busy="Signing in..." id="sign-in-btn" type="submit">
+                        Sign In
+                    </button>
+</div>
+<!-- Auth Error -->
+<div class="hidden flex items-start gap-2 p-3 bg-error-container text-on-error-container rounded border border-error/30" id="auth-error">
+<span class="material-symbols-outlined text-sm mt-0.5">error</span>
+<p class="font-body-sm text-body-sm" id="auth-error-text"></p>
+</div>
+<!-- Security Note -->
+<div class="flex items-start mt-6 p-3 bg-surface rounded border border-outline-variant border-dashed">
+<span class="material-symbols-outlined text-primary text-sm mr-2 mt-0.5">shield</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">
+                        This is a secure system restricted to authorized hospital personnel only. All activities are monitored and logged.
+                    </p>
+</div>
+</form>
+</div>
+</main>
+<!-- Decorative Background Element -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center opacity-5">
+<span class="material-symbols-outlined text-[400px] text-white" data-weight="fill" style="font-variation-settings: 'FILL' 1;">
+            local_hospital
+        </span>
+</div>
+<script>
+function handleSignIn(event) {
+  if (event) event.preventDefault();
+  var email = (document.getElementById('email').value || '').trim();
+  var password = document.getElementById('password').value || '';
+  var errorBox = document.getElementById('auth-error');
+  var errorText = document.getElementById('auth-error-text');
+  var btn = document.getElementById('sign-in-btn');
+  if (errorBox) errorBox.classList.add('hidden');
+  if (!window.Auth) {
+    if (errorText) errorText.textContent = 'Still loading. Please try again.';
+    if (errorBox) errorBox.classList.remove('hidden');
+    return;
+  }
+  if (window.UI) window.UI.busy(btn, true);
+  window.Auth.signIn(email, password).then(function (res) {
+    if (res.ok) {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+    if (window.UI) window.UI.busy(btn, false);
+    if (errorText) errorText.textContent = res.error || 'Sign in failed.';
+    if (errorBox) errorBox.classList.remove('hidden');
+  }).catch(function () {
+    if (window.UI) window.UI.busy(btn, false);
+    if (errorText) errorText.textContent = 'Unexpected error. Please try again.';
+    if (errorBox) errorBox.classList.remove('hidden');
+  });
+}
+</script>
+</body></html>

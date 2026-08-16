@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background text-on-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="%APP% - Leave Roster">BANSANG HOSPITAL - Leave Roster</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/pdf-export.js"></script>
+<script type="module" src="/src/nav.js"></script>
+<style>
+        .stripes-pattern {
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(0, 106, 97, 0.1) 10px,
+                rgba(0, 106, 97, 0.1) 20px
+            );
+        }
+
+        .timeline-grid {
+            display: grid;
+        }
+
+        .day-cell {
+            position: absolute;
+            inset-block: 0;
+            width: 48px;
+            border-inline-end: 1px solid #c5c5d34d;
+            background: #ffffff;
+        }
+
+        .day-cell.weekend {
+            background: #d3e4fe26;
+        }
+
+        .day-hdr {
+            border-inline-end: 1px solid #c5c5d34d;
+            background: #e5eeff;
+        }
+
+        .day-hdr.weekend {
+            background: #d3e4fe26;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-grid {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<!-- Active Tab: Leave Roster -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)] h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Canvas -->
+<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<div class="mb-section-gap flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-background" id="roster-month">Master Leave Roster</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Master Leave Roster - Maintenance Unit</p>
+</div>
+<div class="flex gap-3">
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant shadow-sm">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface">Scheduled</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant shadow-sm">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md text-on-surface">In Progress</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant shadow-sm">
+<span class="w-3 h-3 rounded-full bg-error"></span>
+<span class="font-label-md text-label-md text-on-surface">Completed</span>
+</div>
+</div>
+</div>
+<!-- Roster Container -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col h-[calc(100vh-220px)]">
+<!-- Tools Row -->
+<div class="p-gutter border-b border-outline-variant flex flex-wrap items-center gap-3 bg-surface-container-lowest z-10">
+<div class="flex gap-2">
+<button class="px-3 py-1.5 bg-surface border border-outline-variant rounded text-on-surface font-label-md hover:bg-surface-variant flex items-center gap-1" onclick="shiftMonth(-1)">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span> Prev
+                    </button>
+<button class="px-3 py-1.5 bg-surface border border-outline-variant rounded text-on-surface font-label-md hover:bg-surface-variant flex items-center gap-1" onclick="shiftMonth(1)">
+                        Next <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+<button class="px-3 py-1.5 bg-primary-container text-on-primary-container border border-primary-container rounded font-label-md hover:bg-primary-fixed-dim transition-colors" onclick="goToCurrentMonth()">This Month</button>
+</div>
+<!-- Staff Search -->
+<div class="relative flex-1 min-w-[180px] max-w-xs">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" style="font-size:18px">search</span>
+<input id="roster-search" oninput="filterRosterSearch()" class="w-full pl-9 pr-3 h-9 bg-surface border border-outline-variant rounded-full text-on-surface font-body-sm placeholder-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Search staff, roles, or ID..." type="text"/>
+</div>
+<div class="flex gap-2 ml-auto">
+<select id="roster-team-filter" class="bg-surface border border-outline-variant text-on-surface font-body-sm rounded px-3 py-1.5 focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterRosterTeam()">
+<option value="">All Teams</option>
+</select>
+</div>
+<div class="flex gap-2">
+<button onclick="exportRosterCSV()" class="px-3 py-1.5 bg-surface border border-outline-variant rounded text-on-surface font-label-md hover:bg-surface-variant flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span> CSV
+                </button>
+<button onclick="exportRosterPDF()" class="px-3 py-1.5 bg-surface border border-outline-variant rounded text-on-surface font-label-md hover:bg-surface-variant flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="picture_as_pdf">picture_as_pdf</span> PDF
+                </button>
+</div>
+</div>
+<!-- Search Results Panel -->
+<div id="roster-results" class="hidden"></div>
+<!-- Timeline Scroll Area -->
+<div class="overflow-auto flex-1 relative bg-surface-bright">
+<!-- Header Row -->
+<div class="timeline-grid sticky top-0 bg-surface-container z-20 border-b border-outline-variant font-label-md text-label-md text-on-surface-variant" id="roster-header"></div>
+<div id="roster-rows">
+<div class="flex items-center gap-3 p-5" data-skeleton><div class="skel skel-avatar shrink-0"></div><div class="flex-1 space-y-2"><div class="skel skel-row w-1/3"></div><div class="skel skel-row w-full"></div></div></div>
+<div class="flex items-center gap-3 p-5" data-skeleton><div class="skel skel-avatar shrink-0"></div><div class="flex-1 space-y-2"><div class="skel skel-row w-1/3"></div><div class="skel skel-row w-full"></div></div></div>
+<div class="flex items-center gap-3 p-5" data-skeleton><div class="skel skel-avatar shrink-0"></div><div class="flex-1 space-y-2"><div class="skel skel-row w-1/3"></div><div class="skel skel-row w-full"></div></div></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+(function () {
+var LEAVE_TYPES_KEY = 'bansang_leave_types';
+var LEAVE_ENTRIES_KEY = 'bansang_leave_entries';
+var rosterHasStaff = false;
+var navigating = false;
+function getLeaveTypes() {
+return window.DB ? window.DB.getList('leaveTypes') : [];
+}
+function getLeaveEntries() {
+return (window.DB ? window.DB.getList('leaveEntries') : []).filter(function (e) { return !e.deleted; });
+}
+function escapeHtml(str) {
+var div = document.createElement('div');
+div.textContent = str == null ? '' : String(str);
+return div.innerHTML;
+}
+function todayStr() {
+var d = new Date();
+var pad = function (n) { return ('0' + n).slice(-2); };
+return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function fmtDate(str) {
+if (!str) return '';
+var p = String(str).split('-');
+if (p.length !== 3) return str;
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return months[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+}
+function isSchedulable(type) {
+return /annual/i.test((type && type.name) || '');
+}
+function getTypeById(id) {
+var types = getLeaveTypes();
+return types.filter(function (t) { return t.id === id; })[0] || null;
+}
+function inRange(dateStr, start, end) {
+return dateStr >= start && dateStr <= end;
+}
+function effectiveStatus(e) {
+var t = todayStr();
+if (t < e.startDate) return 'Scheduled';
+if (t > e.endDate) return 'Completed';
+if (e.status === 'Logged') return 'Completed';
+return 'In Progress';
+}
+function daysBetween(start, end) {
+var ms = new Date(end) - new Date(start);
+return Math.max(1, Math.round(ms / 86400000) + 1);
+}
+function currentMonthStr() {
+return todayStr().slice(0, 7);
+}
+function monthDay(str) {
+return parseInt(String(str).slice(8, 10), 10);
+}
+window.LeaveTracker = {
+getLeaveTypes: getLeaveTypes,
+getLeaveEntries: getLeaveEntries,
+escapeHtml: escapeHtml,
+todayStr: todayStr,
+fmtDate: fmtDate,
+isSchedulable: isSchedulable,
+getTypeById: getTypeById,
+inRange: inRange,
+effectiveStatus: effectiveStatus,
+daysBetween: daysBetween,
+currentMonthStr: currentMonthStr,
+monthDay: monthDay
+};
+})();
+</script>
+<script>
+(function () {
+function getStaff() {
+return window.DB ? window.DB.getList('staff') : [];
+}
+var STAFF = getStaff();
+var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var viewDate = new Date();
+viewDate.setDate(1);
+
+function getTeams() {
+return window.DB ? window.DB.getList('teams') : [];
+}
+
+function teamDisplayName(id) {
+var teams = getTeams();
+var t = teams.filter(function (x) { return x.id === id; })[0];
+return t ? t.name : id;
+}
+
+function populateTeamFilter() {
+var select = document.getElementById('roster-team-filter');
+if (!select) return;
+var teams = getTeams();
+select.innerHTML = '<option value="">All Teams</option>' + teams.map(function (t) {
+return '<option value="' + LeaveTracker.escapeHtml(t.id) + '">' + LeaveTracker.escapeHtml(t.name) + '</option>';
+}).join('');
+}
+
+function applyRosterFilters() {
+var container = document.getElementById('roster-rows');
+var resultsPanel = document.getElementById('roster-results');
+var searchEl = document.getElementById('roster-search');
+var teamEl = document.getElementById('roster-team-filter');
+var q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+var teamVal = teamEl ? teamEl.value : '';
+if (container && rosterHasStaff) {
+var rows = container.querySelectorAll('#roster-rows .timeline-grid[data-team]:not(.bg-surface-container-low)');
+var anyVisible = false;
+rows.forEach(function (el) {
+var name = (el.getAttribute('data-name') || '').toLowerCase();
+var role = (el.getAttribute('data-role') || '').toLowerCase();
+var tname = (el.getAttribute('data-team-label') || '').toLowerCase();
+var matchesTeam = !teamVal || el.getAttribute('data-team') === teamVal;
+var matchesQ = !q || name.indexOf(q) !== -1 || role.indexOf(q) !== -1 || tname.indexOf(q) !== -1;
+var show = matchesTeam && matchesQ;
+el.style.display = show ? '' : 'none';
+if (show) anyVisible = true;
+});
+var bars = container.querySelectorAll('#roster-rows .timeline-grid.bg-surface-container-low[data-team]');
+bars.forEach(function (bar) {
+var tid = bar.getAttribute('data-team');
+var show = false;
+container.querySelectorAll('#roster-rows .timeline-grid[data-team="' + tid + '"]:not(.bg-surface-container-low)').forEach(function (s) {
+if (s.style.display !== 'none') show = true;
+});
+bar.style.display = show ? '' : 'none';
+});
+var empty = document.getElementById('roster-empty');
+if (!empty) {
+empty = document.createElement('div');
+empty.id = 'roster-empty';
+empty.className = 'p-8 text-center';
+empty.innerHTML = '<span class="material-symbols-outlined text-[40px] text-on-surface-variant opacity-40">search_off</span><p class="font-body-sm text-body-sm text-on-surface-variant mt-2">No staff match your search.</p>';
+container.appendChild(empty);
+}
+empty.style.display = (anyVisible || (!q && !teamVal)) ? 'none' : '';
+}
+
+var matches = [];
+if (q) {
+STAFF.forEach(function (s) {
+var name = s.name.toLowerCase();
+var role = s.role.toLowerCase();
+var tname = (s.teamLabel || teamDisplayName(s.team) || '').toLowerCase();
+if (name.indexOf(q) !== -1 || role.indexOf(q) !== -1 || tname.indexOf(q) !== -1) matches.push(s);
+});
+}
+renderSearchResults(resultsPanel, matches);
+if (q && matches.length) {
+var entries = LeaveTracker.getLeaveEntries();
+var firstScheduled = null;
+matches.forEach(function (s) {
+if (firstScheduled) return;
+var sched = entries.filter(function (e) {
+return e.staffId === s.id && e.status !== 'Logged' && /annual/i.test(e.typeName || e.typeId || '');
+}).sort(function (a, b) { return a.startDate < b.startDate ? -1 : 1; });
+if (sched.length) firstScheduled = sched[0];
+});
+if (firstScheduled) {
+var targetM = parseInt(firstScheduled.startDate.slice(5, 7), 10) - 1;
+var targetY = parseInt(firstScheduled.startDate.slice(0, 4), 10);
+if ((targetY !== viewDate.getFullYear() || targetM !== viewDate.getMonth()) && !navigating) {
+navigating = true;
+viewDate = new Date(targetY, targetM, 1);
+renderRoster();
+}
+}
+}
+}
+
+function monthFromDate(str) {
+var p = String(str).split('-');
+if (p.length !== 3) return '';
+return MONTHS[parseInt(p[1], 10) - 1] + ' ' + p[0];
+}
+
+function renderSearchResults(panel, matches) {
+if (!panel) return;
+if (!matches.length) {
+panel.className = 'hidden';
+panel.innerHTML = '';
+return;
+}
+var entries = LeaveTracker.getLeaveEntries();
+var html = '';
+matches.forEach(function (s) {
+var list = entries.filter(function (e) {
+return e.staffId === s.id;
+}).sort(function (a, b) { return a.startDate < b.startDate ? 1 : -1; });
+var teamName = s.teamLabel || teamDisplayName(s.team);
+html += '<div class="p-gutter border-b border-outline-variant bg-surface-container-lowest">';
+html += '<div class="flex items-center gap-3 flex-wrap">';
+html += '<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-sm">' + LeaveTracker.escapeHtml(s.initials) + '</div>';
+html += '<div><p class="font-body-sm text-body-sm font-medium text-on-surface">' + LeaveTracker.escapeHtml(s.name) + '</p><p class="text-[11px] text-on-surface-variant">' + LeaveTracker.escapeHtml(s.role) + ' · ' + LeaveTracker.escapeHtml(teamName) + '</p></div>';
+html += '<span class="ml-auto bg-primary-container/60 text-on-primary-container text-[11px] font-medium px-2.5 py-1 rounded-full">' + list.length + (list.length === 1 ? ' Entry' : ' Entries') + '</span>';
+html += '</div>';
+if (!list.length) {
+html += '<p class="mt-3 font-body-sm text-body-sm text-on-surface-variant">No leave entries found.</p>';
+} else {
+html += '<div class="mt-3 grid gap-2 md:grid-cols-2">';
+list.forEach(function (e) {
+var isAnnual = /annual/i.test(e.typeName || e.typeId || '');
+var st = LeaveTracker.effectiveStatus(e);
+var dur = LeaveTracker.daysBetween(e.startDate, e.endDate);
+var typeName = e.typeName || (isAnnual ? 'Annual Leave' : 'Logged Leave');
+var badge = st === 'Completed'
+? 'bg-error/10 text-error border border-error/40'
+: st === 'In Progress'
+? 'bg-primary-fixed text-on-primary-fixed'
+: 'bg-primary-container/60 text-on-primary-container';
+var badgeLabel = st === 'Completed' ? 'COMPLETED' : st === 'In Progress' ? 'IN PROGRESS' : 'SCHEDULED';
+html += '<div class="flex items-center gap-3 bg-surface-container rounded-lg border border-outline-variant p-3">';
+html += '<span class="material-symbols-outlined ' + (isAnnual ? 'text-primary' : 'text-error') + '">' + (isAnnual ? 'beach_access' : 'bolt') + '</span>';
+html += '<div class="min-w-0"><p class="font-body-sm font-medium text-on-surface truncate">' + LeaveTracker.escapeHtml(typeName) + '</p><p class="font-body-sm text-on-surface-variant">' + LeaveTracker.fmtDate(e.startDate) + (e.startDate !== e.endDate ? ' – ' + LeaveTracker.fmtDate(e.endDate) : '') + ' · ' + dur + (dur > 1 ? ' days' : ' day') + '</p></div>';
+html += '<span class="ml-auto px-2 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap ' + badge + '">' + badgeLabel + '</span>';
+html += '</div>';
+});
+html += '</div>';
+}
+html += '</div>';
+});
+panel.className = 'border-b border-outline-variant bg-surface-container-lowest max-h-64 overflow-y-auto';
+panel.innerHTML = html;
+}
+
+window.filterRosterSearch = applyRosterFilters;
+window.filterRosterTeam = applyRosterFilters;
+
+function monthKey(d) {
+return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+}
+
+function weekdayOfFirst() {
+return new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
+}
+
+function renderMonthHeader(daysInMonth, gridStyle) {
+var el = document.getElementById('roster-month');
+if (el) el.textContent = MONTHS[viewDate.getMonth()] + ' ' + viewDate.getFullYear();
+var hdr = document.getElementById('roster-header');
+if (hdr) {
+hdr.style.gridTemplateColumns = gridStyle;
+var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+var d0 = weekdayOfFirst();
+var html = '<div class="p-3 sticky left-0 bg-surface-container border-r border-outline-variant flex items-center z-30 shadow-[2px_0_5px_rgba(0,0,0,0.05)]">Team Member</div>';
+for (var i = 1; i <= daysInMonth; i++) {
+var wd = (d0 + (i - 1)) % 7;
+var isWeekend = wd === 0 || wd === 6;
+var bgClass = isWeekend ? ' weekend' : '';
+html += '<div class="p-2 day-hdr text-center flex flex-col justify-center' + bgClass + '"><span class="opacity-70 text-[10px]">' + labels[wd] + '</span><span>' + i + '</span></div>';
+}
+hdr.innerHTML = html;
+}
+}
+
+function renderRoster() {
+var daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+var gridStyle = '200px repeat(' + daysInMonth + ', 48px)';
+renderMonthHeader(daysInMonth, gridStyle);
+var container = document.getElementById('roster-rows');
+var entries = LeaveTracker.getLeaveEntries();
+var key = monthKey(viewDate);
+var d0 = weekdayOfFirst();
+rosterHasStaff = false;
+navigating = false;
+var html = '';
+var teams = {};
+STAFF.forEach(function (s) {
+if (!teams[s.team]) teams[s.team] = { id: s.team, label: s.teamLabel, members: [] };
+teams[s.team].members.push(s);
+});
+var teamNames = Object.keys(teams);
+function overlaps(a, b) {
+return a.startDate <= b.endDate && b.startDate <= a.endDate;
+}
+
+teamNames.forEach(function (teamName) {
+var team = teams[teamName];
+var teamEntries = {};
+team.members.forEach(function (s) {
+teamEntries[s.id] = entries.filter(function (e) {
+return e.staffId === s.id && (e.startDate.slice(0, 7) === key || e.endDate.slice(0, 7) === key);
+});
+});
+team.members.forEach(function (s) {
+teamEntries[s.id].forEach(function (e) {
+var conflictNames = [];
+team.members.forEach(function (o) {
+if (o.id === s.id) return;
+teamEntries[o.id].forEach(function (oe) {
+if (overlaps(e, oe)) conflictNames.push(o.name);
+});
+});
+e._conflicts = conflictNames;
+});
+});
+html += '<div class="timeline-grid bg-surface-container-low border-y border-outline-variant/50 font-label-md text-primary" data-team="' + LeaveTracker.escapeHtml(team.id) + '" style="grid-template-columns:' + gridStyle + '">';
+html += '<div class="p-2 sticky left-0 bg-surface-container-low border-r border-outline-variant/50 z-20">' + LeaveTracker.escapeHtml(teamDisplayName(team.id)) + ' (Min Req: ' + team.members[0].minReq + ')</div>';
+html += '<div class="relative p-2" style="grid-column:span ' + daysInMonth + ' / span ' + daysInMonth + '">';
+for (var day = 1; day <= daysInMonth; day++) {
+var wd = (d0 + (day - 1)) % 7;
+var dayBg = (wd === 0 || wd === 6) ? ' weekend' : '';
+html += '<div class="day-cell' + dayBg + '" style="left:calc(48px * ' + (day - 1) + ')"></div>';
+}
+html += '</div>';
+html += '</div>';
+team.members.forEach(function (s) {
+var staffEntries = teamEntries[s.id];
+html += '<div class="timeline-grid border-b border-outline-variant/30 hover:bg-surface-container/30 transition-colors group" data-team="' + LeaveTracker.escapeHtml(s.team) + '" data-name="' + LeaveTracker.escapeHtml(s.name) + '" data-role="' + LeaveTracker.escapeHtml(s.role) + '" data-team-label="' + LeaveTracker.escapeHtml(teamDisplayName(team.id)) + '" style="grid-template-columns:' + gridStyle + '">';
+html += '<div class="p-3 sticky left-0 bg-surface-container-lowest group-hover:bg-surface-container/50 border-r border-outline-variant z-10 flex items-center gap-3">';
+html += '<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">' + s.initials + '</div>';
+html += '<div><div class="font-body-sm font-medium">' + s.name + '</div><div class="text-[10px] text-on-surface-variant">' + s.role + '</div></div>';
+html += '</div>';
+html += '<div class="relative h-[52px]" style="grid-column:span ' + daysInMonth + ' / span ' + daysInMonth + '">';
+for (var day = 1; day <= daysInMonth; day++) {
+var wd = (d0 + (day - 1)) % 7;
+var dayBg = (wd === 0 || wd === 6) ? ' weekend' : '';
+html += '<div class="day-cell' + dayBg + '" style="left:calc(48px * ' + (day - 1) + ')"></div>';
+}
+staffEntries.forEach(function (e) {
+var startDay = e.startDate.slice(0, 7) === key ? Math.max(1, LeaveTracker.monthDay(e.startDate)) : 1;
+var endDay = e.endDate.slice(0, 7) === key ? Math.min(daysInMonth, LeaveTracker.monthDay(e.endDate)) : daysInMonth;
+if (endDay < startDay) return;
+var days = endDay - startDay + 1;
+var status = LeaveTracker.effectiveStatus(e);
+var hasConflict = e._conflicts && e._conflicts.length > 0;
+var barCls = hasConflict
+? 'bg-error/20 border-2 border-error text-error hover:bg-error/30'
+: status === 'In Progress'
+? 'bg-primary/15 border border-primary text-primary hover:bg-primary/25'
+: status === 'Completed'
+? 'bg-error/10 border border-error/40 text-error hover:bg-error/20'
+: 'bg-secondary/20 border border-secondary text-secondary hover:bg-secondary/30';
+var dur = LeaveTracker.daysBetween(e.startDate, e.endDate);
+var durLabel = dur + (dur > 1 ? ' days' : ' day');
+var label = e.typeName + ' · ' + durLabel + (status === 'Completed' ? ' (Completed)' : status === 'In Progress' ? ' (In Progress)' : '');
+var title = s.name + ' - ' + e.typeName + ' (' + LeaveTracker.fmtDate(e.startDate) + (e.startDate !== e.endDate ? ' to ' + LeaveTracker.fmtDate(e.endDate) : '') + ') - ' + durLabel + ' - ' + (status === 'Completed' ? 'Completed' : status === 'In Progress' ? 'In Progress' : 'Scheduled');
+if (hasConflict) title += ' - OVERLAPS WITH ' + e._conflicts.join(', ');
+html += '<div class="absolute top-2 h-9 rounded flex items-center px-2 cursor-pointer transition-colors shadow-sm ' + barCls + '" style="left:calc(48px * ' + (startDay - 1) + '); width:calc(48px * ' + days + ');" title="' + LeaveTracker.escapeHtml(title) + '">';
+html += '<span class="font-label-md truncate w-full">' + LeaveTracker.escapeHtml(label) + '</span>';
+html += '</div>';
+});
+html += '</div>';
+html += '</div>';
+});
+});
+if (!teamNames.length) {
+html = '<div class="p-8 text-center"><span class="material-symbols-outlined text-[40px] text-on-surface-variant opacity-40">calendar_month</span><p class="font-body-sm text-body-sm text-on-surface-variant mt-2">No staff assigned yet.</p></div>';
+} else {
+rosterHasStaff = true;
+}
+container.innerHTML = html;
+applyRosterFilters();
+}
+
+window.shiftMonth = function (delta) {
+viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + delta, 1);
+renderRoster();
+};
+
+window.goToCurrentMonth = function () {
+viewDate = new Date();
+viewDate.setDate(1);
+renderRoster();
+};
+
+// ---------- Roster export (CSV / PDF) ----------
+
+function rosterExportRows() {
+var key = monthKey(viewDate);
+var entries = LeaveTracker.getLeaveEntries();
+var out = [];
+var staff = STAFF.slice().sort(function (a, b) {
+var ta = teamDisplayName(a.team);
+var tb = teamDisplayName(b.team);
+if (ta < tb) return -1;
+if (ta > tb) return 1;
+return (a.name || '').localeCompare(b.name || '');
+});
+staff.forEach(function (s) {
+var team = s.teamLabel || teamDisplayName(s.team);
+var monthEntries = entries.filter(function (e) {
+return e.staffId === s.id && (e.startDate.slice(0, 7) === key || e.endDate.slice(0, 7) === key);
+});
+if (!monthEntries.length) {
+out.push({ name: s.name, role: s.role, team: team, empId: s.empId, balance: s.leaveBalance, type: '', start: '', end: '', status: '' });
+} else {
+monthEntries.forEach(function (e) {
+out.push({ name: s.name, role: s.role, team: team, empId: s.empId, balance: s.leaveBalance, type: e.typeName, start: e.startDate, end: e.endDate, status: LeaveTracker.effectiveStatus(e) });
+});
+}
+});
+return out;
+}
+
+function rosterDownload(filename, content, mime) {
+var blob;
+if (mime === 'application/pdf') {
+blob = new Blob([new TextEncoder().encode(content)], { type: mime });
+} else {
+blob = new Blob([content], { type: mime });
+}
+var url = URL.createObjectURL(blob);
+var a = document.createElement('a');
+a.href = url;
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+}
+
+function csvEscape(v) {
+v = v == null ? '' : String(v);
+if (/[",\n]/.test(v)) v = '"' + v.replace(/"/g, '""') + '"';
+return v;
+}
+
+window.exportRosterCSV = function () {
+var rows = rosterExportRows();
+var header = ['Staff', 'Role', 'Team', 'Employee ID', 'Leave Balance', 'Leave Type', 'Start Date', 'End Date', 'Status'];
+var lines = [header.join(',')];
+rows.forEach(function (r) {
+lines.push([r.name, r.role, r.team, r.empId, r.balance, r.type, r.start, r.end, r.status].map(csvEscape).join(','));
+});
+rosterDownload('Roster_' + monthKey(viewDate) + '.csv', '\uFEFF' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+};
+
+window.exportRosterPDF = function () {
+var PDFExport = window.PDFExport;
+if (!PDFExport) {
+alert('PDF export is still loading. Please try again.');
+return;
+}
+var settings = (window.DB && window.DB.getDoc('settings')) || {};
+var hospital = settings.hospitalName || 'BANSANG HOSPITAL';
+var dept = settings.department || settings.slogan || 'Maintenance Unit';
+var monthLabel = MONTHS[viewDate.getMonth()] + ' ' + viewDate.getFullYear();
+var now = new Date();
+var pad2 = function (n) { return ('0' + n).slice(-2); };
+var generated = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate()) + ' ' + pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+
+var rows = rosterExportRows().filter(function (r) { return r.type; });
+var C = { staff: 22, emp: 12, team: 16, type: 14, start: 11, end: 11, duration: 10 };
+var colWidths = [C.staff, C.emp, C.team, C.type, C.start, C.end, C.duration];
+
+function leaveDuration(r) {
+if (!r.start) return '—';
+var s = new Date(r.start);
+var e = r.end ? new Date(r.end) : s;
+var days = Math.round((e - s) / 86400000) + 1;
+return days + (days === 1 ? ' day' : ' days');
+}
+
+function rowLine(r) {
+return PDFExport.padCol(r.name, C.staff) + PDFExport.padCol(r.empId, C.emp) + PDFExport.padCol(r.team, C.team) + PDFExport.padCol(r.type, C.type) + PDFExport.padCol(r.start ? PDFExport.shortDate(r.start) : '', C.start) + PDFExport.padCol(r.end ? PDFExport.shortDate(r.end) : '', C.end) + PDFExport.padCol(leaveDuration(r), C.duration);
+}
+var headerLine = PDFExport.padCol('Team Member', C.staff) + PDFExport.padCol('Staff ID', C.emp) + PDFExport.padCol('Team', C.team) + PDFExport.padCol('Leave Type', C.type) + PDFExport.padCol('Start Date', C.start) + PDFExport.padCol('End Date', C.end) + PDFExport.padCol('Duration', C.duration);
+
+var title = [
+{ t: hospital, b: true, s: 16, color: [20, 50, 120] },
+{ t: 'Staff Leave Schedule', b: true, s: 12, color: [30, 30, 30] },
+{ t: dept + '  |  ' + monthLabel, s: 9, color: [110, 115, 120] },
+{ t: 'Generated: ' + generated, s: 8, color: [160, 165, 170] }
+];
+var pdf = PDFExport.buildPdf({
+title: title,
+sections: [
+{ title: 'Leave Records', header: [{ t: headerLine, s: 8.5 }], rows: rows.map(function (r) { return { t: rowLine(r), s: 8.5 }; }), columns: colWidths }
+],
+footer: hospital + '  |  Staff Leave Schedule  |  ' + monthLabel
+});
+rosterDownload('Roster_' + monthKey(viewDate) + '.pdf', pdf, 'application/pdf');
+};
+
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+var refresh = function () {
+STAFF = getStaff();
+renderRoster();
+populateTeamFilter();
+};
+refresh();
+window.DB.subscribe(refresh);
+});
+});
+})();
+</script>
+</body></html>

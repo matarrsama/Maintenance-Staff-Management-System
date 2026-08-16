@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Leave Manager - %APP%">Leave Manager - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/ui.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<!-- Active Tab: Leave Manager -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search leave entries..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Workspace -->
+<main id="app-main" class="flex-grow p-container-padding grid grid-cols-1 lg:grid-cols-12 gap-container-padding overflow-hidden h-[calc(100vh-64px)]">
+<!-- Left Pane: Tracked Leave Entries -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded flex flex-col h-full overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-slate-50 flex justify-between items-center">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tracked Leave</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Scheduled &amp; logged leave for the department</p>
+</div>
+<span class="bg-primary-container text-on-primary px-2.5 py-0.5 rounded-full font-label-md text-[10px]" id="leave-entries-count">0 Entries</span>
+</div>
+<div class="flex-grow overflow-y-auto p-4 space-y-3" id="leave-entries-list">
+<div class="flex items-center gap-3 p-3 border border-outline-variant rounded" data-skeleton><div class="skel skel-avatar shrink-0"></div><div class="flex-1 space-y-2"><div class="skel skel-h6 w-1/3"></div><div class="skel skel-h6 w-full"></div></div></div>
+<div class="flex items-center gap-3 p-3 border border-outline-variant rounded" data-skeleton><div class="skel skel-avatar shrink-0"></div><div class="flex-1 space-y-2"><div class="skel skel-h6 w-1/3"></div><div class="skel skel-h6 w-full"></div></div></div>
+</div>
+</div>
+<!-- Right Pane: Schedule / Log Leave Form -->
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded flex flex-col h-full overflow-hidden shadow-sm relative">
+<!-- Decorative subtle header gradient -->
+<div class="h-1 w-full bg-gradient-to-r from-primary-container to-surface-tint absolute top-0 left-0"></div>
+<div class="px-6 py-4 border-b border-outline-variant">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary-container">event_available</span>
+                        Schedule / Log Leave
+                    </h3>
+</div>
+<div class="flex-grow overflow-y-auto p-6">
+<form class="space-y-5" onsubmit="submitLeaveEntry(event)">
+<!-- Staff Member Selection -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="staff-select">Staff Member <span class="text-error">*</span></label>
+<div class="relative">
+<select class="block w-full h-[40px] pl-3 pr-10 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors cursor-pointer" id="staff-select">
+<option disabled="" selected="" value="">Select staff member...</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Leave Type -->
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="leave-type">Leave Type <span class="text-error">*</span></label>
+<button class="flex items-center gap-1 font-label-md text-label-md text-primary hover:text-primary-container transition-colors" type="button" onclick="openLeaveTypesModal()">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+                        Manage
+                    </button>
+</div>
+<div class="relative">
+<select class="block w-full h-[40px] pl-3 pr-10 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors cursor-pointer" id="leave-type" onchange="updateLeaveTypeHint()"><option value="" disabled="" selected="" data-skeleton>Loading leave types...</option></select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Scheduling Mode Toggle -->
+<div id="schedule-mode-toggle" class="hidden">
+<div class="flex items-center justify-between mb-1.5">
+<label class="block font-label-md text-label-md text-on-surface">Scheduling Mode</label>
+</div>
+<div class="flex rounded-lg border border-outline-variant overflow-hidden bg-surface">
+<button type="button" class="flex-1 px-3 py-2 text-center font-label-md text-label-md transition-colors bg-primary-container text-on-primary" id="mode-dates" onclick="setScheduleMode('dates')">Specific Dates</button>
+<button type="button" class="flex-1 px-3 py-2 text-center font-label-md text-label-md transition-colors text-on-surface-variant hover:bg-surface-container" id="mode-month" onclick="setScheduleMode('month')">Schedule by Month</button>
+</div>
+</div>
+<!-- Date Range Grid (specific dates mode) -->
+<div class="grid grid-cols-2 gap-4" id="date-range-grid">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="start-date">Start Date <span class="text-error">*</span></label>
+<div class="relative">
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="start-date" onchange="onStartDateChange()" type="date"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="end-date">End Date <span class="text-error">*</span></label>
+<div class="relative">
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="end-date" type="date"/>
+</div>
+</div>
+</div>
+<!-- Month/Year Grid (month scheduling mode) -->
+<div class="grid grid-cols-2 gap-4 hidden" id="month-range-grid">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="sched-month">Leave Month <span class="text-error">*</span></label>
+<div class="relative">
+<select class="block w-full h-[40px] pl-3 pr-10 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors cursor-pointer" id="sched-month">
+<option value="" disabled selected>Select month...</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="sched-year">Leave Year <span class="text-error">*</span></label>
+<div class="relative">
+<select class="block w-full h-[40px] pl-3 pr-10 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors cursor-pointer" id="sched-year">
+<option value="" disabled selected>Select year...</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Leave Type Hint Panel -->
+<div class="bg-surface p-3 border border-outline-variant border-dashed rounded" id="leave-type-hint">
+<div class="flex items-start text-on-surface-variant font-body-sm text-[12px]">
+<span class="material-symbols-outlined text-[16px] mr-1.5 mt-0.5">calendar_month</span>
+<span>Annual leave is scheduled in advance to a fixed date.</span>
+</div>
+</div>
+<!-- Reason -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="reason">Reason / Notes</label>
+<textarea class="block w-full p-3 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors resize-none" id="reason" placeholder="Provide any necessary context..." rows="3"></textarea>
+</div>
+</form>
+</div>
+<!-- Action Footer -->
+<div class="p-4 border-t border-outline-variant bg-surface-bright flex justify-end space-x-3">
+<button class="px-4 py-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors" type="button" onclick="clearLeaveForm()">
+                        Clear
+                    </button>
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner" id="leave-submit-btn" type="button" onclick="submitLeaveEntry(event)">
+                        Schedule Leave
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<!-- Manage Leave Types Modal -->
+<div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4" id="leave-types-modal">
+<div class="bg-surface-container-lowest w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Manage Leave Types</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors" type="button" onclick="closeLeaveTypesModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex-grow overflow-y-auto">
+<form class="flex gap-2 mb-4" onsubmit="addLeaveType(event)">
+<input id="new-leave-type-name" class="flex-1 h-[40px] min-w-0 px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" placeholder="New leave type name..." type="text"/>
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner whitespace-nowrap" type="submit">Add</button>
+</form>
+<ul class="space-y-2" id="leave-types-list"></ul>
+</div>
+</div>
+</div>
+<script>
+(function () {
+var LEAVE_TYPES_KEY = 'bansang_leave_types';
+var LEAVE_ENTRIES_KEY = 'bansang_leave_entries';
+var STAFF = getStaff();
+
+function getLeaveTypes() {
+return window.DB ? window.DB.getList('leaveTypes') : [];
+}
+
+function saveLeaveTypes(types) {
+return window.DB.saveList('leaveTypes', types);
+}
+
+function getLeaveEntries() {
+return window.DB ? window.DB.getList('leaveEntries') : [];
+}
+
+function activeEntries() {
+return getLeaveEntries().filter(function (e) { return !e.deleted; });
+}
+
+function saveLeaveEntries(entries) {
+return window.DB.saveList('leaveEntries', entries);
+}
+
+function getStaff() {
+return window.DB ? window.DB.getList('staff') : [];
+}
+
+function escapeHtml(str) {
+var div = document.createElement('div');
+div.textContent = str;
+return div.innerHTML;
+}
+
+function todayStr() {
+var d = new Date();
+var pad = function (n) { return ('0' + n).slice(-2); };
+return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
+function isSchedulable(type) {
+return /annual/i.test(type.name);
+}
+
+// --- Month scheduling mode ---
+var currentScheduleMode = 'dates';
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function populateMonthYear() {
+var monthSel = document.getElementById('sched-month');
+var yearSel = document.getElementById('sched-year');
+if (!monthSel || !yearSel) return;
+var now = new Date();
+var curMonth = now.getMonth();
+var curYear = now.getFullYear();
+monthSel.innerHTML = '<option value="" disabled>Select month...</option>' + MONTHS_FULL.map(function (m, i) {
+return '<option value="' + ('0' + (i + 1)).slice(-2) + '"' + (i === curMonth ? '' : '') + '>' + m + '</option>';
+}).join('');
+monthSel.value = ('0' + (curMonth + 1)).slice(-2);
+var yearOpts = '';
+for (var y = curYear; y <= curYear + 3; y++) {
+yearOpts += '<option value="' + y + '"' + (y === curYear ? ' selected' : '') + '>' + y + '</option>';
+}
+yearSel.innerHTML = '<option value="" disabled>Select year...</option>' + yearOpts;
+}
+
+window.setScheduleMode = function (mode) {
+currentScheduleMode = mode;
+var dateGrid = document.getElementById('date-range-grid');
+var monthGrid = document.getElementById('month-range-grid');
+var modeDates = document.getElementById('mode-dates');
+var modeMonth = document.getElementById('mode-month');
+if (mode === 'month') {
+dateGrid.classList.add('hidden');
+monthGrid.classList.remove('hidden');
+modeDates.className = 'flex-1 px-3 py-2 text-center font-label-md text-label-md transition-colors text-on-surface-variant hover:bg-surface-container';
+modeMonth.className = 'flex-1 px-3 py-2 text-center font-label-md text-label-md transition-colors bg-primary-container text-on-primary';
+} else {
+dateGrid.classList.remove('hidden');
+monthGrid.classList.add('hidden');
+modeDates.className = 'flex-1 px-3 py-2 text-center font-label-md text-label-md transition-colors bg-primary-container text-on-primary';
+modeMonth.className = 'flex-1 px-3 py-2 text-center font-label-md text-label-md transition-colors text-on-surface-variant hover:bg-surface-container';
+}
+};
+
+function showScheduleModeToggle(show) {
+var toggle = document.getElementById('schedule-mode-toggle');
+if (toggle) toggle.classList.toggle('hidden', !show);
+if (!show) setScheduleMode('dates');
+}
+
+function isAnnualType(type) {
+return /annual/i.test((type && type.name) || '');
+}
+
+function perYearFor(type) {
+return isAnnualType(type) ? 1 : Math.max(1, parseInt(type.perYear, 10) || 1);
+}
+
+function usedThisYear(staffId, typeId) {
+var y = new Date().getFullYear();
+var prefix = y + '-';
+return activeEntries().filter(function (e) {
+return e.staffId === staffId && e.typeId === typeId && (e.startDate || '').indexOf(prefix) === 0;
+}).length;
+}
+
+function durationDays(start, end) {
+var a = new Date(start + 'T00:00:00');
+var b = new Date(end + 'T00:00:00');
+return Math.max(1, Math.round((b - a) / 86400000) + 1);
+}
+
+function effectiveStatus(e) {
+var t = todayStr();
+if (t < e.startDate) return 'Scheduled';
+if (t > e.endDate) return 'Completed';
+if (e.status === 'Logged') return 'Completed';
+return 'In Progress';
+}
+
+function initials(name) {
+return name.split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
+}
+
+function fmtDate(str) {
+if (!str) return '';
+var p = str.split('-');
+if (p.length !== 3) return str;
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return months[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+}
+
+function slugify(name) {
+var base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'leave-type';
+var types = getLeaveTypes();
+var id = base;
+var n = 2;
+while (types.some(function (t) { return t.id === id; })) {
+id = base + '-' + n++;
+}
+return id;
+}
+
+function syncLeaveTypeSelect(types) {
+var select = document.getElementById('leave-type');
+if (!select) return;
+var current = select.value;
+if (!types.length) {
+select.innerHTML = '<option value="" disabled="" selected="">No leave types yet</option>';
+updateLeaveTypeHint();
+return;
+}
+select.innerHTML = types.map(function (t) {
+return '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.name) + '</option>';
+}).join('');
+if (types.some(function (t) { return t.id === current; })) {
+select.value = current;
+} else {
+select.value = types[0].id;
+}
+updateLeaveTypeHint();
+}
+
+function populateStaffSelect() {
+var select = document.getElementById('staff-select');
+if (!select) return;
+select.innerHTML = '<option disabled="" selected="" value="">Select staff member...</option>' + STAFF.map(function (s) {
+return '<option value="' + s.id + '">' + escapeHtml(s.name) + ' (' + escapeHtml(s.role) + ')</option>';
+}).join('');
+}
+
+window.updateLeaveTypeHint = function () {
+var select = document.getElementById('leave-type');
+var type = getLeaveTypes().filter(function (t) { return t.id === select.value; })[0];
+var hint = document.getElementById('leave-type-hint');
+var submitBtn = document.getElementById('leave-submit-btn');
+if (!type) {
+showScheduleModeToggle(false);
+if (hint) {
+hint.innerHTML = '<div class="flex items-start text-on-surface-variant font-body-sm text-[12px]">' +
+'<span class="material-symbols-outlined text-[16px] mr-1.5 mt-0.5">info</span>' +
+'<span>No leave types configured yet. Add one below.</span>' +
+'</div>';
+}
+if (submitBtn) submitBtn.textContent = 'Add Leave Type';
+return;
+}
+var isAnnual = isSchedulable(type);
+showScheduleModeToggle(isAnnual);
+var allowText = isAnnual
+? 'Annual leave is scheduled in advance to a fixed date. One per staff per year.'
+: 'Unpredictable leave (sick/casual). Up to ' + perYearFor(type) + ' per staff per year.';
+hint.innerHTML = '<div class="flex items-start text-on-surface-variant font-body-sm text-[12px]">' +
+'<span class="material-symbols-outlined text-[16px] mr-1.5 mt-0.5">' + (isAnnual ? 'calendar_month' : 'bolt') + '</span>' +
+'<span>' + allowText + '</span>' +
+'</div>';
+submitBtn.textContent = isAnnual ? 'Schedule Leave' : 'Log Leave';
+var startDate = document.getElementById('start-date');
+var endDate = document.getElementById('end-date');
+if (!isAnnual) {
+if (!startDate.value) startDate.value = todayStr();
+if (!endDate.value) endDate.value = startDate.value || todayStr();
+}
+};
+
+window.onStartDateChange = function () {
+var select = document.getElementById('leave-type');
+var type = getLeaveTypes().filter(function (t) { return t.id === select.value; })[0];
+var startDate = document.getElementById('start-date');
+var endDate = document.getElementById('end-date');
+if (type && !isSchedulable(type) && startDate.value && (!endDate.value || endDate.value < startDate.value)) endDate.value = startDate.value;
+};
+
+function renderLeaveEntries() {
+var entries = activeEntries().slice().sort(function (a, b) { return b.startDate.localeCompare(a.startDate); });
+var list = document.getElementById('leave-entries-list');
+var count = document.getElementById('leave-entries-count');
+if (!list) return;
+if (count) count.textContent = entries.length + (entries.length === 1 ? ' Entry' : ' Entries');
+if (!entries.length) {
+list.innerHTML = '<div class="p-8 text-center">' +
+'<span class="material-symbols-outlined text-[40px] text-on-surface-variant opacity-40">event_note</span>' +
+'<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">No leave recorded yet. Use the form to schedule or log leave.</p>' +
+'</div>';
+return;
+}
+list.innerHTML = entries.map(function (e) {
+var status = effectiveStatus(e);
+var isMonthOnly = e.scheduleMode === 'month' && status === 'Scheduled';
+var badge = status === 'Completed'
+? '<span class="inline-block px-2 py-1 rounded bg-error/10 text-error border border-error/40 text-[10px] font-label-md">COMPLETED</span>'
+: status === 'In Progress'
+? '<span class="inline-block px-2 py-1 rounded bg-tertiary-container text-on-tertiary-container text-[10px] font-label-md">IN PROGRESS</span>'
+: isMonthOnly
+? '<span class="inline-block px-2 py-1 rounded bg-secondary-container text-on-secondary-container text-[10px] font-label-md">MONTH ONLY</span>'
+: '<span class="inline-block px-2 py-1 rounded bg-primary-fixed text-on-primary-fixed text-[10px] font-label-md">SCHEDULED</span>';
+var range;
+if (isMonthOnly && e.scheduledMonth) {
+var parts = e.scheduledMonth.split('-');
+var monthName = MONTHS_FULL[parseInt(parts[1], 10) - 1];
+range = monthName + ' ' + parts[0];
+} else {
+range = e.startDate === e.endDate ? fmtDate(e.startDate) : fmtDate(e.startDate) + ' - ' + fmtDate(e.endDate);
+}
+var days = durationDays(e.startDate, e.endDate);
+var durLabel = isMonthOnly ? 'Dates TBD' : days + (days === 1 ? ' day' : ' days');
+var editBtn = isMonthOnly
+? '<button type="button" class="text-on-surface-variant hover:text-primary transition-colors text-sm px-2 py-1 rounded hover:bg-primary-container" onclick="editLeaveEntry(\'' + e.id + '\')">Set Dates</button>'
+: '';
+return '<div class="border border-outline-variant rounded p-4 bg-surface-bright hover:bg-surface-container-lowest transition-colors">' +
+'<div class="flex justify-between items-start mb-1">' +
+'<div class="flex items-center gap-3">' +
+'<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs">' + escapeHtml(initials(e.staffName)) + '</div>' +
+'<div><div class="font-data-mono text-data-mono text-on-surface font-semibold">' + escapeHtml(e.staffName) + '</div>' +
+'<div class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml(e.staffRole || '') + '</div></div>' +
+'</div>' + badge +
+'</div>' +
+'<div class="grid grid-cols-3 gap-2 mt-3 bg-surface p-2 rounded border border-outline-variant border-opacity-50">' +
+'<div><span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Type</span>' +
+'<span class="font-body-sm text-body-sm text-on-surface">' + escapeHtml(e.typeName) + '</span></div>' +
+'<div><span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">' + (isMonthOnly ? 'Month' : 'Dates') + '</span>' +
+'<span class="font-body-sm text-body-sm text-on-surface">' + escapeHtml(range) + '</span></div>' +
+'<div><span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Duration</span>' +
+'<span class="font-body-sm text-body-sm text-on-surface">' + durLabel + '</span></div>' +
+'</div>' +
+'<div class="flex justify-end mt-2 gap-1">' +
+editBtn +
+'<button type="button" class="text-on-surface-variant hover:text-error transition-colors text-sm px-2 py-1 rounded hover:bg-error-container" onclick="deleteLeaveEntry(\'' + e.id + '\', this)">Delete</button>' +
+'</div>' +
+'</div>';
+}).join('');
+}
+
+window.submitLeaveEntry = async function (event) {
+if (event) event.preventDefault();
+var btn = document.getElementById('leave-submit-btn');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var staffSelect = document.getElementById('staff-select');
+var typeSelect = document.getElementById('leave-type');
+var staff = STAFF.filter(function (s) { return s.id === staffSelect.value; })[0];
+var type = getLeaveTypes().filter(function (t) { return t.id === typeSelect.value; })[0];
+if (!staff || !type) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Missing information', message: 'Please select a staff member and leave type.', type: 'warning' });
+else alert('Please select a staff member and leave type.');
+return;
+}
+var isAnnual = isSchedulable(type);
+var scheduleMode = currentScheduleMode;
+var startDateVal, endDateVal, scheduledMonth = null;
+if (isAnnual && scheduleMode === 'month') {
+var monthSel = document.getElementById('sched-month');
+var yearSel = document.getElementById('sched-year');
+if (!monthSel.value || !yearSel.value) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Missing information', message: 'Please select a leave month and year.', type: 'warning' });
+else alert('Please select a leave month and year.');
+return;
+}
+scheduledMonth = yearSel.value + '-' + monthSel.value;
+var lastDay = new Date(parseInt(yearSel.value), parseInt(monthSel.value, 10), 0).getDate();
+startDateVal = scheduledMonth + '-01';
+endDateVal = scheduledMonth + '-' + ('0' + lastDay).slice(-2);
+} else {
+var startDate = document.getElementById('start-date');
+var endDate = document.getElementById('end-date');
+if (!startDate.value || !endDate.value) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Missing information', message: 'Please select a staff member, leave type, and date range.', type: 'warning' });
+else alert('Please select a staff member, leave type, and date range.');
+return;
+}
+startDateVal = startDate.value;
+endDateVal = endDate.value;
+scheduleMode = 'dates';
+}
+if (endDateVal < startDateVal) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Invalid date range', message: 'End date cannot be before start date.', type: 'warning' });
+else alert('End date cannot be be be be before start date.');
+return;
+}
+var overlap = activeEntries().filter(function (x) {
+return x.staffId === staff.id && x.startDate <= endDateVal && startDateVal <= x.endDate;
+});
+if (overlap.length) {
+var first = overlap[0];
+if (window.Dialogs) window.Dialogs.alert({ title: 'Overlapping leave', message: staff.name + ' already has ' + first.typeName + ' leave from ' + fmtDate(first.startDate) + ' to ' + fmtDate(first.endDate) + '. A staff member cannot be on leave twice at the same time.', type: 'error' });
+else alert('This staff member already has overlapping leave.');
+return;
+}
+var used = usedThisYear(staff.id, type.id);
+var allowed = perYearFor(type);
+if (used >= allowed) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Yearly limit reached', message: staff.name + ' has already taken ' + used + ' ' + type.name.toLowerCase() + ' leave(s) this year (limit ' + allowed + ' per year). Adjust the limit in Settings > Leave Entitlements if needed.', type: 'warning' });
+else alert(staff.name + ' has already taken ' + used + ' ' + type.name.toLowerCase() + ' leave(s) this year (limit ' + allowed + ' per year). Adjust the limit in Settings > Leave Entitlements if needed.');
+return;
+}
+var status = isAnnual ? 'Scheduled' : 'Logged';
+var entries = getLeaveEntries();
+entries.push({
+id: 'e' + Date.now(),
+staffId: staff.id,
+staffName: staff.name,
+staffRole: staff.role,
+typeId: type.id,
+typeName: type.name,
+startDate: startDateVal,
+endDate: endDateVal,
+status: status,
+scheduleMode: scheduleMode,
+scheduledMonth: scheduledMonth,
+reminderSent: false,
+createdAt: new Date().toISOString()
+});
+var res = await saveLeaveEntries(entries);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save this leave entry to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save this leave entry to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+renderLeaveEntries();
+clearLeaveForm();
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.clearLeaveForm = function () {
+document.getElementById('staff-select').value = '';
+var typeSelect = document.getElementById('leave-type');
+var types = getLeaveTypes();
+if (typeSelect.value && types.length) {
+typeSelect.value = types[0].id;
+}
+document.getElementById('start-date').value = '';
+document.getElementById('end-date').value = '';
+document.getElementById('reason').value = '';
+setScheduleMode('dates');
+updateLeaveTypeHint();
+};
+
+window.deleteLeaveEntry = async function (id, btn) {
+var entries = getLeaveEntries();
+var e = entries.filter(function (x) { return x.id === id; })[0];
+if (!e) return;
+if (window.Dialogs) {
+var confirmed = await window.Dialogs.confirm({ title: 'Remove leave entry', message: 'Remove "' + e.staffName + ' - ' + e.typeName + '" from the active record? It stays in the staff leave history.', confirmText: 'Remove', danger: true });
+if (!confirmed) return;
+} else {
+if (!confirm('Remove "' + e.staffName + ' - ' + e.typeName + '" from the active record? It stays in the staff leave history.')) return;
+}
+if (window.UI) window.UI.busy(btn, true);
+try {
+e.deleted = true;
+e.deletedAt = new Date().toISOString();
+var res = await saveLeaveEntries(entries);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Delete failed', message: 'Could not update the leave entry in Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not update the leave entry in Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+renderLeaveEntries();
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.editLeaveEntry = async function (id) {
+var entries = getLeaveEntries();
+var e = entries.filter(function (x) { return x.id === id; })[0];
+if (!e) return;
+var monthLabel = '';
+if (e.scheduledMonth) {
+var parts = e.scheduledMonth.split('-');
+monthLabel = MONTHS_FULL[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+}
+var startDateVal = prompt('Enter the start date for ' + e.staffName + '\'s ' + e.typeName + ' leave' + (monthLabel ? ' (' + monthLabel + ')' : '') + ':\nFormat: YYYY-MM-DD', e.startDate);
+if (!startDateVal) return;
+var endDateVal = prompt('Enter the end date for ' + e.staffName + '\'s leave:\nFormat: YYYY-MM-DD', e.endDate);
+if (!endDateVal) return;
+if (endDateVal < startDateVal) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Invalid date range', message: 'End date cannot be before start date.', type: 'warning' });
+else alert('End date cannot be before start date.');
+return;
+}
+e.startDate = startDateVal;
+e.endDate = endDateVal;
+e.scheduleMode = 'dates';
+e.scheduledMonth = null;
+var res = await saveLeaveEntries(entries);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not update the leave entry.', type: 'error' });
+else alert('Could not update the leave entry.');
+return;
+}
+renderLeaveEntries();
+};
+
+function renderLeaveTypesList(types) {
+var list = document.getElementById('leave-types-list');
+if (!list) return;
+if (!types.length) {
+list.innerHTML = '<li class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">No leave types yet. Add one above.</li>';
+return;
+}
+list.innerHTML = types.map(function (t) {
+return '<li class="flex items-center justify-between gap-2 border border-outline-variant rounded px-3 py-2" data-id="' + escapeHtml(t.id) + '">' +
+'<span class="font-body-md text-body-md text-on-surface flex-1 truncate">' + escapeHtml(t.name) + '</span>' +
+'<button type="button" class="text-on-surface-variant hover:text-primary transition-colors" title="Rename" onclick="editLeaveType(\'' + t.id + '\')">' +
+'<span class="material-symbols-outlined text-[18px]">edit</span>' +
+'</button>' +
+'<button type="button" class="text-on-surface-variant hover:text-error transition-colors" title="Delete" onclick="deleteLeaveType(\'' + t.id + '\', this)">' +
+'<span class="material-symbols-outlined text-[18px]">delete</span>' +
+'</button>' +
+'</li>';
+}).join('');
+}
+
+window.openLeaveTypesModal = function () {
+renderLeaveTypesList(getLeaveTypes());
+var modal = document.getElementById('leave-types-modal');
+modal.classList.remove('hidden');
+modal.classList.add('flex');
+var input = document.getElementById('new-leave-type-name');
+if (input) setTimeout(function () { input.focus(); }, 50);
+};
+
+window.closeLeaveTypesModal = function () {
+var modal = document.getElementById('leave-types-modal');
+modal.classList.add('hidden');
+modal.classList.remove('flex');
+};
+
+window.addLeaveType = async function (event) {
+if (event) event.preventDefault();
+var btn = document.querySelector('#leave-types-modal form button[type="submit"]');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var input = document.getElementById('new-leave-type-name');
+var name = input.value.trim();
+if (!name) return;
+var types = getLeaveTypes();
+types.push({ id: slugify(name), name: name, perYear: 1 });
+var res = await saveLeaveTypes(types);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save the leave type to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save the leave type to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+input.value = '';
+renderLeaveTypesList(types);
+syncLeaveTypeSelect(types);
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.editLeaveType = function (id) {
+var types = getLeaveTypes();
+var t = types.filter(function (x) { return x.id === id; })[0];
+if (!t) return;
+var li = document.querySelector('#leave-types-list li[data-id="' + id + '"]');
+if (!li) return;
+li.innerHTML = '<input class="flex-1 h-[36px] min-w-0 px-3 py-1.5 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm" value="' + escapeHtml(t.name) + '" />' +
+'<button type="button" class="text-primary hover:text-primary-container transition-colors" title="Save" onclick="saveLeaveTypeEdit(\'' + id + '\', this)">' +
+'<span class="material-symbols-outlined text-[18px]">save</span>' +
+'</button>' +
+'<button type="button" class="text-on-surface-variant hover:text-on-surface transition-colors" title="Cancel" onclick="renderLeaveTypesList(getLeaveTypes())">' +
+'<span class="material-symbols-outlined text-[18px]">close</span>' +
+'</button>';
+var input = li.querySelector('input');
+if (input) { input.focus(); input.select(); }
+};
+
+window.saveLeaveTypeEdit = async function (id, btn) {
+var input = document.querySelector('#leave-types-list li[data-id="' + id + '"] input');
+if (!input) return;
+var name = input.value.trim();
+if (!name) return;
+if (window.UI) window.UI.busy(btn, true);
+try {
+var types = getLeaveTypes();
+types.forEach(function (t) {
+if (t.id === id) t.name = name;
+});
+var res = await saveLeaveTypes(types);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save the leave type to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save the leave type to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+renderLeaveTypesList(types);
+syncLeaveTypeSelect(types);
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.deleteLeaveType = async function (id, btn) {
+var types = getLeaveTypes();
+if (types.length === 1) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Cannot delete', message: 'At least one leave type is required.', type: 'warning' });
+else alert('At least one leave type is required.');
+return;
+}
+var t = types.filter(function (x) { return x.id === id; })[0];
+if (!t) return;
+if (window.Dialogs) {
+var confirmed = await window.Dialogs.confirm({ title: 'Delete leave type', message: 'Delete "' + t.name + '"?', confirmText: 'Delete', danger: true });
+if (!confirmed) return;
+} else {
+if (!confirm('Delete "' + t.name + '"?')) return;
+}
+if (window.UI) window.UI.busy(btn, true);
+try {
+var next = types.filter(function (x) { return x.id !== id; });
+var res = await saveLeaveTypes(next);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Delete failed', message: 'Could not delete the leave type from Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not delete the leave type from Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+renderLeaveTypesList(next);
+syncLeaveTypeSelect(next);
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+populateMonthYear();
+window.DB.onReady(function () {
+var refresh = function () {
+STAFF = getStaff();
+populateStaffSelect();
+syncLeaveTypeSelect(getLeaveTypes());
+renderLeaveEntries();
+};
+refresh();
+window.DB.subscribe(refresh);
+});
+});
+})();
+</script>
+</body></html>

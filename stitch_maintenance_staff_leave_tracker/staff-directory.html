@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background text-on-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Staff Directory - %APP%">Staff Directory - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/ui.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Active Tab: Staff Directory -->
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)] h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Canvas -->
+<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<div class="max-w-[1200px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Staff Directory</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage and review leave eligibility for all maintenance personnel.</p>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap gap-2 w-full sm:w-auto">
+<select id="team-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
+<option value="">All Teams</option>
+</select>
+<select id="role-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
+<option value="">All Roles</option>
+<option>Plumber</option>
+<option>HVAC</option>
+<option>Electrician</option>
+<option>General Maintenance</option>
+</select>
+<select id="status-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
+<option value="">All Statuses</option>
+<option value="due">Due for Leave</option>
+<option value="returned">Recently Returned</option>
+<option value="eligible">Eligible</option>
+</select>
+</div>
+<div class="flex gap-3 w-full sm:w-auto">
+<button onclick="openTeamsModal()" class="h-10 px-4 bg-surface-container-lowest text-on-surface-variant border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">groups</span>
+Manage Teams
+</button>
+<button onclick="window.location.href='add-staff.html'" class="h-10 px-4 bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">person_add</span>
+Add New Staff
+</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="staff-table">
+<thead>
+<tr class="bg-slate-100 border-b border-outline-variant">
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant sticky left-0 bg-slate-100 z-10">Name</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Role</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Team</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Employee ID</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Leave Balance</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant">Eligibility Status</th>
+<th class="py-3 px-4 font-label-md text-label-md text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md" id="staff-tbody">
+<tr data-skeleton><td colspan="7" class="py-4 px-4"><div class="skel skel-row w-2/3"></div></td></tr>
+<tr data-skeleton><td colspan="7" class="py-4 px-4"><div class="skel skel-row w-3/4"></div></td></tr>
+<tr data-skeleton><td colspan="7" class="py-4 px-4"><div class="skel skel-row w-1/2"></div></td></tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="bg-surface-container-lowest border-t border-outline-variant px-4 py-3 flex items-center justify-between sm:px-6">
+<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+<div>
+<p class="text-sm text-on-surface-variant font-body-sm">
+                                    Showing <span class="font-medium" id="paging-from">0</span> to <span class="font-medium" id="paging-to">0</span> of <span class="font-medium" id="paging-total">0</span> results
+                                </p>
+</div>
+<div>
+<nav aria-label="Pagination" class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+<a class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-outline-variant bg-white text-sm font-medium text-on-surface-variant hover:bg-slate-50" href="#">
+<span class="sr-only">Previous</span>
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</a>
+<a aria-current="page" class="z-10 bg-primary-container text-white relative inline-flex items-center px-4 py-2 border border-primary-container text-sm font-medium" href="#">1</a>
+<a class="bg-white border-outline-variant text-on-surface-variant hover:bg-slate-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">2</a>
+<a class="bg-white border-outline-variant text-on-surface-variant hover:bg-slate-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">3</a>
+<a class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-outline-variant bg-white text-sm font-medium text-on-surface-variant hover:bg-slate-50" href="#">
+<span class="sr-only">Next</span>
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</a>
+</nav>
+</div>
+</div>
+<!-- Manage Teams Modal -->
+<div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4" id="teams-modal">
+<div class="bg-surface-container-lowest w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Manage Teams</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors" type="button" onclick="closeTeamsModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex-grow overflow-y-auto">
+<form class="flex gap-2 mb-4" onsubmit="addTeam(event)">
+<input id="new-team-name" class="flex-1 h-[40px] min-w-0 px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" placeholder="New team name..." type="text"/>
+<button class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner whitespace-nowrap" type="submit">Add</button>
+</form>
+<ul class="space-y-2" id="teams-list"></ul>
+</div>
+</div>
+</div>
+<!-- Staff Leave History Modal -->
+<div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4" id="history-modal">
+<div class="bg-surface-container-lowest w-full max-w-lg rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface" id="history-modal-title">Leave History</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors" type="button" onclick="closeHistoryModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex-grow overflow-y-auto" id="history-list"></div>
+</div>
+</div>
+</main>
+<script>
+(function () {
+var TEAMS_KEY = 'bansang_teams';
+
+function getTeams() {
+return window.DB ? window.DB.getList('teams') : [];
+}
+
+function saveTeams(teams) {
+return window.DB.saveList('teams', teams);
+}
+
+function escapeHtml(str) {
+var div = document.createElement('div');
+div.textContent = str;
+return div.innerHTML;
+}
+
+function slugify(name) {
+var base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'team';
+var teams = getTeams();
+var id = base;
+var n = 2;
+while (teams.some(function (t) { return t.id === id; })) {
+id = base + '-' + n++;
+}
+return id;
+}
+
+function populateTeamFilter() {
+var select = document.getElementById('team-filter');
+if (!select) return;
+var teams = getTeams();
+var current = select.value;
+select.innerHTML = '<option value="">All Teams</option>' + teams.map(function (t) {
+return '<option value="' + escapeHtml(t.id) + '">' + escapeHtml(t.name) + '</option>';
+}).join('');
+if (current) select.value = current;
+}
+
+function renderTeamsList(teams) {
+var list = document.getElementById('teams-list');
+if (!list) return;
+list.innerHTML = teams.map(function (t) {
+return '<li class="flex items-center justify-between gap-2 border border-outline-variant rounded px-3 py-2" data-id="' + escapeHtml(t.id) + '">' +
+'<span class="font-body-md text-body-md text-on-surface flex-1 truncate">' + escapeHtml(t.name) + '</span>' +
+'<button type="button" class="text-on-surface-variant hover:text-primary transition-colors" title="Rename" onclick="editTeam(\'' + t.id + '\')">' +
+'<span class="material-symbols-outlined text-[18px]">edit</span>' +
+'</button>' +
+'<button type="button" class="text-on-surface-variant hover:text-error transition-colors" title="Delete" onclick="deleteTeam(\'' + t.id + '\', this)">' +
+'<span class="material-symbols-outlined text-[18px]">delete</span>' +
+'</button>' +
+'</li>';
+}).join('');
+}
+
+window.openTeamsModal = function () {
+renderTeamsList(getTeams());
+var modal = document.getElementById('teams-modal');
+modal.classList.remove('hidden');
+modal.classList.add('flex');
+var input = document.getElementById('new-team-name');
+if (input) setTimeout(function () { input.focus(); }, 50);
+};
+
+window.closeTeamsModal = function () {
+var modal = document.getElementById('teams-modal');
+modal.classList.add('hidden');
+modal.classList.remove('flex');
+};
+
+window.addTeam = async function (event) {
+if (event) event.preventDefault();
+var btn = document.querySelector('#teams-modal form button[type="submit"]');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var input = document.getElementById('new-team-name');
+var name = input.value.trim();
+if (!name) return;
+var teams = getTeams();
+teams.push({ id: slugify(name), name: name });
+var res = await saveTeams(teams);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save the team to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save the team to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+input.value = '';
+renderTeamsList(teams);
+populateTeamFilter();
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.editTeam = function (id) {
+var teams = getTeams();
+var t = teams.filter(function (x) { return x.id === id; })[0];
+if (!t) return;
+var li = document.querySelector('#teams-list li[data-id="' + id + '"]');
+if (!li) return;
+li.innerHTML = '<input class="flex-1 h-[36px] min-w-0 px-3 py-1.5 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm" value="' + escapeHtml(t.name) + '" />' +
+'<button type="button" class="text-primary hover:text-primary-container transition-colors" title="Save" onclick="saveTeamEdit(\'' + id + '\', this)">' +
+'<span class="material-symbols-outlined text-[18px]">save</span>' +
+'</button>' +
+'<button type="button" class="text-on-surface-variant hover:text-on-surface transition-colors" title="Cancel" onclick="renderTeamsList(getTeams())">' +
+'<span class="material-symbols-outlined text-[18px]">close</span>' +
+'</button>';
+var input = li.querySelector('input');
+if (input) { input.focus(); input.select(); }
+};
+
+window.saveTeamEdit = async function (id, btn) {
+var input = document.querySelector('#teams-list li[data-id="' + id + '"] input');
+if (!input) return;
+var name = input.value.trim();
+if (!name) return;
+if (window.UI) window.UI.busy(btn, true);
+try {
+var teams = getTeams();
+teams.forEach(function (t) {
+if (t.id === id) t.name = name;
+});
+var res = await saveTeams(teams);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save the team to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save the team to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+renderTeamsList(teams);
+populateTeamFilter();
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.deleteTeam = async function (id, btn) {
+var teams = getTeams();
+if (teams.length === 1) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Cannot delete', message: 'At least one team is required.', type: 'warning' });
+else alert('At least one team is required.');
+return;
+}
+var t = teams.filter(function (x) { return x.id === id; })[0];
+if (!t) return;
+if (window.Dialogs) {
+var confirmed = await window.Dialogs.confirm({ title: 'Delete team', message: 'Delete "' + t.name + '"?', confirmText: 'Delete', danger: true });
+if (!confirmed) return;
+} else {
+if (!confirm('Delete "' + t.name + '"?')) return;
+}
+if (window.UI) window.UI.busy(btn, true);
+try {
+var res = await saveTeams(teams.filter(function (x) { return x.id !== id; }));
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Delete failed', message: 'Could not delete the team from Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not delete the team from Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+renderTeamsList(getTeams());
+populateTeamFilter();
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.deleteStaff = async function (id, btn) {
+var staff = window.DB ? window.DB.getList('staff') : [];
+var s = staff.filter(function (x) { return x.id === id; })[0];
+if (!s) return;
+if (window.Dialogs) {
+var confirmed = await window.Dialogs.confirm({ title: 'Delete staff member', message: 'Delete "' + s.name + '"? This will also remove their leave records.', confirmText: 'Delete', danger: true });
+if (!confirmed) return;
+} else {
+if (!confirm('Delete "' + s.name + '"? This will also remove their leave records.')) return;
+}
+if (window.UI) window.UI.busy(btn, true);
+try {
+var res = await window.DB.saveList('staff', staff.filter(function (x) { return x.id !== id; }));
+var res2 = await window.DB.saveList('leaveEntries', (window.DB.getList('leaveEntries') || []).filter(function (e) { return e.staffId !== id; }));
+if (res !== true || res2 !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Delete failed', message: 'Could not delete the staff member from Firestore: ' + (typeof (res !== true ? res : res2) === 'string' ? (res !== true ? res : res2) : 'Unknown error'), type: 'error' });
+else alert('Could not delete the staff member from Firestore: ' + (typeof (res !== true ? res : res2) === 'string' ? (res !== true ? res : res2) : 'Unknown error'));
+return;
+}
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.renderStaffTable = function () {
+var tbody = document.getElementById('staff-tbody');
+var staff = window.DB ? window.DB.getList('staff') : [];
+if (!tbody) return;
+if (!staff.length) {
+tbody.innerHTML = '<tr><td colspan="7" class="py-8 px-4 text-center text-on-surface-variant">No staff members yet.</td></tr>';
+var fromEl = document.getElementById('paging-from');
+var toEl = document.getElementById('paging-to');
+var totalEl = document.getElementById('paging-total');
+if (fromEl) fromEl.textContent = '0';
+if (toEl) toEl.textContent = '0';
+if (totalEl) totalEl.textContent = '0';
+return;
+}
+var statusBadge = {
+due: '<span class="inline-flex items-center px-2 py-1 rounded bg-teal-50 text-teal-800 text-[11px] font-semibold tracking-wide border border-teal-200">DUE FOR LEAVE</span>',
+returned: '<span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 text-slate-700 text-[11px] font-semibold tracking-wide border border-slate-200">RECENTLY RETURNED</span>'
+};
+tbody.innerHTML = staff.map(function (s) {
+var badge = statusBadge[s.status] || '<span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 text-slate-700 text-[11px] font-semibold tracking-wide border border-slate-200">ELIGIBLE</span>';
+var teamName = s.teamLabel || s.team || 'General';
+return '<tr class="border-b border-outline-variant hover:bg-slate-50 transition-colors group" data-role="' + escapeHtml(s.role || '') + '" data-team="' + escapeHtml(teamName) + '" data-status="' + escapeHtml(s.status || 'eligible') + '">' +
+'<td class="py-3 px-4 sticky left-0 bg-surface-container-lowest group-hover:bg-slate-50 z-10">' +
+'<div class="flex items-center gap-3">' +
+'<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs">' + escapeHtml(s.initials || (s.name ? s.name.split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2) : '--')) + '</div>' +
+'<span class="font-medium text-on-surface">' + escapeHtml(s.name) + '</span>' +
+'</div></td>' +
+'<td class="py-3 px-4 text-on-surface-variant">' + escapeHtml(s.role || '') + '</td>' +
+'<td class="py-3 px-4"><span class="inline-flex items-center px-2 py-1 rounded bg-surface-container text-on-surface-variant text-[11px] font-semibold tracking-wide">' + escapeHtml(teamName) + '</span></td>' +
+'<td class="py-3 px-4 font-data-mono text-data-mono text-on-surface-variant">' + escapeHtml(s.empId || '') + '</td>' +
+'<td class="py-3 px-4"><span class="font-medium text-on-surface">' + (s.leaveBalance != null ? s.leaveBalance : 0) + ' Days</span></td>' +
+'<td class="py-3 px-4">' + badge + '</td>' +
+'<td class="py-3 px-4 text-right"><div class="flex items-center justify-end gap-2">' +
+'<button onclick="window.location.href=\'add-staff.html?edit=' + encodeURIComponent(s.id) + '\'" class="text-primary border border-primary hover:bg-primary hover:text-white text-sm px-2 py-1 rounded transition-colors">Edit</button>' +
+'<button onclick="deleteStaff(\'' + s.id + '\', this)" class="text-error border border-error hover:bg-error hover:text-white text-sm px-2 py-1 rounded transition-colors">Delete</button>' +
+'<button onclick="viewStaffHistory(\'' + s.id + '\')" class="text-on-surface-variant hover:text-primary text-sm px-2 py-1 rounded hover:bg-surface-container transition-colors">History</button>' +
+'<button onclick="window.location.href=\'request-manager.html\'" class="text-primary border border-primary hover:bg-primary hover:text-white text-sm px-3 py-1 rounded transition-colors font-medium">Initiate</button>' +
+'</div></td></tr>';
+}).join('');
+var fromEl = document.getElementById('paging-from');
+var toEl = document.getElementById('paging-to');
+var totalEl = document.getElementById('paging-total');
+if (fromEl) fromEl.textContent = '1';
+if (toEl) toEl.textContent = String(staff.length);
+if (totalEl) totalEl.textContent = String(staff.length);
+};
+
+function fmtDate(str) {
+var p = String(str || '').split('-');
+if (p.length !== 3) return str || '';
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+return months[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+}
+
+function todayStr() {
+var d = new Date();
+var pad = function (n) { return ('0' + n).slice(-2); };
+return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
+function leaveEffectiveStatus(e) {
+    var t = todayStr();
+    if (t < e.startDate) return 'Scheduled';
+    if (t > e.endDate) return 'Completed';
+    if (e.status === 'Logged') return 'Completed';
+    return 'In Progress';
+}
+
+function leaveDurationDays(start, end) {
+var ms = new Date(end) - new Date(start);
+return Math.max(1, Math.round(ms / 86400000) + 1);
+}
+
+window.viewStaffHistory = function (id) {
+var modal = document.getElementById('history-modal');
+var list = document.getElementById('history-list');
+var title = document.getElementById('history-modal-title');
+if (!modal || !list || !title) return;
+
+var staff = window.DB ? window.DB.getList('staff') : [];
+var s = staff.filter(function (x) { return x.id === id; })[0] || null;
+title.textContent = 'Leave History - ' + (s ? s.name : 'Staff');
+
+list.innerHTML = '<div class="flex flex-col items-center justify-center py-10 gap-3"><div class="w-8 h-8 border-2 border-outline-variant border-t-primary rounded-full animate-spin"></div><p class="font-body-sm text-body-sm text-on-surface-variant">Loading history...</p></div>';
+modal.classList.remove('hidden');
+modal.classList.add('flex');
+
+function historyBackdropClick(ev) { if (ev.target === modal) closeHistoryModal(); }
+function historyEscapeKey(ev) { if (ev.key === 'Escape') closeHistoryModal(); }
+modal.addEventListener('mousedown', historyBackdropClick);
+document.addEventListener('keydown', historyEscapeKey);
+window._historyCleanup = function () {
+  modal.removeEventListener('mousedown', historyBackdropClick);
+  document.removeEventListener('keydown', historyEscapeKey);
+};
+
+setTimeout(function () {
+var entries = (window.DB ? window.DB.getList('leaveEntries') : []).filter(function (e) { return e.staffId === id; });
+entries.sort(function (a, b) { return a.startDate < b.startDate ? 1 : -1; });
+if (!entries.length) {
+list.innerHTML = '<div class="text-center py-10 text-on-surface-variant"><span class="material-symbols-outlined text-[40px] opacity-40">event_busy</span><p class="font-body-sm text-body-sm mt-2">No leave history for this staff member.</p></div>';
+} else {
+list.innerHTML = '<ul class="space-y-2">' + entries.map(function (e) {
+var st = leaveEffectiveStatus(e);
+var dur = leaveDurationDays(e.startDate, e.endDate);
+var badge = e.deleted
+? 'bg-surface-container-high text-on-surface-variant'
+: st === 'Completed'
+? 'bg-error/10 text-error border border-error/40'
+: st === 'In Progress'
+? 'bg-primary-fixed text-on-primary-fixed'
+: 'bg-primary-container/60 text-on-primary-container';
+var badgeLabel = e.deleted ? 'DELETED' : st === 'Completed' ? 'COMPLETED' : st === 'In Progress' ? 'IN PROGRESS' : 'SCHEDULED';
+return '<li class="flex items-center justify-between gap-3 border border-outline-variant rounded-lg px-4 py-3' + (e.deleted ? ' opacity-60' : '') + '">' +
+'<div class="min-w-0">' +
+'<p class="font-body-sm font-medium text-on-surface">' + escapeHtml(e.typeName || 'Leave') + ' <span class="text-on-surface-variant font-normal">· ' + dur + (dur > 1 ? ' days' : ' day') + '</span></p>' +
+'<p class="font-body-sm text-body-sm text-on-surface-variant">' + fmtDate(e.startDate) + (e.startDate !== e.endDate ? ' – ' + fmtDate(e.endDate) : '') + '</p>' +
+'</div>' +
+'<span class="inline-flex items-center px-2 py-1 rounded text-[11px] font-semibold tracking-wide whitespace-nowrap ' + badge + '">' + badgeLabel + '</span>' +
+'</li>';
+}).join('') + '</ul>';
+}
+}, 50);
+};
+
+window.closeHistoryModal = function () {
+var modal = document.getElementById('history-modal');
+if (modal) {
+modal.classList.add('hidden');
+modal.classList.remove('flex');
+}
+if (window._historyCleanup) { window._historyCleanup(); window._historyCleanup = null; }
+};
+
+window.filterTable = function () {
+var team = document.getElementById('team-filter').value;
+var role = document.getElementById('role-filter').value;
+var status = document.getElementById('status-filter').value;
+document.querySelectorAll('#staff-table tbody tr').forEach(function (tr) {
+var show = true;
+if (team && tr.getAttribute('data-team') !== team) show = false;
+if (show && role && (tr.getAttribute('data-role') || '').toLowerCase().indexOf(role.toLowerCase()) === -1) show = false;
+if (show && status && tr.getAttribute('data-status') !== status) show = false;
+tr.style.display = show ? '' : 'none';
+});
+};
+
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+var refresh = function () {
+populateTeamFilter();
+renderStaffTable();
+};
+refresh();
+window.DB.subscribe(refresh);
+});
+});
+})();
+</script>
+</body></html>

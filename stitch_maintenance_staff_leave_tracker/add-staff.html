@@ -1,0 +1,404 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title data-app-title="%APP% - New Staff">BANSANG HOSPITAL - New Staff</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/ui.js"></script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- SideNavBar Component -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary dark:border-primary-fixed-dim bg-surface-container-low transition-colors duration-200 opacity-80" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar Component -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, requests..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Page Content: New Staff Form -->
+<main class="flex-1 p-container-padding pb-24">
+<!-- Page Header -->
+<div class="mb-section-gap flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="font-label-md text-label-md uppercase tracking-wider">Staff Directory</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-label-md text-label-md text-primary">New Staff</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg md:text-headline-lg text-on-surface">Add New Staff Member</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Enter the details below to register a new maintenance staff member into the system.</p>
+</div>
+<div class="flex gap-3 w-full sm:w-auto">
+<button onclick="window.location.href='staff-directory.html'" class="flex-1 sm:flex-none px-4 py-2 text-on-surface-variant font-label-md text-label-md hover:bg-surface-container rounded-lg transition-colors border border-transparent">
+                        Cancel
+                    </button>
+<button onclick="saveNewStaff(this)" class="flex-1 sm:flex-none px-4 py-2 bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:bg-primary transition-colors flex items-center justify-center gap-2 btn-active">
+<span class="material-symbols-outlined text-sm">save</span>
+                        Save Staff Member
+                    </button>
+</div>
+</div>
+<!-- Main Form Layout (Bento-style Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-container-padding">
+<!-- Left Column: Primary Details -->
+<div class="lg:col-span-2 flex flex-col gap-container-padding">
+<!-- Basic Information Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm relative overflow-hidden">
+<!-- Decorative Header -->
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-tint"></div>
+<div class="flex items-center gap-3 mb-6 border-b border-outline-variant pb-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Basic Information</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Core identity details.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Full Name -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="fullName">Full Name <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">badge</span>
+<input class="w-full pl-10 pr-4 py-2 h-10 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:bg-surface-container-lowest transition-colors" id="fullName" placeholder="e.g. John Doe" type="text">
+</div>
+</div>
+<!-- Employee ID -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="employeeId">Employee ID <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">tag</span>
+<input class="w-full pl-10 pr-4 py-2 h-10 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:bg-surface-container-lowest transition-colors" id="employeeId" placeholder="e.g. MNT-1042" type="text">
+</div>
+</div>
+<!-- Contact Number -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="contactNumber">Contact Number</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">call</span>
+<input class="w-full pl-10 pr-4 py-2 h-10 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:border-primary focus:bg-surface-container-lowest transition-colors" id="contactNumber" placeholder="+1 (555) 000-0000" type="tel">
+</div>
+</div>
+</div>
+</div>
+<!-- Role & Placement Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-secondary-container"></div>
+<div class="flex items-center gap-3 mb-6 border-b border-outline-variant pb-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">work</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Role &amp; Team</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Job function and team assignment.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Role / Team -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="role">Role/Team <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full pl-4 pr-10 py-2 h-10 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface appearance-none focus:border-primary focus:bg-surface-container-lowest transition-colors" id="role">
+<option disabled="" selected="" value="">Select a team...</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Employment Type -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-3">Employment Type</label>
+<div class="flex flex-wrap gap-4">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="w-4 h-4 text-primary bg-surface border-outline-variant focus:ring-primary focus:ring-offset-surface-container-lowest" name="empType" type="radio" value="fulltime">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Full-Time</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="w-4 h-4 text-primary bg-surface border-outline-variant focus:ring-primary focus:ring-offset-surface-container-lowest" name="empType" type="radio" value="parttime">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Part-Time</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="w-4 h-4 text-primary bg-surface border-outline-variant focus:ring-primary focus:ring-offset-surface-container-lowest" name="empType" type="radio" value="contract">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Contractor</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Secondary Details & Summary -->
+<div class="flex flex-col gap-container-padding">
+<!-- Administrative Details Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-tertiary-fixed-dim"></div>
+<div class="flex items-center gap-3 mb-6 border-b border-outline-variant pb-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Administrative</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">System and joining details.</p>
+</div>
+</div>
+<div class="space-y-6">
+<!-- Joining Date -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="joiningDate">Joining Date</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">calendar_today</span>
+<input class="w-full pl-10 pr-4 py-2 h-10 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:border-primary focus:bg-surface-container-lowest transition-colors" id="joiningDate" type="date">
+</div>
+</div>
+<!-- System Access -->
+
+<!-- Email Input (Hidden initially, would show via JS if portal access checked) -->
+
+</div>
+</div>
+<!-- Informational Box -->
+<div class="bg-surface-container p-5 rounded-xl border border-surface-container-high flex gap-3 items-start">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-1">Roster Allocation</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Once added, the staff member will be available in the Master Roster. You will need to manually assign their initial shift pattern in the Leave Roster view.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Mobile Action Bar (shows only on small screens at bottom) -->
+<div class="sm:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant p-4 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<button onclick="saveNewStaff(this)" class="w-full py-3 bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:bg-primary transition-colors flex items-center justify-center gap-2 btn-active">
+<span class="material-symbols-outlined text-sm">save</span>
+                    Save Staff Member
+                </button>
+</div>
+</main>
+</div>
+<!-- Interaction script -->
+<script>
+        if (window.Auth) window.Auth.guard();
+        var editingId = null;
+
+        function populateRoleSelect() {
+            const roleSel = document.getElementById('role');
+            if (!roleSel || !window.DB) return;
+            const teams = window.DB.getList('teams') || [];
+            const current = roleSel.value;
+            roleSel.innerHTML = '<option disabled selected value="">Select a team...</option>' + teams.map((t) => '<option value="' + String(t.id).replace(/"/g, '&quot;') + '">' + String(t.name || t.id).replace(/</g, '&lt;') + '</option>').join('');
+            if (current) roleSel.value = current;
+        }
+
+        function fillEditMode() {
+            const params = new URLSearchParams(window.location.search);
+            editingId = params.get('edit');
+            if (!editingId) return;
+            if (!window.DB) return;
+            const staff = window.DB.getList('staff').filter((s) => s.id === editingId)[0];
+            if (!staff) {
+                alert('Staff member not found.');
+                window.location.href = 'staff-directory.html';
+                return;
+            }
+            document.getElementById('fullName').value = staff.name || '';
+            document.getElementById('employeeId').value = staff.empId || '';
+            document.getElementById('contactNumber').value = staff.phone || '';
+            document.getElementById('role').value = staff.team || '';
+            document.querySelectorAll('input[name="empType"]').forEach((r) => { r.checked = r.value === (staff.empType || 'fulltime'); });
+            document.getElementById('joiningDate').value = staff.joiningDate || '';
+
+            document.title = document.title.replace('New Staff', 'Edit Staff');
+            const heading = document.querySelector('h1');
+            if (heading) heading.textContent = 'Edit Staff Member';
+            const desc = document.querySelector('main p');
+            if (desc && desc.textContent.indexOf('Enter the details') !== -1) desc.textContent = 'Update the details for this maintenance staff member.';
+            const crumb = document.querySelector('.font-label-md.text-primary');
+            if (crumb && crumb.textContent.indexOf('New Staff') !== -1) crumb.textContent = 'Edit Staff';
+            document.querySelectorAll('button[onclick="saveNewStaff(this)"]').forEach((btn) => {
+                btn.childNodes.forEach((n) => { if (n.nodeType === 3) n.nodeValue = '  Update Staff Member'; });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.DB) {
+                window.DB.onReady(() => {
+                    populateRoleSelect();
+                    fillEditMode();
+                    window.DB.subscribe(populateRoleSelect);
+                });
+            }
+        });
+
+        window.saveNewStaff = async function (btn) {
+            const buttons = document.querySelectorAll('button[onclick="saveNewStaff(this)"]');
+            if (window.UI) window.UI.busyGroup('button[onclick="saveNewStaff(this)"]', true);
+            try {
+                if (!window.DB) {
+                    alert('Data layer not ready yet. Please try again.');
+                    return;
+                }
+                const fullName = document.getElementById('fullName').value.trim();
+                if (!fullName) {
+                    alert('Full name is required.');
+                    return;
+                }
+                const roleSel = document.getElementById('role');
+                const team = roleSel.value;
+                if (!team) {
+                    alert('Please select a team. If the list is empty, add teams first via Staff Directory > Manage Teams.');
+                    return;
+                }
+                const teamLabel = roleSel.selectedOptions && roleSel.selectedOptions[0] ? roleSel.selectedOptions[0].textContent : team;
+                const empType = (document.querySelector('input[name="empType"]:checked') || {}).value || 'fulltime';
+                const initials = fullName.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
+                const staffList = window.DB.getList('staff');
+                const base = {
+                    name: fullName,
+                    role: teamLabel,
+                    team: team,
+                    teamLabel: teamLabel,
+                    initials: initials,
+                    empId: document.getElementById('employeeId').value.trim(),
+                    phone: document.getElementById('contactNumber').value.trim(),
+                    empType: empType,
+                    joiningDate: document.getElementById('joiningDate').value
+                };
+
+                if (editingId) {
+                    const idx = staffList.findIndex((s) => s.id === editingId);
+                    if (idx === -1) {
+                        alert('Staff member not found.');
+                        return;
+                    }
+                    // Check duplicates excluding self
+                    var nameTeamDup = staffList.some(function (s) {
+                        return s.id !== editingId && s.name.toLowerCase() === fullName.toLowerCase() && s.team === team;
+                    });
+                    if (nameTeamDup) {
+                        alert('A staff member with the name "' + fullName + '" already exists in the "' + teamLabel + '" team.');
+                        return;
+                    }
+                    var empIdVal = base.empId;
+                    if (empIdVal) {
+                        var empIdDup = staffList.some(function (s) {
+                            return s.id !== editingId && s.empId && s.empId.toLowerCase() === empIdVal.toLowerCase();
+                        });
+                        if (empIdDup) {
+                            alert('Employee ID "' + empIdVal + '" is already assigned to another staff member.');
+                            return;
+                        }
+                    }
+                    staffList[idx] = Object.assign({}, staffList[idx], base, { updatedAt: new Date().toISOString() });
+                } else {
+                    // Check for duplicate name+team
+                    var nameTeamDup = staffList.some(function (s) {
+                        return s.name.toLowerCase() === fullName.toLowerCase() && s.team === team;
+                    });
+                    if (nameTeamDup) {
+                        alert('A staff member with the name "' + fullName + '" already exists in the "' + teamLabel + '" team.');
+                        return;
+                    }
+                    // Check for duplicate employee ID
+                    var empIdVal = base.empId;
+                    if (empIdVal) {
+                        var empIdDup = staffList.some(function (s) {
+                            return s.empId && s.empId.toLowerCase() === empIdVal.toLowerCase();
+                        });
+                        if (empIdDup) {
+                            alert('Employee ID "' + empIdVal + '" is already assigned to another staff member.');
+                            return;
+                        }
+                    }
+                    const slugBase = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'staff';
+                    let id = slugBase;
+                    let n = 2;
+                    while (staffList.some((s) => s.id === id)) id = slugBase + '-' + n++;
+                    staffList.push(Object.assign({}, base, {
+                        id: id,
+                        leaveBalance: 24,
+                        status: 'eligible',
+                        statusLabel: 'Eligible',
+                        minReq: 1,
+                        createdAt: new Date().toISOString()
+                    }));
+                }
+                const res = await window.DB.saveList('staff', staffList);
+                if (res !== true) {
+                    const detail = typeof res === 'string' ? res : 'Unknown error';
+                    alert('Could not save this staff member to Firestore: ' + detail + '\n\nMake sure you are signed in and that the Firestore security rules allow writes. If the rules have not been deployed yet, run:\n\nfirebase deploy --only firestore:rules');
+                    return;
+                }
+                window.location.href = 'staff-directory.html';
+            } finally {
+                if (window.UI) window.UI.busyGroup('button[onclick="saveNewStaff(this)"]', false);
+            }
+        };
+    </script>
+
+
+</body></html>

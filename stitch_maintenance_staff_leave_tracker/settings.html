@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title data-app-title="Settings - %APP%">Settings - BANSANG HOSPITAL</title>
+<link href="/fonts/fonts.css" rel="stylesheet"/><link href="/fonts/inter-v-7.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/><link href="/fonts/material-symbols-outlined-1.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link href="/src/style.css" rel="stylesheet"/>
+<script type="module" src="/src/store.js"></script>
+<script type="module" src="/src/auth.js"></script>
+<script type="module" src="/src/ui.js"></script>
+<script type="module" src="/src/dialogs.js"></script>
+<script type="module" src="/src/nav.js"></script>
+</head>
+<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
+<a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed truncate" data-app-name>BANSANG HOSPITAL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container truncate" data-app-slogan>Maintenance Unit</span>
+</div>
+</a>
+<div class="flex-1 overflow-y-auto px-unit flex flex-col gap-unit">
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="dashboard.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="staff-directory.html">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-body-md text-body-md">Staff Directory</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="leave-roster.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Leave Roster</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="request-manager.html">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Leave Manager</span>
+</a>
+<a class="flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-primary hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors duration-200" href="reports.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-gutter mt-auto pt-section-gap"><button onclick="signOut()" class="w-full flex items-center gap-3 px-gutter py-3 rounded-r-full text-on-surface-variant dark:text-on-tertiary-container hover:text-error hover:bg-error-container transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</button></div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
+<!-- Search Bar -->
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a href="notifications.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</a>
+<a href="settings.html" class="text-primary dark:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+                    + Schedule Leave
+                </button>
+<a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant inline-block shrink-0" data-user-avatar></span>
+<div class="hidden lg:block">
+<p class="font-body-sm text-body-sm text-on-surface font-medium" data-user-name>HOD - Maintenance Unit</p>
+<p class="font-label-md text-[10px] text-on-surface-variant">HOD - Maintenance Unit</p>
+</div>
+</a>
+</div>
+</header>
+<!-- Main Canvas -->
+<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<div class="max-w-[1200px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Settings</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage department preferences and system configuration.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Profile Summary -->
+<div class="lg:col-span-1 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-6 flex flex-col items-center text-center">
+<div class="w-20 h-20 rounded-full overflow-hidden border border-outline-variant mb-4">
+<span class="w-full h-full inline-block" data-user-avatar data-avatar-class="w-full h-full flex items-center justify-center rounded-full bg-primary-container text-on-primary font-bold text-sm"><span class="skel w-full h-full block rounded-full" data-skeleton></span></span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface" data-user-name><span class="skel skel-h4 w-32 inline-block" data-skeleton></span></h3>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Head of Department - Maintenance Unit</p>
+<div class="flex gap-2 mt-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-label-md">Active</span>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-label-md">Admin</span>
+</div>
+<a href="profile.html" class="w-full mt-5 py-2 border border-outline-variant rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors text-center">Edit Profile</a>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Appearance</h3>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Dark Mode</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Switch between light and dark theme</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-container text-on-tertiary-container text-[11px] font-label-md">Coming Soon</span>
+<button class="relative w-11 h-6 rounded-full transition-colors focus:outline-none opacity-50 cursor-not-allowed" id="theme-toggle" style="background-color: #c5c5d3;" disabled>
+<span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-all" id="theme-knob"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Settings Groups -->
+<div class="lg:col-span-2 flex flex-col gap-gutter">
+<!-- Department Settings -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low rounded-t-xl">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Department Settings</h3>
+</div>
+<div class="p-6 space-y-5">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="setting-hospital-name">Hospital Name</label>
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="setting-hospital-name" type="text" value="BANSANG HOSPITAL"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5" for="setting-department">Department / Unit</label>
+<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="setting-department" type="text" value="Maintenance Unit"/>
+</div>
+</div>
+<button onclick="saveDepartmentSettings()" class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner">Save Department Settings</button>
+</div>
+</div>
+<!-- Leave Entitlements -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low rounded-t-xl flex justify-between items-center gap-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Leave Entitlements</h3>
+<button onclick="saveLeaveEntitlements()" class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner" id="entitlements-save-btn">Save Entitlements</button>
+</div>
+<div class="p-6">
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Set how many times per year a staff member can take each leave type. Annual leave is always one per staff per year.</p>
+<div id="leave-entitlements-list" class="space-y-3">
+<div class="flex items-center justify-between gap-4 border border-outline-variant rounded px-4 py-3" data-skeleton>
+<div class="flex items-center gap-3"><div class="skel skel-avatar shrink-0"></div><div class="space-y-2"><div class="skel skel-h6 w-32"></div><div class="skel skel-h6 w-20"></div></div></div>
+<div class="skel skel-row w-20"></div>
+</div>
+<div class="flex items-center justify-between gap-4 border border-outline-variant rounded px-4 py-3" data-skeleton>
+<div class="flex items-center gap-3"><div class="skel skel-avatar shrink-0"></div><div class="space-y-2"><div class="skel skel-h6 w-32"></div><div class="skel skel-h6 w-20"></div></div></div>
+<div class="skel skel-row w-20"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Notification Preferences -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low rounded-t-xl">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Notification Preferences</h3>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-center justify-between gap-4">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Leave schedule reminders</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Notify me when a scheduled leave is approaching</p>
+</div>
+<input class="h-5 w-5 accent-[#4059aa]" type="checkbox" checked=""/>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Staffing level alerts</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Alert me when a team drops below minimum capacity</p>
+</div>
+<input class="h-5 w-5 accent-[#4059aa]" type="checkbox" checked=""/>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Leave entry confirmations</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Confirmations when a leave is scheduled or logged</p>
+</div>
+<input class="h-5 w-5 accent-[#4059aa]" type="checkbox"/>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+(function () {
+var KEY = 'bansang_settings';
+
+function getLeaveTypes() {
+return window.DB ? window.DB.getList('leaveTypes') : [];
+}
+
+function isAnnualType(type) {
+return /annual/i.test((type && type.name) || '');
+}
+
+function perYearFor(type) {
+return isAnnualType(type) ? 1 : Math.max(1, parseInt(type.perYear, 10) || 1);
+}
+
+function escapeHtml(str) {
+var div = document.createElement('div');
+div.textContent = str == null ? '' : String(str);
+return div.innerHTML;
+}
+
+function initials(name) {
+return String(name || '').split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
+}
+
+function renderLeaveEntitlements() {
+var list = document.getElementById('leave-entitlements-list');
+if (!list) return;
+var types = getLeaveTypes();
+if (!types.length) {
+list.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant">No leave types yet. Add them in Leave Manager &gt; Manage Leave Types.</p>';
+return;
+}
+list.innerHTML = types.map(function (t) {
+var annual = isAnnualType(t);
+var val = annual ? 1 : Math.max(1, parseInt(t.perYear, 10) || 1);
+var disabled = annual ? ' disabled=""' : '';
+var badge = annual ? '<span class="inline-block px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-[10px] font-label-md whitespace-nowrap">ALWAYS 1 / YEAR</span>' : '';
+return '<div class="flex items-center justify-between gap-4 border border-outline-variant rounded px-4 py-3 bg-surface-container-lowest">' +
+'<div class="flex items-center gap-3 min-w-0">' +
+'<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs shrink-0">' + escapeHtml(initials(t.name)) + '</div>' +
+'<div class="min-w-0"><p class="font-body-md text-body-md text-on-surface font-medium truncate">' + escapeHtml(t.name) + '</p>' +
+'<p class="font-body-sm text-body-sm text-on-surface-variant">Times per staff per year</p></div></div>' +
+'<div class="flex items-center gap-2 shrink-0">' + badge +
+'<input type="number" min="1" step="1" data-type-id="' + escapeHtml(t.id) + '" class="w-20 h-[40px] px-3 py-2 text-center text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" value="' + val + '"' + disabled + '/>' +
+'</div></div>';
+}).join('');
+}
+
+function load() {
+return window.DB ? window.DB.getDoc('settings') : null;
+}
+
+function apply() {
+var s = load() || {};
+var hname = document.getElementById('setting-hospital-name');
+var dept = document.getElementById('setting-department');
+if (hname && s.hospitalName) hname.value = s.hospitalName;
+if (dept && s.department) dept.value = s.department;
+var dark = s.darkMode === true;
+document.documentElement.classList.toggle('dark', dark);
+var knob = document.getElementById('theme-knob');
+var toggle = document.getElementById('theme-toggle');
+if (knob) knob.style.transform = dark ? 'translateX(20px)' : 'translateX(0)';
+if (toggle) toggle.style.backgroundColor = dark ? '#4059aa' : '#c5c5d3';
+}
+
+window.toggleTheme = function () {
+var s = load() || {};
+s.darkMode = !s.darkMode;
+window.DB.saveDoc('settings', s);
+apply();
+};
+
+window.saveDepartmentSettings = async function () {
+var btn = document.querySelector('button[onclick="saveDepartmentSettings()"]');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var s = load() || {};
+s.hospitalName = document.getElementById('setting-hospital-name').value.trim() || 'BANSANG HOSPITAL';
+s.department = document.getElementById('setting-department').value.trim() || 'Maintenance Unit';
+var res = await window.DB.saveDoc('settings', s);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save the settings to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save the settings to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+if (window.Dialogs) window.Dialogs.toast('Department settings saved.', 'success');
+else alert('Department settings saved.');
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.saveLeaveEntitlements = async function () {
+var btn = document.getElementById('entitlements-save-btn');
+if (window.UI) window.UI.busy(btn, true);
+try {
+var types = getLeaveTypes();
+var inputs = document.querySelectorAll('#leave-entitlements-list input[type="number"]');
+for (var i = 0; i < inputs.length; i++) {
+var inp = inputs[i];
+var t = types.filter(function (x) { return x.id === inp.getAttribute('data-type-id'); })[0];
+if (t && !isAnnualType(t)) {
+t.perYear = Math.max(1, parseInt(inp.value, 10) || 1);
+}
+}
+var res = await window.DB.saveList('leaveTypes', types);
+if (res !== true) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save entitlements to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
+else alert('Could not save entitlements to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'));
+return;
+}
+if (window.Dialogs) window.Dialogs.toast('Leave entitlements saved.', 'success');
+else alert('Leave entitlements saved.');
+} finally {
+if (window.UI) window.UI.busy(btn, false);
+}
+};
+
+window.updatePassword = function () {
+var input = document.getElementById('setting-password');
+if (input) input.value = '';
+if (window.Dialogs) window.Dialogs.toast('Password updated successfully.', 'success');
+else alert('Password updated successfully.');
+};
+
+if (window.Auth) window.Auth.guard();
+document.addEventListener('DOMContentLoaded', function () {
+window.DB.onReady(function () {
+apply();
+renderLeaveEntitlements();
+window.DB.subscribe(function () {
+apply();
+renderLeaveEntitlements();
+});
+});
+});
+})();
+</script>
+</body></html>
