@@ -12,7 +12,7 @@
 <script type="module" src="/src/dialogs.js"></script>
 <script type="module" src="/src/nav.js"></script>
 </head>
-<body class="flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -53,7 +53,7 @@
 </button></div>
 </nav>
 <!-- Main Content Area Wrapper -->
-<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)] h-screen overflow-hidden">
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
 <!-- TopNavBar -->
 <header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
 <div class="flex items-center gap-4 flex-1">
@@ -63,7 +63,7 @@
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
 <!-- Search Bar -->
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
 </div>
@@ -88,33 +88,12 @@
 </div>
 </header>
 <!-- Main Canvas -->
-<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
 <div class="max-w-[1200px] mx-auto">
 <!-- Page Header -->
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
-<div>
+<div class="mb-8">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
 <h2 class="font-headline-lg text-headline-lg text-on-surface">Staff Directory</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage and review leave eligibility for all maintenance personnel.</p>
-</div>
-<!-- Filters -->
-<div class="flex flex-wrap gap-2 w-full sm:w-auto">
-<select id="team-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
-<option value="">All Teams</option>
-</select>
-<select id="role-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
-<option value="">All Roles</option>
-<option>Plumber</option>
-<option>HVAC</option>
-<option>Electrician</option>
-<option>General Maintenance</option>
-</select>
-<select id="status-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
-<option value="">All Statuses</option>
-<option value="due">Due for Leave</option>
-<option value="returned">Recently Returned</option>
-<option value="eligible">Eligible</option>
-</select>
-</div>
 <div class="flex gap-3 w-full sm:w-auto">
 <button onclick="openTeamsModal()" class="h-10 px-4 bg-surface-container-lowest text-on-surface-variant border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm flex items-center gap-2">
 <span class="material-symbols-outlined text-[16px]">groups</span>
@@ -124,6 +103,21 @@ Manage Teams
 <span class="material-symbols-outlined text-[16px]">person_add</span>
 Add New Staff
 </button>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Manage and review leave eligibility for all maintenance personnel.</p>
+<!-- Filters -->
+<div class="flex flex-wrap gap-2">
+<select id="team-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
+<option value="">All Teams</option>
+</select>
+
+<select id="status-filter" class="h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" onchange="filterTable()">
+<option value="">All Statuses</option>
+<option value="due">Due for Leave</option>
+<option value="returned">Recently Returned</option>
+<option value="eligible">Eligible</option>
+</select>
 </div>
 </div>
 <!-- Table Container -->
@@ -172,8 +166,9 @@ Add New Staff
 </nav>
 </div>
 </div>
+</div>
 <!-- Manage Teams Modal -->
-<div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4" id="teams-modal">
+<div class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/40 p-4" id="teams-modal">
 <div class="bg-surface-container-lowest w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">
 <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
 <h3 class="font-headline-sm text-headline-sm text-on-surface">Manage Teams</h3>
@@ -191,7 +186,7 @@ Add New Staff
 </div>
 </div>
 <!-- Staff Leave History Modal -->
-<div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4" id="history-modal">
+<div class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/40 p-4" id="history-modal">
 <div class="bg-surface-container-lowest w-full max-w-lg rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">
 <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
 <h3 class="font-headline-sm text-headline-sm text-on-surface" id="history-modal-title">Leave History</h3>
@@ -203,6 +198,10 @@ Add New Staff
 </div>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
+</div>
 <script>
 (function () {
 var TEAMS_KEY = 'bansang_teams';
@@ -217,7 +216,7 @@ return window.DB.saveList('teams', teams);
 
 function escapeHtml(str) {
 var div = document.createElement('div');
-div.textContent = str;
+div.textContent = str == null ? '' : String(str);
 return div.innerHTML;
 }
 
@@ -414,7 +413,7 @@ returned: '<span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 
 tbody.innerHTML = staff.map(function (s) {
 var badge = statusBadge[s.status] || '<span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 text-slate-700 text-[11px] font-semibold tracking-wide border border-slate-200">ELIGIBLE</span>';
 var teamName = s.teamLabel || s.team || 'General';
-return '<tr class="border-b border-outline-variant hover:bg-slate-50 transition-colors group" data-role="' + escapeHtml(s.role || '') + '" data-team="' + escapeHtml(teamName) + '" data-status="' + escapeHtml(s.status || 'eligible') + '">' +
+return '<tr class="border-b border-outline-variant hover:bg-slate-50 transition-colors group" data-team="' + escapeHtml(teamName) + '" data-status="' + escapeHtml(s.status || 'eligible') + '">' +
 '<td class="py-3 px-4 sticky left-0 bg-surface-container-lowest group-hover:bg-slate-50 z-10">' +
 '<div class="flex items-center gap-3">' +
 '<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs">' + escapeHtml(s.initials || (s.name ? s.name.split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2) : '--')) + '</div>' +
@@ -429,7 +428,7 @@ return '<tr class="border-b border-outline-variant hover:bg-slate-50 transition-
 '<button onclick="window.location.href=\'add-staff.html?edit=' + encodeURIComponent(s.id) + '\'" class="text-primary border border-primary hover:bg-primary hover:text-white text-sm px-2 py-1 rounded transition-colors">Edit</button>' +
 '<button onclick="deleteStaff(\'' + s.id + '\', this)" class="text-error border border-error hover:bg-error hover:text-white text-sm px-2 py-1 rounded transition-colors">Delete</button>' +
 '<button onclick="viewStaffHistory(\'' + s.id + '\')" class="text-on-surface-variant hover:text-primary text-sm px-2 py-1 rounded hover:bg-surface-container transition-colors">History</button>' +
-'<button onclick="window.location.href=\'request-manager.html\'" class="text-primary border border-primary hover:bg-primary hover:text-white text-sm px-3 py-1 rounded transition-colors font-medium">Initiate</button>' +
+'<button onclick="window.location.href=\'request-manager.html?staffId=' + encodeURIComponent(s.id) + '\'" class="text-primary border border-primary hover:bg-primary hover:text-white text-sm px-3 py-1 rounded transition-colors font-medium">Initiate</button>' +
 '</div></td></tr>';
 }).join('');
 var fromEl = document.getElementById('paging-from');
@@ -457,8 +456,8 @@ function leaveEffectiveStatus(e) {
     var t = todayStr();
     if (t < e.startDate) return 'Scheduled';
     if (t > e.endDate) return 'Completed';
-    if (e.status === 'Logged') return 'Completed';
-    return 'In Progress';
+    if (t >= e.startDate && t <= e.endDate) return 'In Progress';
+    return 'Completed';
 }
 
 function leaveDurationDays(start, end) {
@@ -529,12 +528,10 @@ if (window._historyCleanup) { window._historyCleanup(); window._historyCleanup =
 
 window.filterTable = function () {
 var team = document.getElementById('team-filter').value;
-var role = document.getElementById('role-filter').value;
 var status = document.getElementById('status-filter').value;
 document.querySelectorAll('#staff-table tbody tr').forEach(function (tr) {
 var show = true;
 if (team && tr.getAttribute('data-team') !== team) show = false;
-if (show && role && (tr.getAttribute('data-role') || '').toLowerCase().indexOf(role.toLowerCase()) === -1) show = false;
 if (show && status && tr.getAttribute('data-status') !== status) show = false;
 tr.style.display = show ? '' : 'none';
 });

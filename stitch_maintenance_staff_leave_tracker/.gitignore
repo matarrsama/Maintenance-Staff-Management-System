@@ -3,3 +3,7 @@ dist/
 *.local
 .env
 $out
+release-build
+release
+package.json
+package-lock.json

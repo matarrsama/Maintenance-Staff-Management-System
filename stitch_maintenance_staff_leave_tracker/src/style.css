@@ -74,3 +74,20 @@
   height: 100%;
   border-radius: 8px;
 }
+
+/* Fix: search icon intercepting clicks in Electron */
+header .relative > .material-symbols-outlined {
+  pointer-events: none;
+}
+
+/* Fix: Electron input focus — ensure search input receives clicks */
+header input[type="text"] {
+  -webkit-app-region: no-drag;
+  position: relative;
+  z-index: 51;
+}
+
+/* Header must be above sidebar (z-50) in Electron */
+header {
+  z-index: 51 !important;
+}

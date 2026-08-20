@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bansang Hospital</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f1e50 0%, #142864 40%, #1a3578 100%);
+    color: #fff;
+    overflow: hidden;
+    -webkit-app-region: drag;
+    user-select: none;
+  }
+
+  .icon-wrap {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin-bottom: 28px;
+  }
+
+  /* spinning ring */
+  .ring {
+    position: absolute;
+    inset: 0;
+    animation: spin 1s linear infinite;
+  }
+  .ring circle {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .ring .track { stroke: rgba(255,255,255,0.08); }
+  .ring .arc   { stroke: rgba(197,202,233,0.85); stroke-dasharray: 180 226; }
+
+  /* pulsing core */
+  .core {
+    position: absolute;
+    inset: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .core svg { width: 32px; height: 32px; fill: #fff; opacity: 0.9; }
+
+  @keyframes spin  { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1);   opacity: 1;   }
+    50%      { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.3px;
+  }
+
+  /* loading bar */
+  .bar-track {
+    margin-top: 36px;
+    width: 160px;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: rgba(197,202,233,0.5);
+    animation: slide 1.4s ease-in-out infinite;
+  }
+  @keyframes slide {
+    0%   { width: 0%;  margin-left: 0%;    }
+    50%  { width: 55%; margin-left: 22%;   }
+    100% { width: 0%;  margin-left: 100%;  }
+  }
+
+  /* decorative watermark */
+  .watermark {
+    position: fixed;
+    bottom: -60px;
+    right: -60px;
+    font-size: 260px;
+    opacity: 0.025;
+    color: #fff;
+    pointer-events: none;
+    line-height: 1;
+  }
+</style>
+</head>
+<body>
+  <div class="icon-wrap">
+    <svg class="ring" viewBox="0 0 96 96">
+      <circle class="track" cx="48" cy="48" r="44"/>
+      <circle class="arc"   cx="48" cy="48" r="44"/>
+    </svg>
+    <div class="core">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </div>
+  </div>
+  <h1>Bansang Hospital</h1>
+  <p>Loading secure portal&hellip;</p>
+  <div class="bar-track"><div class="bar-fill"></div></div>
+  <div class="watermark">&#x1F3E5;</div>
+</body>
+</html>

@@ -12,7 +12,7 @@
 <script type="module" src="/src/dialogs.js"></script>
 <script type="module" src="/src/nav.js"></script>
 </head>
-<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-surface text-on-surface font-body-md flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -63,7 +63,7 @@
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
 <!-- Search Bar -->
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search leave entries..." type="text"/>
 </div>
@@ -75,7 +75,7 @@
 <a href="settings.html" class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 </a>
-<button onclick="window.location.href='request-manager.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
+<button onclick="window.location.href='add-staff.html'" class="hidden md:flex bg-primary-container text-on-primary-container hover:bg-surface-tint hover:text-white transition-colors duration-200 font-label-md text-label-md px-4 py-2 rounded-full items-center gap-2 shadow-sm ml-2">
                     + Schedule Leave
                 </button>
 <a href="profile.html" class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
@@ -88,15 +88,25 @@
 </div>
 </header>
 <!-- Main Workspace -->
-<main id="app-main" class="flex-grow p-container-padding grid grid-cols-1 lg:grid-cols-12 gap-container-padding overflow-hidden h-[calc(100vh-64px)]">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-container-padding" style="align-items:start">
 <!-- Left Pane: Tracked Leave Entries -->
-<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded flex flex-col h-full overflow-hidden">
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded flex flex-col overflow-hidden">
 <div class="px-6 py-4 border-b border-outline-variant bg-slate-50 flex justify-between items-center">
 <div>
 <h3 class="font-headline-sm text-headline-sm text-on-surface">Tracked Leave</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Scheduled &amp; logged leave for the department</p>
 </div>
+<div class="flex items-center gap-2 relative">
+<div id="leave-search-wrap" class="absolute right-0 top-1/2 -translate-y-1/2 hidden z-10">
+<input id="leave-search-input" type="text" placeholder="Search staff..." class="h-7 w-44 pl-2 pr-6 text-on-surface bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-sm transition-colors" oninput="filterLeaveEntries()"/>
+<button type="button" onclick="clearLeaveSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+<button type="button" id="leave-search-btn" onclick="toggleLeaveSearch()" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded hover:bg-surface-container" title="Search staff"><span class="material-symbols-outlined text-[18px]">search</span></button>
 <span class="bg-primary-container text-on-primary px-2.5 py-0.5 rounded-full font-label-md text-[10px]" id="leave-entries-count">0 Entries</span>
+<button type="button" onclick="collapseAllEntries()" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded hover:bg-surface-container" title="Collapse All"><span class="material-symbols-outlined text-[18px]">collapse_all</span></button>
+<button type="button" onclick="expandAllEntries()" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded hover:bg-surface-container" title="Expand All"><span class="material-symbols-outlined text-[18px]">expand_all</span></button>
+</div>
 </div>
 <div class="flex-grow overflow-y-auto p-4 space-y-3" id="leave-entries-list">
 <div class="flex items-center gap-3 p-3 border border-outline-variant rounded" data-skeleton><div class="skel skel-avatar shrink-0"></div><div class="flex-1 space-y-2"><div class="skel skel-h6 w-1/3"></div><div class="skel skel-h6 w-full"></div></div></div>
@@ -104,17 +114,17 @@
 </div>
 </div>
 <!-- Right Pane: Schedule / Log Leave Form -->
-<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded flex flex-col h-full overflow-hidden shadow-sm relative">
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded flex flex-col overflow-hidden shadow-sm relative" id="leave-form-pane">
 <!-- Decorative subtle header gradient -->
 <div class="h-1 w-full bg-gradient-to-r from-primary-container to-surface-tint absolute top-0 left-0"></div>
-<div class="px-6 py-4 border-b border-outline-variant">
+<div class="px-6 py-3 border-b border-outline-variant">
 <h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center">
 <span class="material-symbols-outlined mr-2 text-primary-container">event_available</span>
                         Schedule / Log Leave
                     </h3>
 </div>
-<div class="flex-grow overflow-y-auto p-6">
-<form class="space-y-5" onsubmit="submitLeaveEntry(event)">
+<div class="p-4">
+<form class="space-y-3" onsubmit="submitLeaveEntry(event)">
 <!-- Staff Member Selection -->
 <div>
 <label class="block font-label-md text-label-md text-on-surface mb-1.5" for="staff-select">Staff Member <span class="text-error">*</span></label>
@@ -208,7 +218,7 @@
 </form>
 </div>
 <!-- Action Footer -->
-<div class="p-4 border-t border-outline-variant bg-surface-bright flex justify-end space-x-3">
+<div class="px-4 py-2 border-t border-outline-variant bg-surface-bright flex justify-end space-x-3">
 <button class="px-4 py-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors" type="button" onclick="clearLeaveForm()">
                         Clear
                     </button>
@@ -217,31 +227,64 @@
                     </button>
 </div>
 </div>
+</div>
+
+<!-- Modals injected dynamically by JS -->
+
 </main>
-</div>
-<!-- Manage Leave Types Modal -->
-<div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/40 p-4" id="leave-types-modal">
-<div class="bg-surface-container-lowest w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">
-<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Manage Leave Types</h3>
-<button class="text-on-surface-variant hover:text-primary transition-colors" type="button" onclick="closeLeaveTypesModal()">
-<span class="material-symbols-outlined">close</span>
-</button>
-</div>
-<div class="p-6 flex-grow overflow-y-auto">
-<form class="flex gap-2 mb-4" onsubmit="addLeaveType(event)">
-<input id="new-leave-type-name" class="flex-1 h-[40px] min-w-0 px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" placeholder="New leave type name..." type="text"/>
-<button class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner whitespace-nowrap" type="submit">Add</button>
-</form>
-<ul class="space-y-2" id="leave-types-list"></ul>
-</div>
-</div>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <script>
 (function () {
 var LEAVE_TYPES_KEY = 'bansang_leave_types';
 var LEAVE_ENTRIES_KEY = 'bansang_leave_entries';
-var STAFF = getStaff();
+var STAFF = [];
+
+function refreshStaff() {
+STAFF = window.DB ? window.DB.getList('staff') : [];
+}
+
+function ensureModals() {
+  if (document.getElementById('set-dates-modal')) return;
+  var wrap = document.createElement('div');
+  wrap.innerHTML =
+    '<div class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/40 p-4" id="set-dates-modal">' +
+    '<div class="bg-surface-container-lowest w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">' +
+    '<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">' +
+    '<h3 class="font-headline-sm text-headline-sm text-on-surface">Set Leave Dates</h3>' +
+    '<button class="text-on-surface-variant hover:text-primary transition-colors" type="button" onclick="closeSetDatesModal()"><span class="material-symbols-outlined">close</span></button>' +
+    '</div>' +
+    '<div class="p-6">' +
+    '<p class="font-body-md text-body-md text-on-surface-variant mb-1" id="set-dates-staff-info"></p>' +
+    '<p class="font-body-sm text-body-sm text-on-surface-variant mb-5" id="set-dates-month-info"></p>' +
+    '<div class="space-y-4">' +
+    '<div><label class="block font-label-md text-label-md text-on-surface mb-1.5" for="set-dates-start">Start Date</label>' +
+    '<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="set-dates-start" type="date"/></div>' +
+    '<div><label class="block font-label-md text-label-md text-on-surface mb-1.5" for="set-dates-end">End Date</label>' +
+    '<input class="block w-full h-[40px] px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" id="set-dates-end" type="date"/></div>' +
+    '</div></div>' +
+    '<div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3">' +
+    '<button type="button" class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container transition-colors" onclick="closeSetDatesModal()">Cancel</button>' +
+    '<button type="button" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm" onclick="confirmSetDates()">Save Dates</button>' +
+    '</div></div></div>' +
+    '<div class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/40 p-4" id="leave-types-modal">' +
+    '<div class="bg-surface-container-lowest w-full max-w-md rounded-lg shadow-lg flex flex-col overflow-hidden border border-outline-variant">' +
+    '<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">' +
+    '<h3 class="font-headline-sm text-headline-sm text-on-surface">Manage Leave Types</h3>' +
+    '<button class="text-on-surface-variant hover:text-primary transition-colors" type="button" onclick="closeLeaveTypesModal()"><span class="material-symbols-outlined">close</span></button>' +
+    '</div>' +
+    '<div class="p-6 flex-grow overflow-y-auto">' +
+    '<form class="flex gap-2 mb-4" onsubmit="addLeaveType(event)">' +
+    '<input id="new-leave-type-name" class="flex-1 h-[40px] min-w-0 px-3 py-2 text-on-surface bg-surface-container-lowest border border-outline-variant rounded focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-body-sm text-body-sm shadow-sm hover:border-outline transition-colors" placeholder="New leave type name..." type="text"/>' +
+    '<button class="px-4 py-2 bg-primary-container text-on-primary rounded font-label-md text-label-md hover:bg-primary transition-colors shadow-sm active:shadow-inner whitespace-nowrap" type="submit">Add</button>' +
+    '</form>' +
+    '<ul class="space-y-2" id="leave-types-list"></ul>' +
+    '</div></div></div>';
+  while (wrap.firstChild) document.body.appendChild(wrap.firstChild);
+}
+ensureModals();
 
 function getLeaveTypes() {
 return window.DB ? window.DB.getList('leaveTypes') : [];
@@ -269,7 +312,7 @@ return window.DB ? window.DB.getList('staff') : [];
 
 function escapeHtml(str) {
 var div = document.createElement('div');
-div.textContent = str;
+div.textContent = str == null ? '' : String(str);
 return div.innerHTML;
 }
 
@@ -338,8 +381,8 @@ function perYearFor(type) {
 return isAnnualType(type) ? 1 : Math.max(1, parseInt(type.perYear, 10) || 1);
 }
 
-function usedThisYear(staffId, typeId) {
-var y = new Date().getFullYear();
+function usedThisYear(staffId, typeId, year) {
+var y = year != null ? year : new Date().getFullYear();
 var prefix = y + '-';
 return activeEntries().filter(function (e) {
 return e.staffId === staffId && e.typeId === typeId && (e.startDate || '').indexOf(prefix) === 0;
@@ -356,8 +399,8 @@ function effectiveStatus(e) {
 var t = todayStr();
 if (t < e.startDate) return 'Scheduled';
 if (t > e.endDate) return 'Completed';
-if (e.status === 'Logged') return 'Completed';
-return 'In Progress';
+if (t >= e.startDate && t <= e.endDate) return 'In Progress';
+return 'Completed';
 }
 
 function initials(name) {
@@ -488,16 +531,20 @@ var days = durationDays(e.startDate, e.endDate);
 var durLabel = isMonthOnly ? 'Dates TBD' : days + (days === 1 ? ' day' : ' days');
 var editBtn = isMonthOnly
 ? '<button type="button" class="text-on-surface-variant hover:text-primary transition-colors text-sm px-2 py-1 rounded hover:bg-primary-container" onclick="editLeaveEntry(\'' + e.id + '\')">Set Dates</button>'
-: '';
-return '<div class="border border-outline-variant rounded p-4 bg-surface-bright hover:bg-surface-container-lowest transition-colors">' +
-'<div class="flex justify-between items-start mb-1">' +
+: '<button type="button" class="text-on-surface-variant hover:bg-primary transition-colors p-1.5 rounded group" title="Edit" onclick="editLeaveEntry(\'' + e.id + '\')"><span class="material-symbols-outlined text-[16px] group-hover:text-white">edit</span></button>';
+return '<div class="border border-outline-variant rounded bg-surface-bright hover:bg-surface-container-lowest transition-colors" data-leave-card="' + e.id + '">' +
+'<div class="flex justify-between items-start p-4 cursor-pointer select-none" onclick="toggleLeaveCard(\'' + e.id + '\')">' +
 '<div class="flex items-center gap-3">' +
 '<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs">' + escapeHtml(initials(e.staffName)) + '</div>' +
 '<div><div class="font-data-mono text-data-mono text-on-surface font-semibold">' + escapeHtml(e.staffName) + '</div>' +
 '<div class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml(e.staffRole || '') + '</div></div>' +
-'</div>' + badge +
 '</div>' +
-'<div class="grid grid-cols-3 gap-2 mt-3 bg-surface p-2 rounded border border-outline-variant border-opacity-50">' +
+'<div class="flex items-center gap-2">' + badge +
+'<span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200 leave-chevron">expand_more</span>' +
+'</div>' +
+'</div>' +
+'<div class="leave-details hidden px-4 pb-4">' +
+'<div class="grid grid-cols-3 gap-2 bg-surface p-2 rounded border border-outline-variant border-opacity-50">' +
 '<div><span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">Type</span>' +
 '<span class="font-body-sm text-body-sm text-on-surface">' + escapeHtml(e.typeName) + '</span></div>' +
 '<div><span class="block font-label-md text-[10px] text-outline uppercase tracking-wider mb-0.5">' + (isMonthOnly ? 'Month' : 'Dates') + '</span>' +
@@ -509,9 +556,84 @@ return '<div class="border border-outline-variant rounded p-4 bg-surface-bright 
 editBtn +
 '<button type="button" class="text-on-surface-variant hover:text-error transition-colors text-sm px-2 py-1 rounded hover:bg-error-container" onclick="deleteLeaveEntry(\'' + e.id + '\', this)">Delete</button>' +
 '</div>' +
+'</div>' +
 '</div>';
 }).join('');
+syncPaneHeights();
 }
+
+function syncPaneHeights() {
+var formPane = document.getElementById('leave-form-pane');
+var leftPane = document.querySelector('.lg\\:col-span-7');
+var listEl = document.getElementById('leave-entries-list');
+if (!formPane || !leftPane || !listEl) return;
+var formH = formPane.offsetHeight;
+leftPane.style.height = formH + 'px';
+var headerH = leftPane.firstElementChild ? leftPane.firstElementChild.offsetHeight : 0;
+listEl.style.maxHeight = Math.max(0, formH - headerH) + 'px';
+}
+
+window.toggleLeaveCard = function (id) {
+var card = document.querySelector('[data-leave-card="' + id + '"]');
+if (!card) return;
+var details = card.querySelector('.leave-details');
+var chevron = card.querySelector('.leave-chevron');
+if (!details || !chevron) return;
+var isOpen = !details.classList.contains('hidden');
+details.classList.toggle('hidden');
+chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+};
+
+window.collapseAllEntries = function () {
+document.querySelectorAll('.leave-details').forEach(function (d) { d.classList.add('hidden'); });
+document.querySelectorAll('.leave-chevron').forEach(function (c) { c.style.transform = ''; });
+};
+
+window.expandAllEntries = function () {
+document.querySelectorAll('.leave-details').forEach(function (d) { d.classList.remove('hidden'); });
+document.querySelectorAll('.leave-chevron').forEach(function (c) { c.style.transform = 'rotate(180deg)'; });
+};
+
+window.toggleLeaveSearch = function () {
+var wrap = document.getElementById('leave-search-wrap');
+var btn = document.getElementById('leave-search-btn');
+var input = document.getElementById('leave-search-input');
+if (wrap.classList.contains('hidden')) {
+wrap.classList.remove('hidden');
+btn.classList.add('hidden');
+input.focus();
+} else {
+clearLeaveSearch();
+}
+};
+
+window.clearLeaveSearch = function () {
+var wrap = document.getElementById('leave-search-wrap');
+var btn = document.getElementById('leave-search-btn');
+var input = document.getElementById('leave-search-input');
+input.value = '';
+wrap.classList.add('hidden');
+btn.classList.remove('hidden');
+filterLeaveEntries();
+};
+
+document.getElementById('leave-search-input').addEventListener('keydown', function (e) {
+if (e.key === 'Escape') clearLeaveSearch();
+});
+document.getElementById('leave-search-input').addEventListener('blur', function () {
+var input = document.getElementById('leave-search-input');
+setTimeout(function () {
+if (!input.value.trim()) clearLeaveSearch();
+}, 150);
+});
+
+window.filterLeaveEntries = function () {
+var query = (document.getElementById('leave-search-input').value || '').toLowerCase().trim();
+document.querySelectorAll('[data-leave-card]').forEach(function (card) {
+var name = (card.querySelector('.font-data-mono') || {}).textContent || '';
+card.style.display = !query || name.toLowerCase().indexOf(query) !== -1 ? '' : 'none';
+});
+};
 
 window.submitLeaveEntry = async function (event) {
 if (event) event.preventDefault();
@@ -556,11 +678,11 @@ scheduleMode = 'dates';
 }
 if (endDateVal < startDateVal) {
 if (window.Dialogs) window.Dialogs.alert({ title: 'Invalid date range', message: 'End date cannot be before start date.', type: 'warning' });
-else alert('End date cannot be be be be before start date.');
+else alert('End date cannot be before start date.');
 return;
 }
 var overlap = activeEntries().filter(function (x) {
-return x.staffId === staff.id && x.startDate <= endDateVal && startDateVal <= x.endDate;
+return x.staffId === staff.id && x.startDate <= endDateVal && startDateVal <= x.endDate && x.id !== editingId;
 });
 if (overlap.length) {
 var first = overlap[0];
@@ -568,15 +690,33 @@ if (window.Dialogs) window.Dialogs.alert({ title: 'Overlapping leave', message: 
 else alert('This staff member already has overlapping leave.');
 return;
 }
-var used = usedThisYear(staff.id, type.id);
+var used = usedThisYear(staff.id, type.id, parseInt(startDateVal.slice(0, 4), 10));
 var allowed = perYearFor(type);
 if (used >= allowed) {
-if (window.Dialogs) window.Dialogs.alert({ title: 'Yearly limit reached', message: staff.name + ' has already taken ' + used + ' ' + type.name.toLowerCase() + ' leave(s) this year (limit ' + allowed + ' per year). Adjust the limit in Settings > Leave Entitlements if needed.', type: 'warning' });
-else alert(staff.name + ' has already taken ' + used + ' ' + type.name.toLowerCase() + ' leave(s) this year (limit ' + allowed + ' per year). Adjust the limit in Settings > Leave Entitlements if needed.');
+if (window.Dialogs) window.Dialogs.alert({ title: 'Yearly limit reached', message: staff.name + ' has already taken ' + used + ' ' + type.name.toLowerCase() + ' leave(s) in ' + startDateVal.slice(0, 4) + ' (limit ' + allowed + ' per year). Adjust the limit in Settings > Leave Entitlements if needed.', type: 'warning' });
+else alert(staff.name + ' has already taken ' + used + ' ' + type.name.toLowerCase() + ' leave(s) in ' + startDateVal.slice(0, 4) + ' (limit ' + allowed + ' per year). Adjust the limit in Settings > Leave Entitlements if needed.');
 return;
 }
 var status = isAnnual ? 'Scheduled' : 'Logged';
 var entries = getLeaveEntries();
+var editingId = window._editingLeaveId;
+if (editingId) {
+var existing = entries.filter(function (x) { return x.id === editingId; })[0];
+if (existing) {
+existing.staffId = staff.id;
+existing.staffName = staff.name;
+existing.staffRole = staff.role;
+existing.typeId = type.id;
+existing.typeName = type.name;
+existing.startDate = startDateVal;
+existing.endDate = endDateVal;
+existing.status = status;
+existing.scheduleMode = scheduleMode;
+existing.scheduledMonth = scheduledMonth;
+existing.reason = document.getElementById('reason').value;
+existing.updatedAt = new Date().toISOString();
+}
+} else {
 entries.push({
 id: 'e' + Date.now(),
 staffId: staff.id,
@@ -592,6 +732,7 @@ scheduledMonth: scheduledMonth,
 reminderSent: false,
 createdAt: new Date().toISOString()
 });
+}
 var res = await saveLeaveEntries(entries);
 if (res !== true) {
 if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could not save this leave entry to Firestore: ' + (typeof res === 'string' ? res : 'Unknown error'), type: 'error' });
@@ -600,6 +741,30 @@ return;
 }
 renderLeaveEntries();
 clearLeaveForm();
+// Success checkmark animation
+var btn = document.getElementById('leave-submit-btn');
+if (btn) {
+  btn.disabled = true;
+  btn.textContent = '✓ Saved';
+  btn.classList.remove('bg-primary-container', 'hover:bg-primary');
+  btn.classList.add('bg-success', 'text-white');
+  setTimeout(function () {
+    btn.textContent = editingId ? 'Update Leave' : 'Schedule Leave';
+    btn.disabled = false;
+    btn.classList.remove('bg-success', 'text-white');
+    btn.classList.add('bg-primary-container', 'hover:bg-primary');
+  }, 1500);
+}
+if (window.Dialogs) window.Dialogs.toast(editingId ? 'Leave entry updated.' : 'Leave entry saved successfully.', 'success');
+// Send email notification to HOD (new entries only)
+if (!editingId && window.DB && window.DB.sendEmailNotification) {
+  var schedLabel = isAnnual ? (scheduleMode === 'month' ? (MONTHS_FULL[parseInt(scheduledMonth.split('-')[1], 10) - 1] + ' ' + scheduledMonth.split('-')[0]) : (fmtDate(startDateVal) + ' to ' + fmtDate(endDateVal))) : (fmtDate(startDateVal) + (startDateVal !== endDateVal ? ' to ' + fmtDate(endDateVal) : ''));
+  window.DB.sendEmailNotification(
+    'Leave ' + (isAnnual ? 'Scheduled' : 'Logged') + ' - ' + staff.name,
+    staff.name + ' (' + (staff.role || '') + ') has ' + (isAnnual ? 'annual' : type.name.toLowerCase()) + ' leave ' + (isAnnual ? 'scheduled for' : 'logged for') + ' ' + schedLabel + '.',
+    'Type: ' + type.name + '\nDuration: ' + durationDays(startDateVal, endDateVal) + ' day(s)\nMode: ' + (isAnnual ? scheduleMode : 'direct')
+  );
+}
 } finally {
 if (window.UI) window.UI.busy(btn, false);
 }
@@ -617,6 +782,36 @@ document.getElementById('end-date').value = '';
 document.getElementById('reason').value = '';
 setScheduleMode('dates');
 updateLeaveTypeHint();
+window._editingLeaveId = null;
+var submitBtn = document.getElementById('leave-submit-btn');
+if (submitBtn) submitBtn.textContent = 'Schedule Leave';
+};
+
+window.editLeaveEntry = function (id) {
+var entries = getLeaveEntries();
+var e = entries.filter(function (x) { return x.id === id; })[0];
+if (!e) return;
+window._editingLeaveId = id;
+var staffSelect = document.getElementById('staff-select');
+var typeSelect = document.getElementById('leave-type');
+staffSelect.value = e.staffId || '';
+typeSelect.value = e.typeId || '';
+if (e.scheduleMode === 'month') {
+setScheduleMode('month');
+var parts = (e.scheduledMonth || '').split('-');
+var monthSel = document.getElementById('sched-month');
+var yearSel = document.getElementById('sched-year');
+if (parts.length === 2) { monthSel.value = parts[1]; yearSel.value = parts[0]; }
+} else {
+setScheduleMode('dates');
+document.getElementById('start-date').value = e.startDate || '';
+document.getElementById('end-date').value = e.endDate || '';
+}
+document.getElementById('reason').value = e.reason || '';
+updateLeaveTypeHint();
+var submitBtn = document.getElementById('leave-submit-btn');
+if (submitBtn) submitBtn.textContent = 'Update Leave';
+document.getElementById('leave-submit-btn').scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
 window.deleteLeaveEntry = async function (id, btn) {
@@ -645,24 +840,67 @@ if (window.UI) window.UI.busy(btn, false);
 }
 };
 
-window.editLeaveEntry = async function (id) {
+window.editLeaveEntry = function (id) {
+ensureModals();
+console.log('[SetDates] editLeaveEntry called with id:', id);
 var entries = getLeaveEntries();
 var e = entries.filter(function (x) { return x.id === id; })[0];
-if (!e) return;
-var monthLabel = '';
+if (!e) { console.warn('[SetDates] entry not found for id:', id); return; }
+console.log('[SetDates] found entry:', e.staffName, e.typeName, e.startDate, e.endDate);
+setDatesEntry = e;
+var staffInfo = document.getElementById('set-dates-staff-info');
+var monthInfo = document.getElementById('set-dates-month-info');
+if (staffInfo) staffInfo.textContent = e.staffName + ' — ' + e.typeName;
 if (e.scheduledMonth) {
 var parts = e.scheduledMonth.split('-');
-monthLabel = MONTHS_FULL[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+var monthLabel = MONTHS_FULL[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+if (monthInfo) monthInfo.textContent = 'Scheduled for ' + monthLabel;
+} else {
+if (monthInfo) monthInfo.textContent = '';
 }
-var startDateVal = prompt('Enter the start date for ' + e.staffName + '\'s ' + e.typeName + ' leave' + (monthLabel ? ' (' + monthLabel + ')' : '') + ':\nFormat: YYYY-MM-DD', e.startDate);
-if (!startDateVal) return;
-var endDateVal = prompt('Enter the end date for ' + e.staffName + '\'s leave:\nFormat: YYYY-MM-DD', e.endDate);
-if (!endDateVal) return;
+var startInput = document.getElementById('set-dates-start');
+var endInput = document.getElementById('set-dates-end');
+if (startInput) startInput.value = e.startDate || '';
+if (endInput) endInput.value = e.endDate || '';
+var modal = document.getElementById('set-dates-modal');
+console.log('[SetDates] modal element:', modal);
+if (modal) {
+  modal.style.display = 'flex';
+  console.log('[SetDates] modal displayed');
+} else {
+  console.error('[SetDates] set-dates-modal NOT FOUND in DOM');
+}
+};
+
+var setDatesEntry = null;
+
+window.closeSetDatesModal = function () {
+var modal = document.getElementById('set-dates-modal');
+if (modal) {
+  modal.style.display = 'none';
+}
+setDatesEntry = null;
+};
+
+window.confirmSetDates = async function () {
+if (!setDatesEntry) return;
+var startInput = document.getElementById('set-dates-start');
+var endInput = document.getElementById('set-dates-end');
+var startDateVal = startInput ? startInput.value : '';
+var endDateVal = endInput ? endInput.value : '';
+if (!startDateVal || !endDateVal) {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Missing dates', message: 'Please select both start and end dates.', type: 'warning' });
+else alert('Please select both start and end dates.');
+return;
+}
 if (endDateVal < startDateVal) {
 if (window.Dialogs) window.Dialogs.alert({ title: 'Invalid date range', message: 'End date cannot be before start date.', type: 'warning' });
 else alert('End date cannot be before start date.');
 return;
 }
+var entries = getLeaveEntries();
+var e = entries.filter(function (x) { return x.id === setDatesEntry.id; })[0];
+if (!e) return;
 e.startDate = startDateVal;
 e.endDate = endDateVal;
 e.scheduleMode = 'dates';
@@ -673,6 +911,7 @@ if (window.Dialogs) window.Dialogs.alert({ title: 'Save failed', message: 'Could
 else alert('Could not update the leave entry.');
 return;
 }
+closeSetDatesModal();
 renderLeaveEntries();
 };
 
@@ -697,6 +936,7 @@ return '<li class="flex items-center justify-between gap-2 border border-outline
 }
 
 window.openLeaveTypesModal = function () {
+ensureModals();
 renderLeaveTypesList(getLeaveTypes());
 var modal = document.getElementById('leave-types-modal');
 modal.classList.remove('hidden');
@@ -809,11 +1049,18 @@ if (window.UI) window.UI.busy(btn, false);
 
 if (window.Auth) window.Auth.guard();
 document.addEventListener('DOMContentLoaded', function () {
-populateMonthYear();
 window.DB.onReady(function () {
+refreshStaff();
+populateMonthYear();
 var refresh = function () {
-STAFF = getStaff();
+refreshStaff();
 populateStaffSelect();
+var params = new URLSearchParams(window.location.search);
+var preselectId = params.get('staffId');
+if (preselectId) {
+  var sel = document.getElementById('staff-select');
+  if (sel) sel.value = preselectId;
+}
 syncLeaveTypeSelect(getLeaveTypes());
 renderLeaveEntries();
 };
@@ -821,6 +1068,8 @@ refresh();
 window.DB.subscribe(refresh);
 });
 });
+
+window.addEventListener('resize', syncPaneHeights);
 })();
 </script>
 </body></html>

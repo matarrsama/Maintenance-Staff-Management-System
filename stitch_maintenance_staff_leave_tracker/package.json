@@ -1,42 +1,64 @@
 {
-  "name": "hospital-maintenance-leave-system",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Hospital Maintenance Staff Leave Management System",
-  "main": "electron/main.js",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "electron": "electron .",
-    "electron:dev": "npm run build && electron .",
-    "dist": "npm run build && electron-builder"
-  },
-  "dependencies": {
-    "firebase": "^10.12.0"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.5.4",
-    "electron": "^31.0.0",
-    "electron-builder": "^24.13.3",
-    "postcss": "^8.5.26",
-    "tailwindcss": "^3.4.19",
-    "vite": "^5.4.0"
-  },
-  "build": {
-    "appId": "com.bansang.hospital-leave",
-    "productName": "Bansang Hospital Maintenance Leave",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "electron/**/*"
-    ],
-    "win": {
-      "target": [
-        "nsis"
-      ]
-    }
-  }
+    "name":  "hospital-maintenance-leave-system",
+    "version":  "0.1.13",
+    "private":  true,
+    "description":  "Hospital Maintenance Staff Leave Management System",
+    "author":  {
+                   "name":  "Matarr Sama",
+                   "email":  "matarrsama@gmail.com"
+               },
+    "repository":  {
+                       "type":  "git",
+                       "url":  "https://github.com/matarrsama/Maintenance-Staff-Management-System.git"
+                   },
+    "main":  "electron/main.js",
+    "scripts":  {
+                    "dev":  "vite",
+                    "build":  "vite build",
+                    "preview":  "vite preview",
+                    "electron":  "electron .",
+                    "electron:dev":  "npm run build \u0026\u0026 electron .",
+                    "dist":  "npm run build \u0026\u0026 electron-builder --win",
+                    "dist:publish":  "npm run build \u0026\u0026 electron-builder --win --publish always"
+                },
+    "dependencies":  {
+                         "electron-updater":  "^6.8.9",
+                         "firebase":  "^10.12.0"
+                     },
+    "devDependencies":  {
+                            "autoprefixer":  "^10.5.4",
+                            "electron":  "^31.0.0",
+                            "electron-builder":  "^24.13.3",
+                            "postcss":  "^8.5.26",
+                            "tailwindcss":  "^3.4.19",
+                            "vite":  "^5.4.0"
+                        },
+    "build":  {
+                  "appId":  "com.bansang.hospital-leave",
+                  "productName":  "Bansang Hospital Maintenance Leave",
+                  "directories":  {
+                                      "output":  "release"
+                                  },
+                  "files":  [
+                                "dist/**/*",
+                                "electron/**/*"
+                            ],
+                  "publish":  {
+                                  "provider":  "github",
+                                  "owner":  "matarrsama",
+                                  "repo":  "Maintenance-Staff-Management-System"
+                              },
+                  "win":  {
+                              "icon":  "public/icon.ico",
+                              "target":  [
+                                             "nsis"
+                                         ]
+                          },
+                  "nsis":  {
+                               "oneClick":  true,
+                               "perMachine":  false,
+                               "allowToChangeInstallationDirectory":  false,
+                               "createDesktopShortcut":  true
+                           }
+              }
 }

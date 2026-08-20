@@ -11,7 +11,7 @@
 <script type="module" src="/src/auth.js"></script>
 <script type="module" src="/src/nav.js"></script>
 </head>
-<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-surface text-on-surface font-body-md flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -61,7 +61,7 @@
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
 <!-- Search Bar -->
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
 </div>
@@ -86,7 +86,7 @@
 </div>
 </header>
 <!-- Main Canvas -->
-<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
 <div class="max-w-[900px] mx-auto">
 <!-- Page Header -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
@@ -117,6 +117,9 @@
 </div>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <script>
 (function () {

@@ -57,7 +57,7 @@
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, requests..." type="text">
 </div>
@@ -239,6 +239,9 @@
                 </button>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <!-- Interaction script -->
 <script>
@@ -280,7 +283,7 @@
             const crumb = document.querySelector('.font-label-md.text-primary');
             if (crumb && crumb.textContent.indexOf('New Staff') !== -1) crumb.textContent = 'Edit Staff';
             document.querySelectorAll('button[onclick="saveNewStaff(this)"]').forEach((btn) => {
-                btn.childNodes.forEach((n) => { if (n.nodeType === 3) n.nodeValue = '  Update Staff Member'; });
+                btn.childNodes.forEach((n) => { if (n.nodeType === 3 && n.textContent.trim()) n.nodeValue = '  Update Staff Member'; });
             });
         }
 

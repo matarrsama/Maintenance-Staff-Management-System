@@ -9,7 +9,7 @@
 <script type="module" src="/src/store.js"></script>
 <script type="module" src="/src/dialogs.js"></script>
 <script type="module" src="/src/auth.js"></script>
-<script type="module" src="/src/pdf-export.js"></script>
+<script src="./pdf-export.js"></script>
 <script type="module" src="/src/nav.js"></script>
 <style>
         .stripes-pattern {
@@ -24,6 +24,8 @@
 
         .timeline-grid {
             display: grid;
+            width: max-content;
+            min-width: 100%;
         }
 
         .day-cell {
@@ -39,6 +41,9 @@
         }
 
         .day-hdr {
+            position: absolute;
+            inset-block: 0;
+            width: 48px;
             border-inline-end: 1px solid #c5c5d34d;
             background: #e5eeff;
         }
@@ -54,7 +59,7 @@
         }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -95,7 +100,7 @@
 </button></div>
 </nav>
 <!-- Main Content Area Wrapper -->
-<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)] h-screen overflow-hidden">
+<div class="flex-1 flex flex-col md:ml-[280px] w-full md:w-[calc(100%-280px)]">
 <!-- TopNavBar -->
 <header class="bg-surface-container-lowest dark:bg-on-background flex justify-between items-center w-full px-container-padding h-16 sticky top-0 z-40 border-b border-outline-variant dark:border-outline">
 <div class="flex items-center gap-4 flex-1">
@@ -125,7 +130,7 @@
 </div>
 </header>
 <!-- Main Canvas -->
-<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
 <div class="mb-section-gap flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 <div>
 <h2 class="font-headline-lg text-headline-lg text-on-background" id="roster-month">Master Leave Roster</h2>
@@ -141,9 +146,9 @@
 <span class="font-label-md text-label-md text-on-surface">In Progress</span>
 </div>
 <div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant shadow-sm">
-<span class="w-3 h-3 rounded-full bg-error"></span>
-<span class="font-label-md text-label-md text-on-surface">Completed</span>
-</div>
+				<span class="w-3 h-3 rounded-full bg-error"></span>
+				<span class="font-label-md text-label-md text-on-surface">Conflict</span>
+			</div>
 </div>
 </div>
 <!-- Roster Container -->
@@ -181,7 +186,7 @@
 <!-- Search Results Panel -->
 <div id="roster-results" class="hidden"></div>
 <!-- Timeline Scroll Area -->
-<div class="overflow-auto flex-1 relative bg-surface-bright">
+<div class="overflow-auto flex-1 relative bg-surface-bright" id="roster-scroll">
 <!-- Header Row -->
 <div class="timeline-grid sticky top-0 bg-surface-container z-20 border-b border-outline-variant font-label-md text-label-md text-on-surface-variant" id="roster-header"></div>
 <div id="roster-rows">
@@ -192,6 +197,9 @@
 </div>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <script>
 (function () {
@@ -236,8 +244,8 @@ function effectiveStatus(e) {
 var t = todayStr();
 if (t < e.startDate) return 'Scheduled';
 if (t > e.endDate) return 'Completed';
-if (e.status === 'Logged') return 'Completed';
-return 'In Progress';
+if (t >= e.startDate && t <= e.endDate) return 'In Progress';
+return 'Completed';
 }
 function daysBetween(start, end) {
 var ms = new Date(end) - new Date(start);
@@ -270,10 +278,57 @@ monthDay: monthDay
 function getStaff() {
 return window.DB ? window.DB.getList('staff') : [];
 }
-var STAFF = getStaff();
+var STAFF = [];
 var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 var viewDate = new Date();
 viewDate.setDate(1);
+var scrollToTodayPending = true;
+
+function isViewingCurrentMonth() {
+var now = new Date();
+return viewDate.getFullYear() === now.getFullYear() && viewDate.getMonth() === now.getMonth();
+}
+
+function scrollRosterToToday() {
+if (!isViewingCurrentMonth()) return;
+var scroller = document.getElementById('roster-scroll');
+if (!scroller) return;
+var today = new Date().getDate();
+scroller.scrollLeft = Math.max(0, (today - 1) * 48);
+}
+
+function fitRosterBarLabels() {
+var bars = document.querySelectorAll('#roster-rows [data-leave-bar]');
+bars.forEach(function (bar) {
+var span = bar.querySelector('[data-bar-label]');
+if (!span) return;
+var typeName = bar.getAttribute('data-type-name') || '';
+var durLabel = bar.getAttribute('data-dur-label') || '';
+var status = bar.getAttribute('data-status') || '';
+var statusSuffix = status === 'Completed' ? ' (Completed)' : status === 'In Progress' ? ' (In Progress)' : '';
+var candidates = [
+typeName + ' · ' + durLabel + statusSuffix,
+typeName + ' · ' + durLabel,
+typeName
+];
+var maxWidth = bar.clientWidth - 4;
+var best = '';
+span.classList.remove('truncate');
+for (var i = 0; i < candidates.length; i++) {
+span.textContent = candidates[i];
+if (span.scrollWidth <= maxWidth) {
+best = candidates[i];
+break;
+}
+}
+if (best) {
+span.textContent = best;
+} else {
+span.classList.add('truncate');
+span.textContent = typeName;
+}
+});
+}
 
 function getTeams() {
 return window.DB ? window.DB.getList('teams') : [];
@@ -438,15 +493,23 @@ if (el) el.textContent = MONTHS[viewDate.getMonth()] + ' ' + viewDate.getFullYea
 var hdr = document.getElementById('roster-header');
 if (hdr) {
 hdr.style.gridTemplateColumns = gridStyle;
+hdr.style.minWidth = (200 + daysInMonth * 48) + 'px';
 var labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 var d0 = weekdayOfFirst();
+var now = new Date();
+var viewingToday = viewDate.getFullYear() === now.getFullYear() && viewDate.getMonth() === now.getMonth();
+var todayDay = now.getDate();
 var html = '<div class="p-3 sticky left-0 bg-surface-container border-r border-outline-variant flex items-center z-30 shadow-[2px_0_5px_rgba(0,0,0,0.05)]">Team Member</div>';
+html += '<div class="relative min-h-[58px]" style="grid-column:span ' + daysInMonth + ' / span ' + daysInMonth + '">';
 for (var i = 1; i <= daysInMonth; i++) {
 var wd = (d0 + (i - 1)) % 7;
 var isWeekend = wd === 0 || wd === 6;
 var bgClass = isWeekend ? ' weekend' : '';
-html += '<div class="p-2 day-hdr text-center flex flex-col justify-center' + bgClass + '"><span class="opacity-70 text-[10px]">' + labels[wd] + '</span><span>' + i + '</span></div>';
+var isToday = viewingToday && i === todayDay;
+var todayMark = isToday ? '<span class="text-[9px] leading-none opacity-60 font-normal lowercase">today</span>' : '';
+html += '<div class="day-hdr p-1.5 text-center flex flex-col justify-center gap-0.5' + bgClass + (isToday ? ' text-primary font-medium' : '') + '" style="left:calc(48px * ' + (i - 1) + ')"><span class="opacity-70 text-[10px]">' + labels[wd] + '</span><span>' + i + '</span>' + todayMark + '</div>';
 }
+html += '</div>';
 hdr.innerHTML = html;
 }
 }
@@ -481,17 +544,35 @@ return e.staffId === s.id && (e.startDate.slice(0, 7) === key || e.endDate.slice
 });
 });
 team.members.forEach(function (s) {
-teamEntries[s.id].forEach(function (e) {
-var conflictNames = [];
-team.members.forEach(function (o) {
-if (o.id === s.id) return;
-teamEntries[o.id].forEach(function (oe) {
-if (overlaps(e, oe)) conflictNames.push(o.name);
-});
-});
-e._conflicts = conflictNames;
-});
-});
+				teamEntries[s.id].forEach(function (e) {
+					var conflictNames = [];
+					var conflictRanges = [];
+					team.members.forEach(function (o) {
+						if (o.id === s.id) return;
+						teamEntries[o.id].forEach(function (oe) {
+							if (overlaps(e, oe)) {
+								conflictNames.push(o.name);
+								var iStart = e.startDate <= oe.startDate ? oe.startDate : e.startDate;
+								var iEnd = e.endDate <= oe.endDate ? e.endDate : oe.endDate;
+								var dStart = iStart.slice(0, 7) === key ? Math.max(1, LeaveTracker.monthDay(iStart)) : 1;
+								var dEnd = iEnd.slice(0, 7) === key ? Math.min(daysInMonth, LeaveTracker.monthDay(iEnd)) : daysInMonth;
+								if (dStart <= dEnd) conflictRanges.push({ start: dStart, end: dEnd });
+							}
+						});
+					});
+					e._conflicts = conflictNames;
+					conflictRanges.sort(function(a, b) { return a.start - b.start; });
+					var merged = [];
+					conflictRanges.forEach(function(r) {
+						if (merged.length && r.start <= merged[merged.length - 1].end + 1) {
+							merged[merged.length - 1].end = Math.max(merged[merged.length - 1].end, r.end);
+						} else {
+							merged.push({ start: r.start, end: r.end });
+						}
+					});
+					e._conflictRanges = merged;
+				});
+			});
 html += '<div class="timeline-grid bg-surface-container-low border-y border-outline-variant/50 font-label-md text-primary" data-team="' + LeaveTracker.escapeHtml(team.id) + '" style="grid-template-columns:' + gridStyle + '">';
 html += '<div class="p-2 sticky left-0 bg-surface-container-low border-r border-outline-variant/50 z-20">' + LeaveTracker.escapeHtml(teamDisplayName(team.id)) + ' (Min Req: ' + team.members[0].minReq + ')</div>';
 html += '<div class="relative p-2" style="grid-column:span ' + daysInMonth + ' / span ' + daysInMonth + '">';
@@ -515,29 +596,47 @@ var wd = (d0 + (day - 1)) % 7;
 var dayBg = (wd === 0 || wd === 6) ? ' weekend' : '';
 html += '<div class="day-cell' + dayBg + '" style="left:calc(48px * ' + (day - 1) + ')"></div>';
 }
-staffEntries.forEach(function (e) {
-var startDay = e.startDate.slice(0, 7) === key ? Math.max(1, LeaveTracker.monthDay(e.startDate)) : 1;
-var endDay = e.endDate.slice(0, 7) === key ? Math.min(daysInMonth, LeaveTracker.monthDay(e.endDate)) : daysInMonth;
-if (endDay < startDay) return;
-var days = endDay - startDay + 1;
-var status = LeaveTracker.effectiveStatus(e);
-var hasConflict = e._conflicts && e._conflicts.length > 0;
-var barCls = hasConflict
-? 'bg-error/20 border-2 border-error text-error hover:bg-error/30'
-: status === 'In Progress'
-? 'bg-primary/15 border border-primary text-primary hover:bg-primary/25'
-: status === 'Completed'
-? 'bg-error/10 border border-error/40 text-error hover:bg-error/20'
-: 'bg-secondary/20 border border-secondary text-secondary hover:bg-secondary/30';
-var dur = LeaveTracker.daysBetween(e.startDate, e.endDate);
-var durLabel = dur + (dur > 1 ? ' days' : ' day');
-var label = e.typeName + ' · ' + durLabel + (status === 'Completed' ? ' (Completed)' : status === 'In Progress' ? ' (In Progress)' : '');
-var title = s.name + ' - ' + e.typeName + ' (' + LeaveTracker.fmtDate(e.startDate) + (e.startDate !== e.endDate ? ' to ' + LeaveTracker.fmtDate(e.endDate) : '') + ') - ' + durLabel + ' - ' + (status === 'Completed' ? 'Completed' : status === 'In Progress' ? 'In Progress' : 'Scheduled');
-if (hasConflict) title += ' - OVERLAPS WITH ' + e._conflicts.join(', ');
-html += '<div class="absolute top-2 h-9 rounded flex items-center px-2 cursor-pointer transition-colors shadow-sm ' + barCls + '" style="left:calc(48px * ' + (startDay - 1) + '); width:calc(48px * ' + days + ');" title="' + LeaveTracker.escapeHtml(title) + '">';
-html += '<span class="font-label-md truncate w-full">' + LeaveTracker.escapeHtml(label) + '</span>';
-html += '</div>';
-});
+			staffEntries.forEach(function (e) {
+				var startDay = e.startDate.slice(0, 7) === key ? Math.max(1, LeaveTracker.monthDay(e.startDate)) : 1;
+				var endDay = e.endDate.slice(0, 7) === key ? Math.min(daysInMonth, LeaveTracker.monthDay(e.endDate)) : daysInMonth;
+				if (endDay < startDay) return;
+				var days = endDay - startDay + 1;
+				var status = LeaveTracker.effectiveStatus(e);
+				var hasConflict = e._conflicts && e._conflicts.length > 0;
+				var conflictRanges = e._conflictRanges || [];
+				var dur = LeaveTracker.daysBetween(e.startDate, e.endDate);
+				var durLabel = dur + (dur > 1 ? ' days' : ' day');
+				var title = s.name + ' - ' + e.typeName + ' (' + LeaveTracker.fmtDate(e.startDate) + (e.startDate !== e.endDate ? ' to ' + LeaveTracker.fmtDate(e.endDate) : '') + ') - ' + durLabel + ' - ' + (status === 'Completed' ? 'Completed' : status === 'In Progress' ? 'In Progress' : 'Scheduled');
+				if (hasConflict) title += ' - OVERLAPS WITH ' + e._conflicts.join(', ');
+
+				var barCls = hasConflict
+					? (status === 'In Progress'
+						? 'bg-primary/15 border border-primary text-primary hover:bg-primary/25'
+						: status === 'Completed'
+						? 'bg-error/10 border border-error/40 text-error hover:bg-error/20'
+						: 'bg-secondary/20 border border-secondary text-secondary hover:bg-secondary/30')
+					: (status === 'In Progress'
+						? 'bg-primary/15 border border-primary text-primary hover:bg-primary/25'
+						: status === 'Completed'
+						? 'bg-error/10 border border-error/40 text-error hover:bg-error/20'
+						: 'bg-secondary/20 border border-secondary text-secondary hover:bg-secondary/30');
+
+				html += '<div class="absolute top-0.5 h-9 rounded flex items-center justify-center px-1 cursor-pointer transition-colors shadow-sm ' + barCls + '" style="left:calc(48px * ' + (startDay - 1) + '); width:calc(48px * ' + days + ');" title="' + LeaveTracker.escapeHtml(title) + '" data-leave-bar data-type-name="' + LeaveTracker.escapeHtml(e.typeName) + '" data-dur-label="' + LeaveTracker.escapeHtml(durLabel) + '" data-status="' + LeaveTracker.escapeHtml(status) + '">';
+				html += '<span class="font-label-md whitespace-nowrap w-full text-center" data-bar-label>' + LeaveTracker.escapeHtml(e.typeName) + '</span>';
+				html += '</div>';
+
+				if (hasConflict) {
+					conflictRanges.forEach(function(cr) {
+						var cs = Math.max(cr.start, startDay);
+						var ce = Math.min(cr.end, endDay);
+						if (cs > ce) return;
+						var cDays = ce - cs + 1;
+						html += '<div class="absolute top-0.5 h-9 rounded border border-error bg-error/30 flex items-center justify-center px-0.5 pointer-events-none" style="left:calc(48px * ' + (cs - 1) + '); width:calc(48px * ' + cDays + '); z-index:5;">';
+						html += '<span class="material-symbols-outlined text-error text-[14px]">warning</span>';
+						html += '</div>';
+					});
+				}
+			});
 html += '</div>';
 html += '</div>';
 });
@@ -549,23 +648,36 @@ rosterHasStaff = true;
 }
 container.innerHTML = html;
 applyRosterFilters();
+if (scrollToTodayPending) {
+scrollToTodayPending = false;
+requestAnimationFrame(function () {
+scrollRosterToToday();
+fitRosterBarLabels();
+});
+} else {
+requestAnimationFrame(fitRosterBarLabels);
+}
 }
 
 window.shiftMonth = function (delta) {
 viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + delta, 1);
+scrollToTodayPending = isViewingCurrentMonth();
 renderRoster();
 };
 
 window.goToCurrentMonth = function () {
 viewDate = new Date();
 viewDate.setDate(1);
+scrollToTodayPending = true;
 renderRoster();
 };
 
 // ---------- Roster export (CSV / PDF) ----------
 
 function rosterExportRows() {
-var key = monthKey(viewDate);
+var yearKey = String(viewDate.getFullYear());
+var yearStart = yearKey + '-01-01';
+var yearEnd = yearKey + '-12-31';
 var entries = LeaveTracker.getLeaveEntries();
 var out = [];
 var staff = STAFF.slice().sort(function (a, b) {
@@ -577,13 +689,13 @@ return (a.name || '').localeCompare(b.name || '');
 });
 staff.forEach(function (s) {
 var team = s.teamLabel || teamDisplayName(s.team);
-var monthEntries = entries.filter(function (e) {
-return e.staffId === s.id && (e.startDate.slice(0, 7) === key || e.endDate.slice(0, 7) === key);
+var yearEntries = entries.filter(function (e) {
+return e.staffId === s.id && e.startDate <= yearEnd && e.endDate >= yearStart;
 });
-if (!monthEntries.length) {
+if (!yearEntries.length) {
 out.push({ name: s.name, role: s.role, team: team, empId: s.empId, balance: s.leaveBalance, type: '', start: '', end: '', status: '' });
 } else {
-monthEntries.forEach(function (e) {
+yearEntries.forEach(function (e) {
 out.push({ name: s.name, role: s.role, team: team, empId: s.empId, balance: s.leaveBalance, type: e.typeName, start: e.startDate, end: e.endDate, status: LeaveTracker.effectiveStatus(e) });
 });
 }
@@ -625,22 +737,25 @@ rosterDownload('Roster_' + monthKey(viewDate) + '.csv', '\uFEFF' + lines.join('\
 };
 
 window.exportRosterPDF = function () {
+console.log('[PDF] exportRosterPDF called, window.PDFExport:', !!window.PDFExport);
 var PDFExport = window.PDFExport;
 if (!PDFExport) {
+console.warn('[PDF] PDFExport not loaded yet');
 alert('PDF export is still loading. Please try again.');
 return;
 }
 var settings = (window.DB && window.DB.getDoc('settings')) || {};
 var hospital = settings.hospitalName || 'BANSANG HOSPITAL';
 var dept = settings.department || settings.slogan || 'Maintenance Unit';
-var monthLabel = MONTHS[viewDate.getMonth()] + ' ' + viewDate.getFullYear();
+var monthLabel = viewDate.getFullYear() + ' Annual Report';
 var now = new Date();
 var pad2 = function (n) { return ('0' + n).slice(-2); };
 var generated = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate()) + ' ' + pad2(now.getHours()) + ':' + pad2(now.getMinutes());
 
 var rows = rosterExportRows().filter(function (r) { return r.type; });
-var C = { staff: 22, emp: 12, team: 16, type: 14, start: 11, end: 11, duration: 10 };
-var colWidths = [C.staff, C.emp, C.team, C.type, C.start, C.end, C.duration];
+console.log('[PDF] year:', viewDate.getFullYear(), '| total rows:', rows.length, '| entries:', rows.map(function(r){ return r.name+':'+r.type+' ('+r.start+' to '+r.end+')'; }));
+var C = { staff: 20, emp: 10, team: 14, type: 13, start: 10, end: 10, duration: 9, status: 11 };
+var colWidths = [C.staff, C.emp, C.team, C.type, C.start, C.end, C.duration, C.status];
 
 function leaveDuration(r) {
 if (!r.start) return '—';
@@ -651,9 +766,9 @@ return days + (days === 1 ? ' day' : ' days');
 }
 
 function rowLine(r) {
-return PDFExport.padCol(r.name, C.staff) + PDFExport.padCol(r.empId, C.emp) + PDFExport.padCol(r.team, C.team) + PDFExport.padCol(r.type, C.type) + PDFExport.padCol(r.start ? PDFExport.shortDate(r.start) : '', C.start) + PDFExport.padCol(r.end ? PDFExport.shortDate(r.end) : '', C.end) + PDFExport.padCol(leaveDuration(r), C.duration);
+return PDFExport.padCol(r.name, C.staff) + PDFExport.padCol(r.empId, C.emp) + PDFExport.padCol(r.team, C.team) + PDFExport.padCol(r.type, C.type) + PDFExport.padCol(r.start ? PDFExport.shortDate(r.start) : '', C.start) + PDFExport.padCol(r.end ? PDFExport.shortDate(r.end) : '', C.end) + PDFExport.padCol(leaveDuration(r), C.duration) + PDFExport.padCol(r.status || '', C.status);
 }
-var headerLine = PDFExport.padCol('Team Member', C.staff) + PDFExport.padCol('Staff ID', C.emp) + PDFExport.padCol('Team', C.team) + PDFExport.padCol('Leave Type', C.type) + PDFExport.padCol('Start Date', C.start) + PDFExport.padCol('End Date', C.end) + PDFExport.padCol('Duration', C.duration);
+var headerLine = PDFExport.padCol('Team Member', C.staff) + PDFExport.padCol('Staff ID', C.emp) + PDFExport.padCol('Team', C.team) + PDFExport.padCol('Leave Type', C.type) + PDFExport.padCol('Start Date', C.start) + PDFExport.padCol('End Date', C.end) + PDFExport.padCol('Duration', C.duration) + PDFExport.padCol('Status', C.status);
 
 var title = [
 { t: hospital, b: true, s: 16, color: [20, 50, 120] },
@@ -668,7 +783,7 @@ sections: [
 ],
 footer: hospital + '  |  Staff Leave Schedule  |  ' + monthLabel
 });
-rosterDownload('Roster_' + monthKey(viewDate) + '.pdf', pdf, 'application/pdf');
+rosterDownload('Roster_' + monthKey(viewDate) + '_' + now.getFullYear() + pad2(now.getMonth() + 1) + pad2(now.getDate()) + '_' + pad2(now.getHours()) + pad2(now.getMinutes()) + pad2(now.getSeconds()) + '.pdf', pdf, 'application/pdf');
 };
 
 if (window.Auth) window.Auth.guard();

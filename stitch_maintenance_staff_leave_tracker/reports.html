@@ -9,10 +9,10 @@
 <script type="module" src="/src/store.js"></script>
 <script type="module" src="/src/dialogs.js"></script>
 <script type="module" src="/src/auth.js"></script>
-<script type="module" src="/src/pdf-export.js"></script>
+<script src="./pdf-export.js"></script>
 <script type="module" src="/src/nav.js"></script>
 </head>
-<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-surface text-on-surface font-body-md flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -63,7 +63,7 @@
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
 <!-- Search Bar -->
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search requests..." type="text"/>
 </div>
@@ -88,7 +88,7 @@
 </div>
 </header>
 <!-- Main Workspace -->
-<main id="app-main" class="flex-grow p-container-padding flex flex-col gap-section-gap overflow-y-auto h-[calc(100vh-64px)]">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
 <div class="max-w-[1200px] mx-auto w-full flex flex-col gap-section-gap px-container-padding">
 <!-- Page Header & Controls -->
 <div class="flex flex-col gap-4">
@@ -166,16 +166,16 @@
 <!-- Staffing Trends Chart (Takes 2 columns on large screens) -->
 <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm overflow-hidden">
 <div class="px-data-density-comfortable py-4 border-b border-outline-variant bg-surface-container-lowest flex justify-between items-center">
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Staffing Trends: Leave Frequency</h3>
-<div class="flex gap-2">
-<button class="font-label-md text-label-md px-2 py-1 bg-surface-container rounded text-on-surface">Monthly</button>
-<button class="font-label-md text-label-md px-2 py-1 text-on-surface-variant hover:bg-surface-container rounded">Quarterly</button>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Team Staffing Overview</h3>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-secondary inline-block"></span><span class="font-label-md text-label-md text-on-surface-variant">Available</span></div>
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-error inline-block"></span><span class="font-label-md text-label-md text-on-surface-variant">On Leave</span></div>
 </div>
 </div>
 <!-- Chart Area -->
-<div class="p-data-density-comfortable flex-1 flex items-end justify-between gap-2 h-64 bg-background">
+<div class="p-data-density-comfortable flex-1 flex items-end justify-between gap-3 h-64 bg-background">
 <!-- Bars rendered from live data -->
-<div class="w-full bg-surface-container h-full relative rounded-sm flex items-end px-4 gap-4" id="chart-bars">
+<div class="w-full bg-surface-container h-full relative rounded-sm flex items-end px-4 gap-3" id="chart-bars">
 <div class="skel flex-1 h-24" data-skeleton></div>
 <div class="skel flex-1 h-16" data-skeleton></div>
 <div class="skel flex-1 h-20" data-skeleton></div>
@@ -183,7 +183,7 @@
 </div>
 </div>
 <!-- Chart X-axis labels -->
-<div class="flex justify-between px-8 py-2 border-t border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant" id="chart-labels"></div>
+<div class="flex justify-between px-4 py-2 border-t border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant" id="chart-labels"></div>
 </div>
 <!-- Detailed Leave Summary Table -->
 <div class="lg:col-span-1 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col shadow-sm overflow-hidden">
@@ -208,6 +208,9 @@
 </div>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <script>
 (function () {
@@ -250,8 +253,8 @@ function effectiveStatus(e) {
 var t = todayStr();
 if (t < e.startDate) return 'Scheduled';
 if (t > e.endDate) return 'Completed';
-if (e.status === 'Logged') return 'Completed';
-return 'In Progress';
+if (t >= e.startDate && t <= e.endDate) return 'In Progress';
+return 'Completed';
 }
 function daysBetween(start, end) {
 var ms = new Date(end) - new Date(start);
@@ -451,18 +454,35 @@ var rangeEl = document.getElementById('report-range-label');
 if (rangeEl) rangeEl.textContent = LeaveTracker.fmtDate(r.start) + ' - ' + LeaveTracker.fmtDate(r.end);
 
 var months = monthKeysBetween(r.start, r.end);
-var monthTotals = months.map(function (mk) { return monthTotal(rangeList, mk); });
-var maxMonth = Math.max.apply(null, monthTotals.concat([1]));
 var barsEl = document.getElementById('chart-bars');
 if (barsEl) {
-barsEl.innerHTML = monthTotals.map(function (t) {
-var h = Math.max(6, Math.round((t / maxMonth) * 100));
-return '<div class="w-full bg-primary-container rounded-t-sm opacity-80 hover:opacity-100 transition-opacity" style="height: ' + h + '%;" title="' + t + ' leave day(s)"></div>';
+if (!teams.length) {
+barsEl.innerHTML = '<div class="w-full h-full flex items-center justify-center text-on-surface-variant font-body-sm text-body-sm">No teams configured yet.</div>';
+} else {
+var teamCapData = teams.map(function (team) {
+var total = teamOf[team.id] || 0;
+var onLeave = onLeaveByTeam[team.id] || 0;
+var active = total - onLeave;
+return { name: team.name, active: active, onLeave: onLeave, total: total };
+});
+var maxTotal = Math.max.apply(null, teamCapData.map(function (t) { return t.total; }).concat([1]));
+barsEl.innerHTML = teamCapData.map(function (t) {
+var hOnLeave = t.total ? Math.round((t.onLeave / maxTotal) * 100) : 0;
+var hActive = t.total ? Math.round((t.active / maxTotal) * 100) : 0;
+return '<div class="flex flex-col justify-end items-center flex-1 h-full gap-0" title="' + LeaveTracker.escapeHtml(t.name) + ': ' + t.active + ' available, ' + t.onLeave + ' on leave">' +
+'<div class="w-full bg-error rounded-t-sm opacity-80 hover:opacity-100 transition-opacity" style="height: ' + hOnLeave + '%;"></div>' +
+'<div class="w-full bg-secondary rounded-t-sm opacity-80 hover:opacity-100 transition-opacity" style="height: ' + hActive + '%;"></div>' +
+'</div>';
 }).join('');
+}
 }
 var labelsEl = document.getElementById('chart-labels');
 if (labelsEl) {
-labelsEl.innerHTML = months.map(function (mk) { return '<span>' + shortMonth(mk) + '</span>'; }).join('');
+if (!teams.length) {
+labelsEl.innerHTML = '';
+} else {
+labelsEl.innerHTML = teams.map(function (team) { return '<span class="truncate text-center" title="' + LeaveTracker.escapeHtml(team.name) + '">' + LeaveTracker.escapeHtml(team.name) + '</span>'; }).join('');
+}
 }
 
 var teamBody = document.getElementById('team-capacity-body');
@@ -474,7 +494,7 @@ teamBody.innerHTML = teams.map(function (team) {
 var total = teamOf[team.id] || 0;
 var onLeave = onLeaveByTeam[team.id] || 0;
 var active = total - onLeave;
-var cap = total ? Math.round((active / total) * 100) : 100;
+var cap = total ? Math.round((active / total) * 100) : 0;
 var barCls = cap < 70 ? 'bg-error' : cap < 85 ? 'bg-outline' : 'bg-secondary';
 var badgeCls = cap < 70 ? 'bg-error-container text-on-error-container' : cap < 85 ? 'bg-surface-variant text-on-surface-variant' : 'bg-secondary-container text-on-secondary-container';
 var rowBg = cap < 70 ? ' bg-error-container/20' : '';
@@ -540,7 +560,7 @@ var mostPct = rangeList.length && typeNames.length ? Math.round((byType[mostType
 var capacities = teams.map(function (team) {
 var total = teamOf[team.id] || 0;
 var onLeave = onLeaveByTeam[team.id] || 0;
-return { name: team.name, active: total - onLeave, onLeave: onLeave, cap: total ? Math.round(((total - onLeave) / total) * 100) : 100 };
+return { name: team.name, active: total - onLeave, onLeave: onLeave, cap: total ? Math.round(((total - onLeave) / total) * 100) : 0 };
 });
 var detailed = rangeList.slice().sort(function (a, b) { return b.startDate.localeCompare(a.startDate); }).map(function (e) {
 var s = staffById[e.staffId];
@@ -601,8 +621,10 @@ reportsDownload('Reports_' + d.r.start + '_to_' + d.r.end + '.csv', '\uFEFF' + c
 };
 
 window.exportReportsPDF = function () {
+console.log('[PDF] exportReportsPDF called, window.PDFExport:', !!window.PDFExport);
 var PDFExport = window.PDFExport;
 if (!PDFExport) {
+console.warn('[PDF] PDFExport not loaded yet');
 alert('PDF export is still loading. Please try again.');
 return;
 }
@@ -614,12 +636,12 @@ var now = new Date();
 var pad2 = function (n) { return ('0' + n).slice(-2); };
 var generated = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate()) + ' ' + pad2(now.getHours()) + ':' + pad2(now.getMinutes());
 
-var C = { staff: 22, emp: 12, team: 16, type: 14, start: 11, end: 11, duration: 10 };
-var colWidths = [C.staff, C.emp, C.team, C.type, C.start, C.end, C.duration];
+var C = { staff: 20, emp: 10, team: 14, type: 13, start: 10, end: 10, duration: 9, status: 11 };
+var colWidths = [C.staff, C.emp, C.team, C.type, C.start, C.end, C.duration, C.status];
 
 var entryRows = d.detailed.map(function (e) {
 var dur = e.days + (e.days === 1 ? ' day' : ' days');
-return { t: PDFExport.padCol(e.staff, C.staff) + PDFExport.padCol(e.empId || '', C.emp) + PDFExport.padCol(e.team, C.team) + PDFExport.padCol(e.type, C.type) + PDFExport.padCol(e.start || '', C.start) + PDFExport.padCol(e.end || '', C.end) + PDFExport.padCol(dur, C.duration), s: 8.5 };
+return { t: PDFExport.padCol(e.staff, C.staff) + PDFExport.padCol(e.empId || '', C.emp) + PDFExport.padCol(e.team, C.team) + PDFExport.padCol(e.type, C.type) + PDFExport.padCol(e.start || '', C.start) + PDFExport.padCol(e.end || '', C.end) + PDFExport.padCol(dur, C.duration) + PDFExport.padCol(e.status || '', C.status), s: 8.5 };
 });
 
 var title = [
@@ -629,7 +651,7 @@ var title = [
 { t: 'Generated: ' + generated, s: 8, color: [160, 165, 170] }
 ];
 
-var entryHeader = PDFExport.padCol('Team Member', C.staff) + PDFExport.padCol('Staff ID', C.emp) + PDFExport.padCol('Team', C.team) + PDFExport.padCol('Leave Type', C.type) + PDFExport.padCol('Start Date', C.start) + PDFExport.padCol('End Date', C.end) + PDFExport.padCol('Duration', C.duration);
+var entryHeader = PDFExport.padCol('Team Member', C.staff) + PDFExport.padCol('Staff ID', C.emp) + PDFExport.padCol('Team', C.team) + PDFExport.padCol('Leave Type', C.type) + PDFExport.padCol('Start Date', C.start) + PDFExport.padCol('End Date', C.end) + PDFExport.padCol('Duration', C.duration) + PDFExport.padCol('Status', C.status);
 
 var pdf = PDFExport.buildPdf({
 title: title,
@@ -638,7 +660,7 @@ sections: [
 ],
 footer: hospital + '  |  Leave Records Report  |  ' + d.r.start + ' to ' + d.r.end
 });
-reportsDownload('Reports_' + d.r.start + '_to_' + d.r.end + '.pdf', pdf, 'application/pdf');
+reportsDownload('Reports_' + d.r.start + '_to_' + d.r.end + '_' + now.getFullYear() + pad2(now.getMonth() + 1) + pad2(now.getDate()) + '_' + pad2(now.getHours()) + pad2(now.getMinutes()) + pad2(now.getSeconds()) + '.pdf', pdf, 'application/pdf');
 };
 
 if (window.Auth) window.Auth.guard();

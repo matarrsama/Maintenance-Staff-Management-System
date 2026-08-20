@@ -11,7 +11,7 @@
 <script type="module" src="/src/auth.js"></script>
 <script type="module" src="/src/nav.js"></script>
 </head>
-<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-surface text-on-surface font-body-md flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -65,7 +65,7 @@
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
 <!-- Search Bar -->
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
 </div>
@@ -90,7 +90,7 @@
 </div>
 </header>
 <!-- Main Content Area -->
-<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
 <!-- Mobile Header (Visible only on mobile) -->
 <div class="md:hidden flex justify-between items-center mb-6">
 <h1 class="font-headline-md text-headline-md font-bold text-primary">Dashboard</h1>
@@ -176,18 +176,17 @@
                         View Leave Manager (0)
                     </button>
 </div>
-<!-- Capacity Chart Placeholder (Visual Representation) -->
+<!-- Weekly Capacity Chart -->
 <div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-5 flex-grow flex flex-col">
 <h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Weekly Capacity</h3>
-<div class="flex-grow flex items-end justify-between gap-2 h-32 mt-auto pb-2 border-b border-outline-variant">
-<!-- Simulated Bar Chart -->
-<div class="w-full bg-primary-container rounded-t" style="height: 95%;"></div>
-<div class="w-full bg-primary-container rounded-t opacity-80" style="height: 90%;"></div>
-<div class="w-full bg-secondary rounded-t" style="height: 100%;"></div>
-<div class="w-full bg-primary-container rounded-t opacity-70" style="height: 85%;"></div>
-<div class="w-full bg-primary-container rounded-t opacity-60" style="height: 75%;"></div>
+<div id="weekly-chart" class="flex-grow flex items-end justify-between gap-2 h-32 mt-auto pb-2 border-b border-outline-variant">
+<div class="w-full bg-surface-container rounded-t" style="height: 100%;"></div>
+<div class="w-full bg-surface-container rounded-t" style="height: 100%;"></div>
+<div class="w-full bg-surface-container rounded-t" style="height: 100%;"></div>
+<div class="w-full bg-surface-container rounded-t" style="height: 100%;"></div>
+<div class="w-full bg-surface-container rounded-t" style="height: 100%;"></div>
 </div>
-<div class="flex justify-between mt-2 font-label-md text-[10px] text-outline uppercase">
+<div id="weekly-labels" class="flex justify-between mt-2 font-label-md text-[10px] text-outline uppercase">
 <span>Mon</span>
 <span>Tue</span>
 <span>Wed</span>
@@ -198,6 +197,9 @@
 </div>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <script>
 (function () {
@@ -240,8 +242,8 @@ function effectiveStatus(e) {
 var t = todayStr();
 if (t < e.startDate) return 'Scheduled';
 if (t > e.endDate) return 'Completed';
-if (e.status === 'Logged') return 'Completed';
-return 'In Progress';
+if (t >= e.startDate && t <= e.endDate) return 'In Progress';
+return 'Completed';
 }
 function daysBetween(start, end) {
 var ms = new Date(end) - new Date(start);
@@ -290,7 +292,7 @@ var totalStaff = staffList.length;
 var totalStaffEl = document.getElementById('metric-total-staff');
 if (totalStaffEl) totalStaffEl.textContent = totalStaff;
 
-var capacity = totalStaff ? Math.max(0, Math.round(((totalStaff - onLeave.length) / totalStaff) * 100)) : 100;
+var capacity = totalStaff ? Math.max(0, Math.round(((totalStaff - onLeave.length) / totalStaff) * 100)) : 0;
 var capacityEl = document.getElementById('metric-capacity');
 if (capacityEl) capacityEl.textContent = capacity + '%';
 var capacityBar = document.getElementById('metric-capacity-bar');
@@ -342,6 +344,33 @@ list.innerHTML = '<li class="font-body-sm text-body-sm text-on-surface-variant t
 
 var btn = document.getElementById('review-all-btn');
 if (btn) btn.textContent = 'View Leave Manager (' + entries.length + ')';
+
+var chartEl = document.getElementById('weekly-chart');
+var labelsEl = document.getElementById('weekly-labels');
+if (chartEl) {
+  var totalStaff = staffList.length;
+  var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var todayDate = new Date();
+  var dayOfWeek = todayDate.getDay();
+  var monday = new Date(todayDate);
+  monday.setDate(todayDate.getDate() - ((dayOfWeek + 6) % 7));
+  var bars = '';
+  var lbls = '';
+  for (var i = 0; i < 5; i++) {
+    var d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    var ds = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    var offCount = entries.filter(function (e) { return e.startDate <= ds && e.endDate >= ds; }).length;
+    var pct = totalStaff ? Math.max(0, Math.round(((totalStaff - offCount) / totalStaff) * 100)) : 100;
+    var isToday = ds === today;
+    var barCls = pct === 100 ? 'bg-secondary' : pct >= 80 ? 'bg-primary-container' : pct >= 60 ? 'bg-primary-container opacity-70' : 'bg-error-container';
+    var borderCls = isToday ? ' ring-2 ring-primary ring-offset-1' : '';
+    bars += '<div class="w-full ' + barCls + ' rounded-t transition-all' + borderCls + '" style="height: ' + pct + '%;" title="' + pct + '% capacity (' + offCount + ' off)"></div>';
+    lbls += '<span class="' + (isToday ? 'text-primary font-bold' : '') + '">' + dayNames[d.getDay()] + '</span>';
+  }
+  chartEl.innerHTML = bars;
+  if (labelsEl) labelsEl.innerHTML = lbls;
+}
 }
 document.addEventListener('DOMContentLoaded', function () {
 window.DB.onReady(function () {

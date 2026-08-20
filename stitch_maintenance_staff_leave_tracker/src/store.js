@@ -11,12 +11,12 @@
 // Firestore layout:
 //   collections: teams, leaveTypes, leaveEntries, staff, notifications
 //   documents:   settings/app, profiles/{uid|local}
+import pkg from '../package.json';
 import { getApp, configured as isCloud } from './firebase-app.js';
 import {
   getFirestore,
   collection,
   doc,
-  getDocs,
   onSnapshot,
   setDoc as fsSetDoc,
   writeBatch,
@@ -32,7 +32,7 @@ const LIST_DEFS = {
 
 const DOC_DEFS = {
   settings: { key: 'bansang_settings' },
-  profile: { key: 'bansang_profile' },
+  profile: { key: 'bansang_profile', fsCollection: 'profiles' },
 };
 
 const cache = {};
@@ -65,6 +65,29 @@ function emit(name) {
   if (set) set.forEach((cb) => { try { cb(cache[name]); } catch (e) { console.error(e); } });
   const all = listeners.get('*');
   if (all) all.forEach((cb) => { try { cb(name, cache[name]); } catch (e) { console.error(e); } });
+}
+
+function fireNativeNotif(title, body, tag) {
+  if (window.desktop && window.desktop.notify) {
+    window.desktop.notify(title, body, tag || 'bansang-' + Date.now());
+  } else if (window.Notification && Notification.permission === 'granted') {
+    try { new Notification(title, { body: body }); } catch (e) {}
+  }
+}
+
+// ---------- Email notifications via Google Apps Script ----------
+
+const EMAIL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhDRPQgZlDwK-LeqojuLLTcLzNy59dp_LjE5Zu20beVSukDs6COqFFDnTZJty9Cm4uvQ/exec';
+
+function sendEmailNotification(title, body, details) {
+  var profile = cache.profile || {};
+  var email = profile.email || (window.Auth && window.Auth.currentUser && window.Auth.currentUser.email) || '';
+  if (!email) return;
+  fetch(EMAIL_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ to: email, title: title, body: body, details: details || '' }),
+  }).catch(function (e) { console.warn('[store] email notification failed', e); });
 }
 
 function loadLocalList(name) {
@@ -101,28 +124,54 @@ function docIdFor(name) {
 
 // ---------- Firestore writes ----------
 
+// Tracks the last-known set of document IDs per collection (as reported by
+// onSnapshot) so we can diff on save without reading the collection again.
+const lastKnownIds = {};
+
+const BATCH_LIMIT = 500;
+
+async function commitBatchedWrites(ops) {
+  for (let i = 0; i < ops.length; i += BATCH_LIMIT) {
+    const chunk = ops.slice(i, i + BATCH_LIMIT);
+    const batch = writeBatch(db);
+    for (const op of chunk) {
+      if (op.type === 'set') batch.set(op.ref, op.data);
+      else if (op.type === 'delete') batch.delete(op.ref);
+    }
+    await batch.commit();
+  }
+}
+
 async function fsPersistList(name, items) {
   const col = collection(db, name);
-  const snap = await getDocs(col);
-  const existingIds = new Set(snap.docs.map((d) => d.id));
+  const prevIds = lastKnownIds[name] || new Set();
   const wantedIds = new Set(items.map((i) => i.id));
-  const batch = writeBatch(db);
-  for (const id of existingIds) {
-    if (!wantedIds.has(id)) batch.delete(doc(col, id));
+  const now = Date.now();
+  const ops = [];
+
+  // Delete IDs that are no longer present
+  for (const id of prevIds) {
+    if (!wantedIds.has(id)) ops.push({ type: 'delete', ref: doc(col, id) });
   }
+  // Set all wanted items (both new and existing)
   for (const item of items) {
-    batch.set(doc(col, item.id), { ...item, updatedAt: Date.now() });
+    ops.push({ type: 'set', ref: doc(col, item.id), data: { ...item, updatedAt: now } });
   }
-  await batch.commit();
+
+  await commitBatchedWrites(ops);
+  lastKnownIds[name] = wantedIds;
 }
 
 async function fsPersistDoc(name, obj) {
-  await fsSetDoc(doc(db, name, docIdFor(name)), { ...obj, updatedAt: Date.now() }, { merge: true });
+  const col = (DOC_DEFS[name] && DOC_DEFS[name].fsCollection) || name;
+  const ref = doc(db, col, docIdFor(name));
+  await fsSetDoc(ref, { ...obj, updatedAt: Date.now() }, { merge: true });
 }
 
 // ---------- Firestore realtime subscriptions ----------
 
 const docUnsubs = {};
+let profileUnsub = null;
 let cloudSubscribed = false;
 
 function subscribeDoc(name) {
@@ -130,7 +179,7 @@ function subscribeDoc(name) {
     try { docUnsubs[name](); } catch (e) {}
   }
   docUnsubs[name] = onSnapshot(
-    doc(db, name, docIdFor(name)),
+    doc(db, (DOC_DEFS[name] && DOC_DEFS[name].fsCollection) || name, docIdFor(name)),
     (snap) => {
       const data = snap.exists() ? snap.data() : null;
       cache[name] = data;
@@ -154,6 +203,8 @@ function subscribeCloud() {
       (snap) => {
         const items = snap.docs.map((d) => d.data());
         cache[name] = items;
+        // Track IDs for diff-based writes
+        lastKnownIds[name] = new Set(snap.docs.map((d) => d.id));
         saveLocalList(name, items);
         markArrived(name);
         emit(name);
@@ -177,7 +228,11 @@ function getList(name) {
 // Saves a list. Resolves `true` on success, or the error code/message on
 // failure so callers can surface the problem instead of failing silently.
 function saveList(name, items) {
-  const copy = Array.isArray(items) ? items.slice() : [];
+  if (!Array.isArray(items)) {
+    console.warn('[store] saveList(' + name + ') called with non-array, ignoring');
+    return Promise.resolve(false);
+  }
+  const copy = items.slice();
   cache[name] = copy;
   saveLocalList(name, copy);
   let p = Promise.resolve(true);
@@ -212,6 +267,23 @@ function saveDoc(name, obj) {
 
 function setCurrentUser(uid) {
   currentUserId = uid || null;
+}
+
+function subscribeProfile() {
+  if (profileUnsub) { try { profileUnsub(); } catch (e) {} profileUnsub = null; }
+  if (!isCloud || !db || !currentUserId) return;
+  profileUnsub = onSnapshot(
+    doc(db, 'profiles', currentUserId),
+    (snap) => {
+      const data = snap.exists() ? snap.data() : null;
+      cache['profile'] = data;
+      if (data) saveLocalDoc('profile', data);
+      emit('profile');
+    },
+    (err) => {
+      console.warn('[store] snapshot(profile) failed; using local cache.', err);
+    }
+  );
 }
 
 // Locally caches a document that was fetched elsewhere (e.g. the profile doc
@@ -286,6 +358,12 @@ init();
 // Checks on load and every hour for month-scheduled leave entries that
 // are approaching. Creates a notification 5 days before the scheduled month.
 
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function fmtShort(d) {
+  return d.getDate() + ' ' + MONTH_NAMES[d.getMonth()].slice(0, 3) + ' ' + d.getFullYear();
+}
+
 function checkScheduledLeaveReminders() {
   const entries = getList('leaveEntries').filter(function (e) {
     return !e.deleted && e.scheduleMode === 'month' && e.status === 'Scheduled' && !e.reminderSent && e.scheduledMonth;
@@ -295,21 +373,20 @@ function checkScheduledLeaveReminders() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const notifications = getList('notifications');
+  const allEntries = getList('leaveEntries');
   let changed = false;
+  let entriesChanged = false;
 
   entries.forEach(function (e) {
     var parts = e.scheduledMonth.split('-');
     var schedYear = parseInt(parts[0], 10);
     var schedMonth = parseInt(parts[1], 10);
-    // First day of the scheduled month
     var monthStart = new Date(schedYear, schedMonth - 1, 1);
-    // 5 days before the month starts
     var reminderDate = new Date(monthStart);
     reminderDate.setDate(reminderDate.getDate() - 5);
 
     if (today >= reminderDate) {
-      var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      var monthName = monthNames[schedMonth - 1];
+      var monthName = MONTH_NAMES[schedMonth - 1];
       var staffName = e.staffName || 'Staff member';
       var notif = {
         id: 'n' + Date.now() + '_' + e.id,
@@ -322,16 +399,19 @@ function checkScheduledLeaveReminders() {
       };
       notifications.push(notif);
       changed = true;
+      fireNativeNotif(notif.title, notif.body);
+      sendEmailNotification(notif.title, notif.body, 'Staff: ' + staffName + '\nType: ' + (e.typeName || 'leave') + '\nMonth: ' + monthName + ' ' + schedYear);
 
-      // Mark the entry so we don't create duplicate reminders
-      var allEntries = getList('leaveEntries');
       allEntries.forEach(function (ae) {
         if (ae.id === e.id) ae.reminderSent = true;
       });
-      saveList('leaveEntries', allEntries);
+      entriesChanged = true;
     }
   });
 
+  if (entriesChanged) {
+    saveList('leaveEntries', allEntries);
+  }
   if (changed) {
     saveList('notifications', notifications);
   }
@@ -340,6 +420,70 @@ function checkScheduledLeaveReminders() {
 // Run on init and every hour
 checkScheduledLeaveReminders();
 setInterval(checkScheduledLeaveReminders, 60 * 60 * 1000);
+
+// ---------- Leave start/end today email reminders ----------
+
+function checkLeaveStartEnd() {
+  const allEntries = getList('leaveEntries');
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const notifications = getList('notifications');
+  let notifChanged = false;
+  let entriesChanged = false;
+
+  allEntries.forEach(function (e) {
+    if (e.deleted || !e.startDate) return;
+
+    const start = new Date(e.startDate + 'T00:00:00');
+    const end = e.endDate ? new Date(e.endDate + 'T00:00:00') : start;
+    const staffName = e.staffName || 'Staff member';
+    const typeName = e.typeName || 'leave';
+
+    // Leave starts today
+    if (+start === +today && !e.startNotified) {
+      var n1 = {
+        id: 'ns_' + Date.now() + '_' + e.id,
+        type: 'reminder',
+        title: 'Leave Starts Today',
+        body: staffName + '\'s ' + typeName + ' starts today (' + fmtShort(start) + ').',
+        time: 'Just now',
+        read: false,
+        entryId: e.id,
+      };
+      notifications.push(n1);
+      notifChanged = true;
+      fireNativeNotif(n1.title, n1.body);
+      sendEmailNotification(n1.title, n1.body, 'Staff: ' + staffName + '\nType: ' + typeName + '\nStart: ' + fmtShort(start));
+      e.startNotified = true;
+      entriesChanged = true;
+    }
+
+    // Leave ends today
+    if (+end === +today && !e.endNotified) {
+      var n2 = {
+        id: 'ne_' + Date.now() + '_' + e.id,
+        type: 'reminder',
+        title: 'Leave Ends Today',
+        body: staffName + '\'s ' + typeName + ' ends today. They should return tomorrow.',
+        time: 'Just now',
+        read: false,
+        entryId: e.id,
+      };
+      notifications.push(n2);
+      notifChanged = true;
+      fireNativeNotif(n2.title, n2.body);
+      sendEmailNotification(n2.title, n2.body, 'Staff: ' + staffName + '\nType: ' + typeName + '\nEnd: ' + fmtShort(end));
+      e.endNotified = true;
+      entriesChanged = true;
+    }
+  });
+
+  if (entriesChanged) saveList('leaveEntries', allEntries);
+  if (notifChanged) saveList('notifications', notifications);
+}
+
+checkLeaveStartEnd();
+setInterval(checkLeaveStartEnd, 60 * 60 * 1000);
 
 export const DB = {
   ready,
@@ -351,10 +495,14 @@ export const DB = {
   saveDoc,
   seedDoc,
   setCurrentUser,
+  subscribeProfile,
   subscribe,
   hideSkeletons,
   applyBranding,
+  fireNativeNotif,
+  sendEmailNotification,
   get currentUserId() { return currentUserId; },
 };
 
 window.DB = DB;
+window.APP_VERSION = pkg.version;

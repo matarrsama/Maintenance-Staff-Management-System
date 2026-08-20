@@ -10,7 +10,7 @@ import {
   signOut as fbSignOut,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { DB } from './store.js';
 
 const SESSION_KEY = 'bansang_auth_session';
@@ -36,10 +36,6 @@ function clearSession() {
   try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
 }
 
-// Fills the header identity placeholders ([data-user-name], [data-user-avatar],
-// [data-user-email]) with the signed-in user. The profile document is fetched
-// ONCE at sign-in and mirrored to localStorage by store.js, so this reads from
-// the local cache synchronously on every page load — no per-page refetch.
 function headerDisplayName() {
   const p = (window.DB && DB.getDoc('profile')) || {};
   const pname = [p.firstName, p.lastName].filter(Boolean).join(' ').trim();
@@ -70,11 +66,19 @@ export function fillHeader() {
   const avatar = (profile && profile.avatar) || (currentUser && currentUser.photoURL) || '';
   const circleCls = 'w-full h-full flex items-center justify-center rounded-full bg-primary-container text-on-primary font-bold text-xs';
   document.querySelectorAll('[data-user-avatar]').forEach((el) => {
+    el.textContent = '';
     if (avatar) {
-      el.innerHTML = '<img class="w-full h-full object-cover rounded-full" alt="Profile picture" src="' + avatar + '">';
+      const img = document.createElement('img');
+      img.className = 'w-full h-full object-cover rounded-full';
+      img.alt = 'Profile picture';
+      img.src = avatar;
+      el.appendChild(img);
     } else {
       const cls = el.getAttribute('data-avatar-class') || circleCls;
-      el.innerHTML = '<div class="' + cls + '">' + initials + '</div>';
+      const div = document.createElement('div');
+      div.className = cls;
+      div.textContent = initials;
+      el.appendChild(div);
     }
   });
 }
@@ -87,13 +91,24 @@ function refreshHeader() {
   }
 }
 
-// Fetches the user's profile document once and mirrors it to localStorage via
-// store.js. Called only on sign-in so subsequent page loads read the cached
-// identity instead of refetching it.
 async function fetchAndCacheProfile(uid) {
+  if (!uid) return;
   try {
-    const snap = await getDoc(doc(getFirestore(getApp()), 'profiles', uid));
-    const data = snap.exists() ? snap.data() : {};
+    const fs = getFirestore(getApp());
+    const ref = doc(fs, 'profiles', uid);
+    const snap = await getDoc(ref);
+    let data = snap.exists() ? snap.data() : null;
+    if (!data) {
+      data = {
+        firstName: '',
+        lastName: '',
+        email: (currentUser && currentUser.email) || '',
+        phone: '',
+        avatar: '',
+        seenWelcome: false,
+      };
+      await setDoc(ref, { ...data, updatedAt: Date.now() });
+    }
     DB.seedDoc('profile', data || {});
   } catch (e) {
     console.warn('[auth] could not cache profile', e);
@@ -116,6 +131,7 @@ export async function signIn(email, password) {
     setSession(email);
     currentUser = cred.user;
     DB.setCurrentUser(cred.user.uid);
+    DB.subscribeProfile();
     await fetchAndCacheProfile(cred.user.uid);
     refreshHeader();
     return { ok: true };
@@ -139,42 +155,214 @@ export async function signOut() {
   clearSession();
   currentUser = null;
   DB.setCurrentUser(null);
+  DB.subscribeProfile();
   DB.seedDoc('profile', null);
   refreshHeader();
 }
 
+function checkWelcome() {
+  const p = (window.DB && DB.getDoc('profile')) || {};
+  const hasName = p.firstName || p.lastName;
+  const welcomeSeen = p.seenWelcome === true;
+  console.log('[welcome] checkWelcome → seenWelcome:', p.seenWelcome, 'firstName:', p.firstName);
+  if (!welcomeSeen && !hasName) {
+    console.log('[welcome] → new user, showing modal');
+    setTimeout(showWelcomeModal, 300);
+  } else {
+    console.log('[welcome] → skipping');
+  }
+}
+
 export function guard() {
-  if (!isCloud) return;
+  if (!isCloud) {
+    DB.onReady(checkWelcome);
+    return;
+  }
   if (!session()) {
     window.location.replace('index.html');
     return;
-  }
-  const a = getAuthInstance();
-  if (a) {
-    onAuthStateChanged(a, (u) => {
-      currentUser = u;
-      if (!u) window.location.replace('index.html');
-      refreshHeader();
-    });
   }
 }
 
 if (isCloud) {
   const a = getAuthInstance();
   if (a) {
-    onAuthStateChanged(a, (u) => {
+    let welcomeChecked = false;
+    onAuthStateChanged(a, async (u) => {
       currentUser = u;
       DB.setCurrentUser(u ? u.uid : null);
+      DB.subscribeProfile();
+      if (u) await fetchAndCacheProfile(u.uid);
       refreshHeader();
+      if (u && !welcomeChecked) {
+        welcomeChecked = true;
+        checkWelcome();
+      }
     });
   }
 }
 
-// Re-fill identity whenever the user's profile document changes (e.g. after a
-// photo upload) so the avatar updates live across pages.
 DB.subscribe('profile', refreshHeader);
 
 refreshHeader();
+
+// ── Welcome modal for first-time users ──
+
+function showWelcomeModal() {
+  console.log('[welcome] showWelcomeModal() called, existing?', !!document.getElementById('welcome-modal'));
+  if (document.getElementById('welcome-modal')) return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'welcome-modal';
+  overlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4';
+  overlay.style.cssText = 'animation:wmFadeIn .3s ease;z-index:9999 !important;position:fixed !important;';
+
+  let avatarDataUrl = '';
+
+  overlay.innerHTML = `
+    <style>
+      @keyframes wmFadeIn{from{opacity:0}to{opacity:1}}
+      @keyframes wmScaleIn{from{opacity:0;transform:scale(.93) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+      .wm-avatar-ring{width:88px;height:88px;border-radius:50%;border:3px dashed rgba(99,102,241,0.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s,background .2s;overflow:hidden;position:relative;}
+      .wm-avatar-ring:hover{border-color:rgba(99,102,241,0.7);background:rgba(99,102,241,0.05);}
+      .wm-avatar-ring img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+      .wm-field input{width:100%;padding:10px 14px;border:1px solid #c5c5d3;border-radius:8px;background:#fafbff;font-size:14px;color:#1e293b;outline:none;transition:border-color .2s,box-shadow .2s;}
+      .wm-field input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.12);}
+      .wm-field label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;letter-spacing:0.3px;}
+      .wm-btn{padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none;}
+      .wm-btn-primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;box-shadow:0 4px 14px rgba(99,102,241,0.35);}
+      .wm-btn-primary:hover{box-shadow:0 6px 20px rgba(99,102,241,0.45);transform:translateY(-1px);}
+      .wm-btn-primary:active{transform:translateY(0);}
+      .wm-btn-skip{background:transparent;color:#94a3b8;border:1px solid #e2e8f0;}
+      .wm-btn-skip:hover{background:#f8fafc;color:#64748b;}
+    </style>
+    <div style="animation:wmScaleIn .35s ease" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+      <div style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);padding:28px 32px 20px;text-align:center;">
+        <div style="width:48px;height:48px;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 4px 12px rgba(99,102,241,0.3);">
+          <span class="material-symbols-outlined" style="color:#fff;font-size:26px;">person_add</span>
+        </div>
+        <h2 style="font-size:20px;font-weight:700;color:#1e293b;margin:0 0 4px;">Welcome to Bansang Hospital</h2>
+        <p style="font-size:13px;color:#64748b;margin:0;">Let's set up your profile to get started</p>
+      </div>
+      <div style="padding:24px 32px 28px;">
+        <div style="display:flex;justify-content:center;margin-bottom:24px;">
+          <div class="wm-avatar-ring" id="wm-avatar-ring" title="Click to upload photo">
+            <span id="wm-avatar-placeholder" class="material-symbols-outlined" style="font-size:32px;color:#a5b4fc;">add_a_photo</span>
+            <img id="wm-avatar-preview" style="display:none;" alt="Avatar"/>
+            <input type="file" accept="image/*" id="wm-avatar-input" style="display:none;"/>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div class="wm-field"><label>FIRST NAME *</label><input id="wm-first" placeholder="e.g. Matarr" autocomplete="given-name"/></div>
+          <div class="wm-field"><label>LAST NAME *</label><input id="wm-last" placeholder="e.g. Sama" autocomplete="family-name"/></div>
+        </div>
+        <div class="wm-field" style="margin-bottom:24px;"><label>PHONE NUMBER</label><input id="wm-phone" type="tel" placeholder="e.g. +220 123 4567" autocomplete="tel"/></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <button class="wm-btn wm-btn-skip" id="wm-skip">Skip for now</button>
+          <button class="wm-btn wm-btn-primary" id="wm-save">Get Started →</button>
+        </div>
+        <p id="wm-error" style="color:#ef4444;font-size:12px;margin-top:12px;text-align:center;display:none;"></p>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const ring = document.getElementById('wm-avatar-ring');
+  const fileInput = document.getElementById('wm-avatar-input');
+  const preview = document.getElementById('wm-avatar-preview');
+  const placeholder = document.getElementById('wm-avatar-placeholder');
+
+  ring.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be under 5MB.');
+      fileInput.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      avatarDataUrl = ev.target.result;
+      preview.src = avatarDataUrl;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+      ring.style.borderStyle = 'solid';
+      ring.style.borderColor = 'rgba(99,102,241,0.5)';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  async function markWelcomeSeen() {
+    try {
+      const p = (window.DB && DB.getDoc('profile')) || {};
+      p.seenWelcome = true;
+      await DB.saveDoc('profile', p);
+      console.log('[welcome] marked seenWelcome = true');
+    } catch (e) {
+      console.warn('[welcome] failed to mark seenWelcome', e);
+    }
+  }
+
+  document.getElementById('wm-skip').addEventListener('click', async () => {
+    await markWelcomeSeen();
+    overlay.remove();
+  });
+
+  document.getElementById('wm-save').addEventListener('click', async () => {
+    const firstName = document.getElementById('wm-first').value.trim();
+    const lastName = document.getElementById('wm-last').value.trim();
+    const phone = document.getElementById('wm-phone').value.trim();
+    const errEl = document.getElementById('wm-error');
+
+    if (!firstName || !lastName) {
+      errEl.textContent = 'Please enter your first and last name.';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    const saveBtn = document.getElementById('wm-save');
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = '0.7';
+
+    try {
+      const p = (window.DB && DB.getDoc('profile')) || {};
+      p.firstName = firstName;
+      p.lastName = lastName;
+      p.phone = phone;
+      p.seenWelcome = true;
+      if (avatarDataUrl) p.avatar = avatarDataUrl;
+      const res = await DB.saveDoc('profile', p);
+      if (res !== true) {
+        errEl.textContent = 'Save failed. Please try again.';
+        errEl.style.display = 'block';
+        saveBtn.textContent = 'Get Started →';
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
+        return;
+      }
+      refreshHeader();
+      overlay.remove();
+      if (window.Dialogs) {
+        window.Dialogs.toast('Welcome, ' + firstName + '! Your profile is all set.', 'success');
+      }
+    } catch (err) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      saveBtn.textContent = 'Get Started →';
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '1';
+    }
+  });
+
+  overlay.addEventListener('mousedown', (e) => {
+    if (e.target === overlay) e.preventDefault();
+  });
+}
 
 window.Auth = {
   isCloud,

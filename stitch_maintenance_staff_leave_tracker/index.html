@@ -10,7 +10,7 @@
 <script type="module" src="/src/auth.js"></script>
 <script type="module" src="/src/ui.js"></script>
 </head>
-<body class="min-h-screen flex items-center justify-center font-body-md text-on-surface p-container-padding antialiased" style="background: linear-gradient(rgba(25, 50, 120, 0.65), rgba(25, 50, 120, 0.75)), url('/login-bg.webp') center/cover no-repeat fixed;"><!-- Auth Container -->
+<body class="min-h-screen flex items-center justify-center font-body-md text-on-surface p-container-padding antialiased" style="background: linear-gradient(rgba(25, 50, 120, 0.65), rgba(25, 50, 120, 0.75)), url('/login-bg.webp') center/cover no-repeat fixed;"><!-- Login Loading Overlay --><div id="login-loader" class="fixed inset-0 z-[999] flex flex-col items-center justify-center" style="background: linear-gradient(rgba(20, 40, 100, 0.92), rgba(15, 30, 80, 0.95)), url('/login-bg.webp') center/cover no-repeat fixed;"><div class="flex flex-col items-center"><div class="relative w-20 h-20 mb-6"><svg class="w-full h-full" viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/><circle cx="40" cy="40" r="36" fill="none" stroke="rgba(197,202,233,0.9)" stroke-width="3" stroke-linecap="round" stroke-dasharray="180 226"><animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="1s" repeatCount="indefinite"/></circle></svg><div class="absolute inset-0 flex items-center justify-center"><div class="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/10"><span class="material-symbols-outlined text-white" style="font-size:24px;font-variation-settings:'FILL' 1" data-weight="fill">health_and_safety</span></div></div></div><h2 class="text-white font-headline-sm text-headline-sm mb-1 tracking-wide">BANSANG HOSPITAL</h2><p class="text-white/60 font-body-sm text-body-sm mb-6">Loading secure portal...</p><div class="w-48 h-[3px] bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-white/40 rounded-full loader-bar"></div></div></div></div><style>.loader-bar{animation:loadSlide 1.4s ease-in-out infinite}@keyframes loadSlide{0%{width:0%;margin-left:0}50%{width:55%;margin-left:22%}100%{width:0%;margin-left:100%}}</style><!-- Auth Container -->
 <main class="w-full max-w-md bg-surface-container-lowest border border-outline-variant rounded shadow-sm overflow-hidden flex flex-col relative z-10">
 <!-- Header Section -->
 <header class="bg-surface-container-low border-b border-outline-variant p-6 flex flex-col items-center text-center">
@@ -37,10 +37,7 @@
 </div>
 <!-- Password Field -->
 <div class="space-y-1.5">
-<div class="flex items-center justify-between">
 <label class="block font-label-md text-label-md text-on-surface" for="password">Password</label>
-<a class="font-body-sm text-body-sm text-primary hover:text-primary-container transition-colors" href="#">Forgot Password?</a>
-</div>
 <div class="relative">
 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
 <span class="material-symbols-outlined text-outline-variant text-lg">lock</span>
@@ -63,11 +60,14 @@
 <div class="flex items-start mt-6 p-3 bg-surface rounded border border-outline-variant border-dashed">
 <span class="material-symbols-outlined text-primary text-sm mr-2 mt-0.5">shield</span>
 <p class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">
-                        This is a secure system restricted to authorized hospital personnel only. All activities are monitored and logged.
+                        This system is specifically designed and built for the Maintenance Unit.
                     </p>
 </div>
 </form>
 </div>
+<footer class="mt-6 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </main>
 <!-- Decorative Background Element -->
 <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center opacity-5">
@@ -76,6 +76,28 @@
         </span>
 </div>
 <script>
+(function () {
+  var loader = document.getElementById('login-loader');
+  var dismissed = false;
+  function hideLoader() {
+    if (dismissed || !loader) return;
+    dismissed = true;
+    loader.style.transition = 'opacity 0.6s ease';
+    loader.style.opacity = '0';
+    setTimeout(function () { loader.remove(); }, 650);
+  }
+  function pollReady() {
+    if (window.DB && window.DB.onReady) {
+      window.DB.onReady(hideLoader);
+    } else {
+      setTimeout(pollReady, 60);
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    pollReady();
+    setTimeout(hideLoader, 3500);
+  });
+})();
 function handleSignIn(event) {
   if (event) event.preventDefault();
   var email = (document.getElementById('email').value || '').trim();

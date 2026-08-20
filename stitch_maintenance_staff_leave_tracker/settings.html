@@ -12,7 +12,7 @@
 <script type="module" src="/src/dialogs.js"></script>
 <script type="module" src="/src/nav.js"></script>
 </head>
-<body class="bg-surface text-on-surface font-body-md flex h-screen overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<body class="bg-surface text-on-surface font-body-md flex min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
 <!-- SideNavBar -->
 <nav class="hidden md:flex bg-surface-container-lowest dark:bg-on-background fixed left-0 top-0 h-screen w-[280px] border-r border-outline-variant dark:border-outline flex-col py-container-padding z-50">
 <a href="dashboard.html" class="px-gutter mb-section-gap flex items-center gap-3">
@@ -62,7 +62,7 @@
 </button>
 <a href="dashboard.html" class="md:hidden"><h1 class="font-headline-sm text-headline-sm text-primary dark:text-primary-fixed-dim" data-app-name>BANSANG HOSPITAL</h1></a>
 <!-- Search Bar -->
-<div class="relative w-full max-w-md hidden sm:block">
+<div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input class="w-full pl-10 pr-4 h-10 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-body-md text-on-surface placeholder-on-surface-variant" placeholder="Search staff, roles, or ID..." type="text"/>
 </div>
@@ -87,7 +87,7 @@
 </div>
 </header>
 <!-- Main Canvas -->
-<main id="app-main" class="flex-1 overflow-y-auto p-container-padding bg-background">
+<main id="app-main" class="flex-1 p-container-padding flex flex-col">
 <div class="max-w-[1200px] mx-auto">
 <!-- Page Header -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
@@ -123,6 +123,27 @@
 <button class="relative w-11 h-6 rounded-full transition-colors focus:outline-none opacity-50 cursor-not-allowed" id="theme-toggle" style="background-color: #c5c5d3;" disabled>
 <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-all" id="theme-knob"></span>
 </button>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">System</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Launch at Startup</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Start the app when you log in to Windows</p>
+</div>
+<button class="relative w-11 h-6 rounded-full transition-colors focus:outline-none" id="auto-launch-toggle" onclick="toggleAutoLaunch()" style="background-color: #c5c5d3;">
+<span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-all" id="auto-launch-knob"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Desktop Notifications</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Get native OS notifications for leave alerts</p>
+</div>
+<button onclick="testNotification()" class="px-3 py-1.5 border border-outline-variant rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors">Test</button>
 </div>
 </div>
 </div>
@@ -202,6 +223,9 @@
 </div>
 </div>
 </main>
+<footer class="shrink-0 pb-4 pt-3 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant">Built with <span class="text-error">♥</span> by <span class="text-primary font-medium">MsTech</span> · <span id="app-version"></span> · &copy; <span id="app-year"></span> All rights reserved.</p>
+</footer>
 </div>
 <script>
 (function () {
@@ -331,11 +355,46 @@ if (window.Dialogs) window.Dialogs.toast('Password updated successfully.', 'succ
 else alert('Password updated successfully.');
 };
 
+// ── Auto-launch toggle ──
+function applyAutoLaunch(enabled) {
+var toggle = document.getElementById('auto-launch-toggle');
+var knob = document.getElementById('auto-launch-knob');
+if (toggle) toggle.style.backgroundColor = enabled ? '#4059aa' : '#c5c5d3';
+if (knob) knob.style.transform = enabled ? 'translateX(20px)' : 'translateX(0)';
+}
+window.toggleAutoLaunch = function () {
+var desktop = window.desktop;
+if (!desktop || !desktop.setAutoLaunch) {
+if (window.Dialogs) window.Dialogs.toast('Desktop features not available.', 'warning');
+return;
+}
+desktop.getAutoLaunch().then(function (current) {
+var next = !current;
+desktop.setAutoLaunch(next);
+applyAutoLaunch(next);
+if (window.Dialogs) window.Dialogs.toast(next ? 'App will launch at startup.' : 'Startup launch disabled.', 'success');
+});
+};
+window.testNotification = function () {
+var desktop = window.desktop;
+if (desktop && desktop.notify) {
+desktop.notify('Bansang Hospital', 'Desktop notifications are working!', 'test');
+} else if (window.Notification) {
+new Notification('Bansang Hospital', { body: 'Desktop notifications are working!' });
+} else {
+if (window.Dialogs) window.Dialogs.alert({ title: 'Not supported', message: 'Desktop notifications are not available in this environment.', type: 'warning' });
+}
+};
+
 if (window.Auth) window.Auth.guard();
 document.addEventListener('DOMContentLoaded', function () {
 window.DB.onReady(function () {
 apply();
 renderLeaveEntitlements();
+// Sync auto-launch toggle
+if (window.desktop && window.desktop.getAutoLaunch) {
+window.desktop.getAutoLaunch().then(applyAutoLaunch);
+}
 window.DB.subscribe(function () {
 apply();
 renderLeaveEntitlements();
